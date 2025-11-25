@@ -35,6 +35,32 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
     setIsAuthModalOpen(true);
   };
 
+  const handleCheckout = async (planType: 'explorer' | 'builder') => {
+  try {
+    const response = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ planType }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur Stripe');
+    }
+
+    const data = await response.json();
+
+    if (data.url) {
+      window.location.href = data.url; // redirection vers Stripe
+      return;
+    }
+
+    throw new Error('URL de paiement manquante');
+  } catch (error) {
+    console.error(error);
+    alert('Impossible de démarrer le paiement Stripe.');
+  }
+};
+
     const startCheckout = async (priceId: string) => {
     try {
       const res = await fetch('/api/create-checkout-session', {
@@ -595,11 +621,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       {/* Footer */}
       <div>
         <button
-          onClick={() => startCheckout('price_1SXR8gF1yiAtAmIj0NQNnVmH')}
-          className="w-full py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-colors shadow-lg shadow-brand-900/30 hover:-translate-y-1"
-        >
-          Acheter le pack
-        </button>
+  onClick={() => handleCheckout('explorer')}
+  className="w-full py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-colors shadow-lg shadow-brand-900/30 hover:-translate-y-1"
+>
+  Acheter le pack
+</button>
       </div>
     </div>
 
@@ -660,11 +686,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       {/* Footer */}
       <div>
         <button
-          onClick={() => startCheckout('price_1SXR94F1yiAtAmIjmLg0JIkT')}
-          className="w-full py-4 bg-gold-500 hover:bg-gold-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-gold-500/20 hover:-translate-y-1"
-        >
-          S&apos;abonner maintenant
-        </button>
+  onClick={() => handleCheckout('builder')}
+  className="w-full py-4 bg-gold-500 hover:bg-gold-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-gold-500/20 hover:-translate-y-1"
+>
+  S'abonner maintenant
+</button>
         <p className="text-[10px] text-slate-500 mt-3 text-center font-medium">
           Annulable à tout moment en un clic.
         </p>
