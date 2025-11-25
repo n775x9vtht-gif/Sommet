@@ -1,86 +1,49 @@
-// api/create-checkout-session.ts
 import Stripe from 'stripe';
 
-export const config = {
-  runtime: 'edge',
-};
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+});
 
-// ⚠️ Assure-toi d'avoir bien STRIPE_SECRET_KEY dans tes variables Vercel
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {});
-
-type Plan = 'EXPLORATEUR' | 'BATISSEUR';
-
-const PRICE_IDS: Record<Plan, string> = {
-  EXPLORATEUR: 'price_1SXR8gF1yiAtAmIj0NQNnVmH', // L'Explorateur
-  BATISSEUR:  'price_1SXR94F1yiAtAmIjmLg0JIkT', // Le Bâtisseur
-};
-
-export default async function handler(req: Request): Promise<Response> {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
-      {
-        status: 405,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Méthode non autorisée' });
   }
 
   try {
-    const body = await req.json().catch(() => ({} as any));
-    const plan = (body.plan || 'EXPLORATEUR') as Plan;
-    const priceId = PRICE_IDS[plan];
+    const { priceId, mode } = req.body;
 
     if (!priceId) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid plan' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      return res.status(400).json({ error: 'priceId manquant' });
     }
 
-    // Domaine d’origine (local ou Vercel)
+    if (mode !== 'payment' && mode !== 'subscription') {
+      return res.status(400).json({ error: 'mode invalide' });
+    }
+
     const origin =
-      req.headers.get('origin') ||
-      'https://sommet.tech'; // éventuellement remplace par ton domaine Vercel
+      (req.headers && (req.headers.origin || req.headers.referer)) ||
+      'https://sommet.tech';
 
     const session = await stripe.checkout.sessions.create({
-      mode: plan === 'BATISSEUR' ? 'subscription' : 'payment',
+      mode,
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${origin}/?checkout=success&plan=${plan.toLowerCase()}`,
-      cancel_url: `${origin}/?checkout=cancelled`,
-      allow_promotion_codes: true,
+      success_url: `${origin}?checkout=success`,
+      cancel_url: `${origin}?checkout=cancel`,
       billing_address_collection: 'auto',
-      metadata: {
-        plan,
-      },
+      allow_promotion_codes: true,
     });
 
-    return new Response(
-      JSON.stringify({ id: session.id, url: session.url }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
-  } catch (err: any) {
-    console.error('Stripe error:', err);
-
-    return new Response(
-      JSON.stringify({
-        error: err?.message || 'Erreur Stripe lors de la création de la session',
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return res.status(200).json({ url: session.url });
+  } catch (error: any) {
+    console.error('Erreur Stripe:', error);
+    return res.status(500).json({
+      error: 'Erreur serveur Stripe',
+      details: error?.message || 'Erreur inconnue',
+    });
   }
 }
