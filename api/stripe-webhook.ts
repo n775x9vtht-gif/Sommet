@@ -67,15 +67,30 @@ export default async function handler(req: any, res: any) {
 
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
+        // On caste en `any` car la définition TypeScript de Stripe ne contient pas
+        // toujours les champs envoyés par le webhook (current_period_end, cancel_at, etc.)
+        const subscription = event.data.object as any;
+
         const stripeSubscriptionId = subscription.id;
         const stripeCustomerId = subscription.customer as string;
         const status = subscription.status; // active, past_due, canceled, unpaid...
+
+        // Champs utiles pour le debug / la compréhension du cycle de vie :
+        const cancelAtPeriodEnd = subscription.cancel_at_period_end ?? false;
+        const cancelAt = subscription.cancel_at
+          ? new Date(subscription.cancel_at * 1000).toISOString()
+          : null;
+        const currentPeriodEnd = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : null;
 
         console.log('🔔 Event subscription:', event.type, {
           stripeSubscriptionId,
           stripeCustomerId,
           status,
+          cancelAtPeriodEnd,
+          cancelAt,
+          currentPeriodEnd,
         });
 
         // 1️⃣ On met à jour stripe_subscriptions
