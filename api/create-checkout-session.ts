@@ -36,9 +36,8 @@ export default async function handler(req: any, res: any) {
           quantity: 1,
         },
       ],
-      // ✅ Redirection vers /success avec le plan en query param
-      success_url: `${origin}/success?plan=${plan}`,
-      // Tu peux garder un petit flag sur la home si tu veux
+      // ✅ Retour vers la home AVEC les paramètres pour React
+      success_url: `${origin}/?checkout=success&plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancel`,
       billing_address_collection: 'required',
       allow_promotion_codes: true,
