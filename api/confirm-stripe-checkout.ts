@@ -55,7 +55,6 @@ export default async function handler(req: any, res: any) {
     const stripeSubscriptionId = session.subscription as string | null;
 
     // 2️⃣ Retrouver l'utilisateur Supabase par son email via l'API admin
-    // (listUsers + filtrage, car getUserByEmail n'existe pas dans ton SDK)
     const { data: usersRes, error: usersErr } =
       await supabaseAdmin.auth.admin.listUsers({
         page: 1,
@@ -67,9 +66,14 @@ export default async function handler(req: any, res: any) {
       return res.status(500).json({ error: 'Erreur récupération utilisateur' });
     }
 
+    // 👉 On force le typage en any[] pour éviter l’erreur "never"
+    const users = (usersRes?.users ?? []) as any[];
+
     const user =
-      usersRes?.users?.find(
-        (u) => u.email && u.email.toLowerCase() === email.toLowerCase()
+      users.find(
+        (u) =>
+          typeof u.email === 'string' &&
+          u.email.toLowerCase() === email.toLowerCase()
       ) ?? null;
 
     if (!user) {
@@ -90,7 +94,6 @@ export default async function handler(req: any, res: any) {
         mvp_blueprint_credits: 1,
       };
     } else if (plan === 'batisseur') {
-      // Illimité (à ajuster si tu veux serrer plus tard)
       updates = {
         ...updates,
         generation_credits: 999999,
