@@ -16,6 +16,7 @@ import { IconMountain } from './components/Icons';
 import { DEMO_DATA } from './services/demoData';
 import { supabase } from './services/supabaseClient';
 import { fetchUserIdeas, createIdea, updateIdea, deleteIdea as deleteIdeaService } from './services/ideaService';
+import SuccessPage from './components/SuccessPage'; // 👈 NEW IMPORT
 
 const App: React.FC = () => {
   const [hasAccess, setHasAccess] = useState(false);
@@ -216,10 +217,24 @@ const App: React.FC = () => {
     if (ideaToUpdate) await updateIdea(ideaToUpdate);
   };
 
+  // 🔥 ROUTAGE PAR URL : page de succès Stripe
+  const path = typeof window !== 'undefined' ? window.location.pathname : '/';
+
+  if (path === '/success') {
+    // On affiche la page de succès / création de mot de passe
+    return (
+      <SuccessPage
+        onEnterApp={handleEnterApp}
+      />
+    );
+  }
+
+  // Si pas encore accès à l'app → Landing
   if (!hasAccess) {
     return <LandingPage onEnterApp={handleEnterApp} onEnterDemo={handleEnterDemo} />;
   }
 
+  // Sinon, l'app principale
   return (
     <div className="flex min-h-screen bg-dark-900 font-sans text-slate-50 selection:bg-brand-500 selection:text-white animate-fade-in">
       
