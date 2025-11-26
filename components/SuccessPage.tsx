@@ -1,37 +1,33 @@
 // components/SuccessPage.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { IconMountain } from './Icons';
 
-type PlanType = 'camp_de_base' | 'explorateur' | 'batisseur';
-
 interface SuccessPageProps {
   onEnterApp: () => void;
+  plan?: 'explorateur' | 'batisseur';
 }
 
-const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp }) => {
-  const [plan, setPlan] = useState<PlanType>('camp_de_base');
+const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
 
+    // Récupération du session_id dans l’URL
     const params = new URLSearchParams(window.location.search);
-    const rawPlan = params.get('plan');
+    const sId = params.get('session_id');
+    const emailFromStripe = params.get('email'); // au cas où on décide de le passer plus tard
 
-    if (rawPlan === 'explorateur' || rawPlan === 'batisseur') {
-      setPlan(rawPlan);
-    } else {
-      setPlan('camp_de_base');
-    }
-
-    // Si un jour tu ajoutes ?email=... dans l’URL :
-    // const emailFromUrl = params.get('email');
-    // if (emailFromUrl) setEmail(emailFromUrl);
+    if (sId) setSessionId(sId);
+    if (emailFromStripe) setEmail(emailFromStripe);
   }, []);
 
   const handleCreateAccount = async (e: React.FormEvent) => {
@@ -47,16 +43,22 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp }) => {
       setErrorMsg('Ton mot de passe doit faire au moins 6 caractères.');
       return;
     }
+    if (!sessionId) {
+      setErrorMsg('Session Stripe introuvable. Contacte le support.');
+      return;
+    }
 
     setLoading(true);
 
     try {
-      // 1️⃣ Création du compte auth
+      // 1️⃣ Création du compte Supabase
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {},
+          data: {
+            first_name: firstName || null,
+          },
         },
       });
 
@@ -70,43 +72,42 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp }) => {
         return;
       }
 
-      const user = data.user;
-      if (user) {
-        // 2️⃣ Mise à jour du profil avec le bon plan
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            plan,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', user.id);
+      // 2️⃣ Confirmation du paiement / plan côté backend
+      const resp = await fetch('/api/confirm-stripe-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          email,
+        }),
+      });
 
-        if (profileError) {
-          console.error('Erreur lors de la mise à jour du plan :', profileError);
-          // On ne bloque pas l’accès, mais on log l’erreur
-        }
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => null);
+        console.error('Erreur confirm-stripe-checkout:', data);
+        setErrorMsg(
+          data?.error ||
+            "Impossible de valider ton paiement. Contacte le support avec l'email utilisé."
+        );
+        setLoading(false);
+        return;
       }
+
+      const result = await resp.json();
+      console.log('✅ Plan appliqué :', result.plan);
 
       setSuccessMsg('Compte créé avec succès ! Redirection vers Sommet…');
       localStorage.removeItem('sommet_guest_mode');
 
       setTimeout(() => {
         onEnterApp();
-      }, 500);
+      }, 600);
     } catch (err: any) {
       console.error('Erreur inattendue lors de la création de compte:', err);
       setErrorMsg("Erreur inattendue. Réessaie dans quelques instants.");
       setLoading(false);
     }
   };
-
-  // 🧠 Texte dynamique selon le plan
-  const planLabel =
-    plan === 'batisseur'
-      ? 'Votre plan Bâtisseur est activé.'
-      : plan === 'explorateur'
-      ? 'Votre pack Explorateur est activé.'
-      : 'Votre Camp de Base est activé.';
 
   return (
     <div className="min-h-screen bg-dark-950 text-slate-50 flex items-center justify-center px-4">
@@ -118,18 +119,29 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp }) => {
           <h1 className="text-2xl font-extrabold text-white text-center">
             Paiement confirmé 🎉
           </h1>
-          <p className="mt-2 text-sm text-emerald-400 text-center">
-            {planLabel}
-          </p>
-          <p className="mt-1 text-xs text-slate-400 text-center">
-            Il ne reste plus qu&apos;à créer ton mot de passe pour accéder à Sommet.
+          <p className="mt-2 text-sm text-slate-400 text-center">
+            Il ne reste plus qu’à créer ton accès Sommet. Cet email servira à
+            te connecter et à recevoir tes notifications.
           </p>
         </div>
 
         <form onSubmit={handleCreateAccount} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-400 mb-1">
-              Email utilisé pour le paiement
+              Prénom (optionnel)
+            </label>
+            <input
+              type="text"
+              className="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/60"
+              placeholder="Rémi"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 mb-1">
+              Email
             </label>
             <input
               type="email"
@@ -153,9 +165,6 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp }) => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <p className="mt-1 text-[10px] text-slate-500">
-              Minimum 6 caractères. Tu pourras le modifier plus tard.
-            </p>
           </div>
 
           {errorMsg && (
@@ -173,7 +182,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 bg-brand-500 hover:bg-brand-400 disabled:bg-brand-500/60 text-white font-bold text-sm rounded-xl transition-colors"
+            className="w-full mt-2 py-3 bg-gold-500 hover:bg-gold-400 disabled:bg-gold-500/60 text-dark-900 font-bold text-sm rounded-xl transition-colors"
           >
             {loading ? 'Création en cours…' : 'Créer mon accès Sommet'}
           </button>
