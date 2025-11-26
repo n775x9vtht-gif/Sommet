@@ -1,147 +1,159 @@
 // api/stripe-webhook.ts
+
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-// ⚠️ On ne force pas la version d'API pour éviter les erreurs de typage
+// ⚠️ Stripe : on ne fixe PAS apiVersion pour éviter les erreurs de typage
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-// Client Supabase "admin" (service role)
+// ⚠️ Client admin Supabase (SERVICE KEY, uniquement côté serveur)
 const supabaseAdmin = createClient(
-  process.env.VITE_SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+  process.env.SUPABASE_SERVICE_KEY as string,
+  { auth: { persistSession: false } }
 );
 
-// Petite fonction utilitaire pour récupérer le corps brut de la requête
-async function getRawBody(req: any): Promise<string> {
-  return new Promise((resolve, reject) => {
-    let data = '';
-
-    req.on('data', (chunk: Buffer) => {
-      data += chunk.toString();
-    });
-
-    req.on('end', () => {
-      resolve(data);
-    });
-
-    req.on('error', (err: any) => {
-      reject(err);
-    });
+// Petit helper pour lire le body brut (requis par Stripe pour vérifier la signature)
+async function getRawBody(req: any): Promise<Buffer> {
+  const chunks: Uint8Array[] = [];
+  await new Promise<void>((resolve, reject) => {
+    req.on('data', (chunk: Uint8Array) => chunks.push(chunk));
+    req.on('end', () => resolve());
+    req.on('error', reject);
   });
+  return Buffer.concat(chunks);
 }
 
+// 🚀 Handler Vercel (pas de NextApiRequest)
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).send('Method not allowed');
   }
 
-  const signature = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  if (!signature || !webhookSecret) {
-    console.error('❌ Signature Stripe ou secret manquant');
-    // On répond quand même 200 pour éviter que Stripe SPAM le webhook
-    return res.status(200).send('ok');
-  }
-
+  const sig = req.headers['stripe-signature'] as string;
   let event: Stripe.Event;
 
   try {
-    const rawBody = await getRawBody(req);
+    const buf = await getRawBody(req);
 
     event = stripe.webhooks.constructEvent(
-      rawBody,
-      signature as string,
-      webhookSecret
+      buf,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (err: any) {
-    console.error('❌ Erreur de vérification de signature Stripe :', err?.message || err);
-    // Très important : on ne renvoie PAS 400, on accepte mais on ne fait rien
-    return res.status(200).send('signature_failed');
+    console.error('❌ Signature webhook invalide :', err.message);
+    return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
-  console.log('✅ Webhook Stripe reçu :', event.type);
+  // 🎯 ROUTAGE DES ÉVÉNEMENTS STRIPE
+  switch (event.type) {
+    // 1️⃣ Paiement terminé (explorateur ou bâtisseur)
+    case 'checkout.session.completed': {
+      const session = event.data.object as Stripe.Checkout.Session;
 
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object as any;
+      const customerId = session.customer as string;
+      const subscriptionId = session.subscription as string | null;
 
-        const sessionId = session.id as string;
-        const customerId = session.customer as string | null;
-        const email =
-          session.customer_details?.email ||
-          session.customer_email ||
-          null;
+      const plan = session.metadata?.plan || 'explorateur';
 
-        const mode = session.mode as 'payment' | 'subscription';
-        const plan = (session.metadata?.plan as string | null) ?? null;
-
-        console.log('📦 checkout.session.completed', {
-          sessionId,
-          customerId,
-          email,
-          mode,
-          plan,
-        });
-
-        // On loggue la session dans stripe_checkout_sessions
-        const { error: insertError } = await supabaseAdmin
-          .from('stripe_checkout_sessions')
-          .insert({
-            session_id: sessionId,
+      const { error: upsertError } = await supabaseAdmin
+        .from('stripe_subscriptions')
+        .upsert(
+          {
             stripe_customer_id: customerId,
-            email,
-            mode,
+            stripe_subscription_id: subscriptionId ?? '',
             plan,
-            raw_payload: event as any,
-          });
+            status: 'active',
+          },
+          { onConflict: 'stripe_subscription_id' }
+        );
 
-        if (insertError) {
-          console.error('❌ Erreur Supabase (stripe_checkout_sessions.insert) :', insertError);
-        }
-
-        // Ici on ne touche pas encore au plan dans "profiles" :
-        // c'est ton SuccessPage qui le gère côté front, et plus tard
-        // on pourra rajouter une logique d’upgrade 100% côté serveur.
-        break;
+      if (upsertError) {
+        console.error('❌ Erreur upsert stripe_subscriptions:', upsertError);
       }
 
-      case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as any;
-        console.log('💰 invoice.payment_succeeded', {
-          invoiceId: invoice.id,
-          customer: invoice.customer,
-          subscription: invoice.subscription,
-          amount_paid: invoice.amount_paid,
-        });
-        // Pour l’instant, on log juste. Pas de 400/500, tout passe.
-        break;
-      }
-
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-      case 'customer.subscription.deleted': {
-        const sub = event.data.object as any;
-        console.log(`🔄 ${event.type}`, {
-          subscriptionId: sub.id,
-          status: sub.status,
-          customer: sub.customer,
-        });
-        break;
-      }
-
-      default: {
-        console.log('ℹ️ Événement non géré explicitement :', event.type);
-      }
+      return res.status(200).send('OK checkout');
     }
-  } catch (err: any) {
-    console.error('💥 Erreur interne dans le handler Stripe :', err);
-    // On log l’erreur mais on renvoie quand même 200 pour que Stripe arrête de réessayer
-    return res.status(200).send('internal_error');
-  }
 
-  // Toujours répondre 200 si la signature est OK
-  return res.status(200).send('ok');
+    // 2️⃣ Subscription mise à jour (ex : cancel_at_period_end = true)
+    case 'customer.subscription.updated': {
+      const sub = event.data.object as Stripe.Subscription;
+
+      if (sub.cancel_at_period_end) {
+        const { error } = await supabaseAdmin
+          .from('stripe_subscriptions')
+          .update({
+            status: 'canceling',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('stripe_subscription_id', sub.id);
+
+        if (error) {
+          console.error('❌ Erreur update stripe_subscriptions (updated):', error);
+        }
+      }
+
+      return res.status(200).send('OK sub updated');
+    }
+
+    // 3️⃣ Désabonnement (résiliation effective)
+    case 'customer.subscription.deleted': {
+      const sub = event.data.object as Stripe.Subscription;
+      const subscriptionId = sub.id;
+
+      const { data: row, error: subErr } = await supabaseAdmin
+        .from('stripe_subscriptions')
+        .select('user_id')
+        .eq('stripe_subscription_id', subscriptionId)
+        .maybeSingle();
+
+      if (subErr) {
+        console.error('❌ Erreur lecture stripe_subscriptions:', subErr);
+        return res.status(200).send('OK');
+      }
+
+      if (!row?.user_id) {
+        console.warn('⚠️ Aucun user_id trouvé pour sub:', subscriptionId);
+        return res.status(200).send('OK');
+      }
+
+      const userId = row.user_id;
+
+      // On repasse le profil en plan gratuit
+      const { error: profileErr } = await supabaseAdmin
+        .from('profiles')
+        .update({
+          plan: 'camp_de_base',
+          generation_credits: 3,
+          analysis_credits: 1,
+          mvp_blueprint_credits: 0,
+        })
+        .eq('id', userId);
+
+      if (profileErr) {
+        console.error('❌ Erreur update profiles (delete sub):', profileErr);
+      }
+
+      const { error: updateSubErr } = await supabaseAdmin
+        .from('stripe_subscriptions')
+        .update({
+          status: 'canceled',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('stripe_subscription_id', subscriptionId);
+
+      if (updateSubErr) {
+        console.error('❌ Erreur update stripe_subscriptions (delete):', updateSubErr);
+      }
+
+      return res.status(200).send('OK sub deleted');
+    }
+
+    default: {
+      console.log('ℹ️ Événement Stripe ignoré :', event.type);
+      return res.status(200).send('ignored');
+    }
+  }
 }
