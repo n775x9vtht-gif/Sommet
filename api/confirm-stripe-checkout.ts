@@ -165,7 +165,7 @@ export default async function handler(req: any, res: any) {
       // On ne bloque pas l'utilisateur
     }
 
-    // 7️⃣ Upsert de la subscription (si abonnement Bâtisseur / ou si subscription existe)
+        // 7️⃣ Upsert de la subscription (Bâtisseur ou autre abonnement)
     if (stripeSubscriptionId && stripeCustomerId) {
       const { error: subErr } = await supabaseAdmin
         .from('stripe_subscriptions')
@@ -177,7 +177,9 @@ export default async function handler(req: any, res: any) {
             plan,
             status: 'active',
           },
-          { onConflict: 'stripe_subscription_id' }
+          {
+            onConflict: 'stripe_subscription_id',
+          }
         );
 
       if (subErr) {
