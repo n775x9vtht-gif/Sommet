@@ -1,7 +1,25 @@
 // api/create-checkout-session.ts
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+});
+
+// ⚙️ On définit ce qui est autorisé côté serveur
+const PRICE_CONFIG: Record<
+  string,
+  { plan: 'explorateur' | 'batisseur'; mode: 'payment' | 'subscription' }
+> = {
+  // Explorateur – paiement one-shot
+  'price_1SXR8gF1yiAtAmIj0NQNnVmH': {
+    plan: 'explorateur',
+    mode: 'payment',
+  },
+  // Bâtisseur – abonnement mensuel
+  'price_1SXR94F1yiAtAmIjmLg0JIkT': {
+    plan: 'batisseur',
+    mode: 'subscription',
+  },
+};
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -18,36 +36,37 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'priceId ou mode manquant' });
   }
 
+  const config = PRICE_CONFIG[priceId];
+
+  // ❌ Price inconnu ou mode qui ne matche pas → on bloque
+  if (!config || config.mode !== mode) {
+    console.error('Tentative de checkout invalide', { priceId, mode });
+    return res.status(400).json({ error: 'Combinaison priceId/mode invalide' });
+  }
+
   try {
-    // Domaine du site (prod : ton Vercel, local : http://localhost:5173)
     const origin =
       process.env.PUBLIC_SITE_URL ||
       req.headers.origin ||
       'http://localhost:5173';
 
-    // 🧠 On déduit le plan pour la SuccessPage
-    const plan = mode === 'payment' ? 'explorateur' : 'batisseur';
-
     const session = await stripe.checkout.sessions.create({
-      mode,
+      mode: config.mode,
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      // ✅ Retour vers la home AVEC les paramètres pour React
-      success_url: `${origin}/?checkout=success&plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
+      // ✅ on ne fait PAS confiance au front pour le plan
+      metadata: {
+        plan: config.plan,
+      },
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancel`,
       billing_address_collection: 'required',
       allow_promotion_codes: true,
     });
-
-    if (!session.url) {
-      return res
-        .status(500)
-        .json({ error: "Impossible de générer l'URL de paiement Stripe." });
-    }
 
     return res.status(200).json({ url: session.url });
   } catch (error: any) {
