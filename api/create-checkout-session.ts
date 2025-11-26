@@ -1,70 +1,63 @@
+// api/create-checkout-session.ts
 import Stripe from 'stripe';
-
-type Req = {
-  method?: string;
-  body?: any;
-};
-
-type Res = {
-  status: (code: number) => Res;
-  json: (data: any) => void;
-  setHeader: (name: string, value: string) => void;
-};
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-const stripe = new Stripe(stripeSecretKey || '', {});
+if (!stripeSecretKey) {
+  console.warn('⚠️ STRIPE_SECRET_KEY manquant dans les variables d’environnement');
+}
 
-// Tes price IDs
-const EXPLORER_PRICE_ID = 'price_1SXR8gF1yiAtAmIj0NQNnVmH';
-const BUILDER_PRICE_ID = 'price_1SXR94F1yiAtAmIjmLg0JIkT';
+// On ne force pas apiVersion pour éviter les erreurs de typage
+const stripe = new Stripe(stripeSecretKey || '');
 
-export default async function handler(req: Req, res: Res) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  if (!stripeSecretKey) {
-    console.error('❌ STRIPE_SECRET_KEY manquant dans les variables d’environnement Vercel');
-    return res.status(500).json({ error: 'Stripe non configuré côté serveur.' });
+    return res.status(405).json({ error: 'Méthode non autorisée' });
   }
 
   try {
-    const { planType } = req.body as { planType?: 'explorer' | 'builder' };
+    const { priceId, mode } = req.body || {};
 
-    let priceId: string;
-    let mode: 'payment' | 'subscription';
-
-    if (planType === 'explorer') {
-      priceId = EXPLORER_PRICE_ID;
-      mode = 'payment';
-    } else if (planType === 'builder') {
-      priceId = BUILDER_PRICE_ID;
-      mode = 'subscription';
-    } else {
-      return res.status(400).json({ error: 'planType invalide ou manquant' });
+    if (!priceId) {
+      console.error('❌ priceId manquant dans le body');
+      return res.status(400).json({ error: 'priceId manquant' });
     }
 
-    const baseUrl = process.env.SOMMET_BASE_URL || 'http://localhost:5173';
+    const checkoutMode: 'payment' | 'subscription' =
+      mode === 'subscription' ? 'subscription' : 'payment';
+
+    if (!stripeSecretKey) {
+      console.error('❌ Stripe non configuré côté serveur');
+      return res.status(500).json({ error: 'Stripe non configuré côté serveur' });
+    }
+
+    const origin =
+      (req.headers.origin as string) ||
+      process.env.PUBLIC_SITE_URL ||
+      'http://localhost:5173';
 
     const session = await stripe.checkout.sessions.create({
-      mode,
+      mode: checkoutMode,
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/?canceled=1`,
-      billing_address_collection: 'auto',
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/cancel`,
       allow_promotion_codes: true,
+      automatic_tax: { enabled: true },
     });
 
+    console.log('✅ Session Stripe créée :', session.id);
     return res.status(200).json({ url: session.url });
-  } catch (error) {
-    console.error('❌ Stripe checkout error:', error);
-    return res.status(500).json({ error: 'Erreur lors de la création de la session Stripe.' });
+  } catch (error: any) {
+    console.error('❌ Erreur Stripe Checkout :', error);
+    return res.status(500).json({
+      error: 'Erreur lors de la création de la session Stripe',
+      details: error?.message,
+    });
   }
 }
