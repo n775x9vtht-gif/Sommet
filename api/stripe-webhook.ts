@@ -58,8 +58,6 @@ export default async function handler(req: any, res: any) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
-        // 👉 Tu as déjà la logique de confirm-stripe-checkout pour gérer le plan + crédits,
-        // donc ici on peut éventuellement juste loguer, ou ne rien faire.
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('✅ checkout.session.completed reçu (webhook) :', session.id);
         break;
@@ -67,20 +65,22 @@ export default async function handler(req: any, res: any) {
 
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted': {
-        // On caste en `any` car la définition TypeScript de Stripe ne contient pas
-        // toujours les champs envoyés par le webhook (current_period_end, cancel_at, etc.)
+        // Cast en any pour récupérer les champs epoch (cancel_at, current_period_end, etc.)
         const subscription = event.data.object as any;
 
-        const stripeSubscriptionId = subscription.id;
+        const stripeSubscriptionId = subscription.id as string;
         const stripeCustomerId = subscription.customer as string;
-        const status = subscription.status; // active, past_due, canceled, unpaid...
+        const status = subscription.status as string; // active, past_due, canceled, unpaid...
 
-        // Champs utiles pour le debug / la compréhension du cycle de vie :
-        const cancelAtPeriodEnd = subscription.cancel_at_period_end ?? false;
-        const cancelAt = subscription.cancel_at
+        // Champs chrono envoyés par Stripe (epoch seconds → ISO string)
+        const cancelAtPeriodEnd: boolean =
+          subscription.cancel_at_period_end ?? false;
+
+        const cancelAt: string | null = subscription.cancel_at
           ? new Date(subscription.cancel_at * 1000).toISOString()
           : null;
-        const currentPeriodEnd = subscription.current_period_end
+
+        const currentPeriodEnd: string | null = subscription.current_period_end
           ? new Date(subscription.current_period_end * 1000).toISOString()
           : null;
 
@@ -93,7 +93,7 @@ export default async function handler(req: any, res: any) {
           currentPeriodEnd,
         });
 
-        // 1️⃣ On met à jour stripe_subscriptions
+        // 1️⃣ On récupère la row stripe_subscriptions existante
         const { data: subRows, error: subSelectErr } = await supabaseAdmin
           .from('stripe_subscriptions')
           .select('id, user_id, plan')
@@ -102,7 +102,7 @@ export default async function handler(req: any, res: any) {
 
         if (subSelectErr) {
           console.error('❌ Erreur lecture stripe_subscriptions:', subSelectErr);
-          break; // on évite de faire planter le webhook
+          break;
         }
 
         const subscriptionRow = subRows && subRows[0];
@@ -116,12 +116,15 @@ export default async function handler(req: any, res: any) {
 
         const { user_id: userId, plan } = subscriptionRow;
 
-        // Mise à jour du statut dans stripe_subscriptions
+        // 2️⃣ Mise à jour des métadonnées d’abonnement dans stripe_subscriptions
         const { error: subUpdateErr } = await supabaseAdmin
           .from('stripe_subscriptions')
           .update({
             status,
             stripe_customer_id: stripeCustomerId,
+            cancel_at: cancelAt,
+            cancel_at_period_end: cancelAtPeriodEnd,
+            current_period_end: currentPeriodEnd,
           })
           .eq('stripe_subscription_id', stripeSubscriptionId);
 
@@ -129,7 +132,7 @@ export default async function handler(req: any, res: any) {
           console.error('❌ Erreur update stripe_subscriptions:', subUpdateErr);
         }
 
-        // 2️⃣ Si l'abonnement est annulé → downgrade du plan dans profiles
+        // 3️⃣ Downgrade du profil UNIQUEMENT si l'abo est réellement terminé
         if (status === 'canceled' || status === 'unpaid' || status === 'past_due') {
           console.log('🔻 Abonnement terminé, downgrade du profil user_id =', userId);
 
@@ -152,7 +155,6 @@ export default async function handler(req: any, res: any) {
       }
 
       default: {
-        // Pour éviter les erreurs 400 "unexpected event", on accepte le reste
         console.log(`ℹ️ Event Stripe non géré: ${event.type}`);
       }
     }
