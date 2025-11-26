@@ -2,30 +2,6 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-if (!STRIPE_SECRET_KEY) {
-  console.error('❌ STRIPE_SECRET_KEY manquant dans les variables d’environnement');
-}
-if (!SUPABASE_URL) {
-  console.error('❌ NEXT_PUBLIC_SUPABASE_URL manquant dans les variables d’environnement');
-}
-if (!SUPABASE_SERVICE_KEY) {
-  console.error('❌ SUPABASE_SERVICE_KEY manquant dans les variables d’environnement');
-}
-
-const stripe = new Stripe(STRIPE_SECRET_KEY as string);
-
-const supabaseAdmin = createClient(
-  SUPABASE_URL as string,
-  SUPABASE_SERVICE_KEY as string,
-  {
-    auth: { persistSession: false },
-  }
-);
-
 type PlanType = 'explorateur' | 'batisseur';
 
 export default async function handler(req: any, res: any) {
@@ -43,12 +19,27 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'sessionId ou email manquant' });
   }
 
+  const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
   if (!STRIPE_SECRET_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    console.error('❌ Variables env manquantes', {
+      hasStripe: !!STRIPE_SECRET_KEY,
+      hasUrl: !!SUPABASE_URL,
+      hasServiceKey: !!SUPABASE_SERVICE_KEY,
+    });
     return res.status(500).json({
       error:
-        'Configuration serveur incomplète (variables STRIPE/SUPABASE manquantes)',
+        'Configuration serveur incomplète (STRIPE_SECRET_KEY / NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_KEY).',
     });
   }
+
+  // ⚠️ Création *après* vérification des env
+  const stripe = new Stripe(STRIPE_SECRET_KEY);
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+    auth: { persistSession: false },
+  });
 
   try {
     console.log('🔎 Vérification Stripe sessionId:', sessionId, 'email:', email);
@@ -86,7 +77,7 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    // 2️⃣ Déterminer le plan (on lit d'abord metadata.plan, sinon on déduit du mode)
+    // 2️⃣ Déterminer le plan
     let plan: PlanType = 'explorateur';
 
     const metadataPlan = session.metadata?.plan as PlanType | undefined;
@@ -180,7 +171,6 @@ export default async function handler(req: any, res: any) {
         '⚠️ Erreur insert stripe_checkout_sessions (non bloquant):',
         sessionErr
       );
-      // On continue quand même, ce n'est pas bloquant pour l'utilisateur
     } else {
       console.log('✅ Session Stripe logguée dans stripe_checkout_sessions');
     }
@@ -214,10 +204,11 @@ export default async function handler(req: any, res: any) {
 
     return res.status(200).json({ success: true, plan });
   } catch (err: any) {
-    console.error('❌ Erreur confirm-stripe-checkout:', err);
+    console.error('❌ Erreur confirm-stripe-checkout (catch):', err);
     return res.status(500).json({
       error:
-        err?.message || 'Erreur interne serveur dans confirm-stripe-checkout',
+        err?.message ||
+        'Erreur interne serveur dans confirm-stripe-checkout (catch)',
     });
   }
 }
