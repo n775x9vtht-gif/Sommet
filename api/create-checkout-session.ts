@@ -1,3 +1,4 @@
+// api/create-checkout-session.ts
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
@@ -18,11 +19,14 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    // On récupère l'origine (prod : ton domaine Vercel, local : http://localhost:5173)
+    // Domaine du site (prod : ton Vercel, local : http://localhost:5173)
     const origin =
       process.env.PUBLIC_SITE_URL ||
       req.headers.origin ||
       'http://localhost:5173';
+
+    // 🧠 On déduit le plan pour la SuccessPage
+    const plan = mode === 'payment' ? 'explorateur' : 'batisseur';
 
     const session = await stripe.checkout.sessions.create({
       mode,
@@ -32,12 +36,19 @@ export default async function handler(req: any, res: any) {
           quantity: 1,
         },
       ],
-      // ✅ On renvoie toujours vers la racine, avec un paramètre dans l'URL
-      success_url: `${origin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      // ✅ Redirection vers /success avec le plan en query param
+      success_url: `${origin}/success?plan=${plan}`,
+      // Tu peux garder un petit flag sur la home si tu veux
       cancel_url: `${origin}/?checkout=cancel`,
       billing_address_collection: 'required',
       allow_promotion_codes: true,
     });
+
+    if (!session.url) {
+      return res
+        .status(500)
+        .json({ error: "Impossible de générer l'URL de paiement Stripe." });
+    }
 
     return res.status(200).json({ url: session.url });
   } catch (error: any) {
