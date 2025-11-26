@@ -2,6 +2,7 @@
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2024-06-20' as any,
 });
 
 export default async function handler(req: any, res: any) {
@@ -25,8 +26,8 @@ export default async function handler(req: any, res: any) {
       req.headers.origin ||
       'http://localhost:5173';
 
-    // 🔥 On dérive le plan à partir du mode
-    const plan = mode === 'payment' ? 'explorateur' : 'batisseur';
+    const plan =
+      mode === 'subscription' ? 'batisseur' : 'explorateur';
 
     const session = await stripe.checkout.sessions.create({
       mode,
@@ -36,11 +37,13 @@ export default async function handler(req: any, res: any) {
           quantity: 1,
         },
       ],
-      // ✅ On reste sur / avec des query params
       success_url: `${origin}/?checkout=success&plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancel`,
       billing_address_collection: 'required',
       allow_promotion_codes: true,
+      metadata: {
+        plan,
+      },
     });
 
     return res.status(200).json({ url: session.url });

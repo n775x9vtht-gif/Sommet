@@ -1,127 +1,111 @@
 // api/stripe-webhook.ts
 import Stripe from 'stripe';
-import { supabaseAdmin } from '../services/supabaseAdminClient';
+import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+// ⚠️ Utilise ton API version supportée par le SDK.
+// Si TypeScript râle, laisse simplement "as any".
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2024-06-20' as any,
+});
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-// 🔧 Helper pour lire le body brut (Stripe en a besoin pour vérifier la signature)
-async function getRawBody(req: any): Promise<string> {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', (chunk: any) => {
-      data += chunk;
-    });
-    req.on('end', () => {
-      resolve(data);
-    });
-    req.on('error', (err: any) => {
-      reject(err);
-    });
-  });
-}
+// Client admin Supabase pour écrire dans la BDD côté serveur
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+);
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).send('Method Not Allowed');
+    return res.status(405).send('Method not allowed');
   }
 
-  if (!endpointSecret) {
-    console.error('❌ STRIPE_WEBHOOK_SECRET manquant');
-    return res.status(500).send('Webhook non configuré');
+  const sig = req.headers['stripe-signature'];
+  if (!sig) {
+    return res.status(400).send('Missing Stripe-Signature header');
   }
 
-  let event: Stripe.Event;
-
+  // 1) Récupérer le RAW body (obligatoire pour Stripe)
+  let rawBody = '';
   try {
-    const rawBody = await getRawBody(req);
-    const sig = req.headers['stripe-signature'];
+    await new Promise<void>((resolve, reject) => {
+      req.on('data', (chunk: Buffer) => {
+        rawBody += chunk.toString('utf8');
+      });
+      req.on('end', () => resolve());
+      req.on('error', (err: any) => reject(err));
+    });
+  } catch (err) {
+    console.error('Error reading raw body', err);
+    return res.status(400).send('Could not read request body');
+  }
 
-    if (!sig || Array.isArray(sig)) {
-      return res.status(400).send('Signature Stripe manquante');
-    }
-
-    event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
+  // 2) Vérifier la signature Stripe
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      rawBody,
+      sig as string,
+      process.env.STRIPE_WEBHOOK_SECRET as string
+    );
   } catch (err: any) {
-    console.error('❌ Erreur de vérification du webhook Stripe:', err.message);
+    console.error('❌ Error verifying Stripe signature', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  // 3) Traiter seulement les events qui nous intéressent
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        const plan = session.metadata?.plan as 'explorateur' | 'batisseur' | undefined;
-        const mode = session.mode; // 'payment' ou 'subscription'
-        const email =
+        const customerEmail =
+          session.customer_email ||
           session.customer_details?.email ||
-          (session.customer_email as string | null) ||
           null;
 
-        if (!plan || !mode) {
-          console.warn('checkout.session.completed sans plan ou mode', session.id);
-          break;
+        // On essaie de récupérer le plan :
+        const planFromMetadata = session.metadata?.plan as
+          | 'explorateur'
+          | 'batisseur'
+          | undefined;
+
+        const plan =
+          planFromMetadata ??
+          (session.mode === 'subscription' ? 'batisseur' : 'explorateur');
+
+        const { error } = await supabaseAdmin
+          .from('stripe_checkout_sessions')
+          .insert({
+            session_id: session.id,
+            stripe_customer_id: session.customer as string | null,
+            customer_email: customerEmail,
+            plan,
+            mode: session.mode,
+            status: session.status,
+            amount_total: session.amount_total,
+            currency: session.currency,
+            raw_event: event, // colonne de type jsonb côté Supabase
+          });
+
+        if (error) {
+          console.error('❌ Supabase insert error:', error);
+          throw error;
         }
 
-        await supabaseAdmin
-          .from('stripe_checkout_sessions')
-          .upsert(
-            {
-              stripe_session_id: session.id,
-              stripe_customer_id: (session.customer as string) ?? null,
-              stripe_subscription_id: (session.subscription as string) ?? null,
-              email,
-              plan,
-              mode,
-              payment_status: session.payment_status ?? null,
-            },
-            { onConflict: 'stripe_session_id' }
-          );
-
-        console.log('✅ checkout.session.completed loggée pour', email, plan);
-        break;
-      }
-
-      case 'invoice.payment_succeeded': {
-        const invoice: any = event.data.object;
-        const subscriptionId = invoice.subscription ?? null;
-        const customerId = invoice.customer ?? null;
-
-        console.log('💰 Facture payée', {
-          subscriptionId,
-          customerId,
-          amount: invoice.amount_paid,
-        });
-
-        // Plus tard : synchro fine des abonnements ici
-        break;
-      }
-
-      case 'customer.subscription.deleted':
-      case 'customer.subscription.updated': {
-        const subscription: any = event.data.object;
-        const customerId = subscription.customer ?? null;
-
-        console.log('🔄 Subscription event', event.type, {
-          customerId,
-          status: subscription.status,
-        });
-
-        // Plus tard : downgrade automatique du plan Bâtisseur -> Camp de base
         break;
       }
 
       default: {
-        console.log(`ℹ️ Event Stripe non géré: ${event.type}`);
+        // Pour tous les autres événements, on log juste
+        console.log(`ℹ️ Ignoring event ${event.type}`);
       }
     }
 
+    // Important : toujours répondre 200 quand tout est OK
     return res.status(200).json({ received: true });
-  } catch (err: any) {
-    console.error('❌ Erreur dans le traitement du webhook Stripe:', err);
-    return res.status(500).send('Erreur interne');
+  } catch (err) {
+    console.error('❌ Error handling webhook event', err);
+    return res.status(500).send('Internal webhook error');
   }
 }
