@@ -86,10 +86,8 @@ const App: React.FC = () => {
 
     if (status === 'success' || status === 'cancel') {
       setCheckoutStatus(status);
-
-      // Nettoyer l'URL pour éviter de re-triggere au refresh
-      const cleanUrl = window.location.origin + window.location.pathname;
-      window.history.replaceState({}, '', cleanUrl);
+      // ⚠️ On NE nettoie PLUS l'URL ici,
+      // SuccessPage a besoin de `session_id` dans la query.
     }
   }, []);
 
