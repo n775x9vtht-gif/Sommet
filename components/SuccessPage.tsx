@@ -12,21 +12,19 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    // 🔍 On récupère le session_id dans l'URL (Stripe l'ajoute en {CHECKOUT_SESSION_ID})
+    // On récupère le session_id dans l’URL (Stripe remplace {CHECKOUT_SESSION_ID})
     const params = new URLSearchParams(window.location.search);
     const sid = params.get('session_id');
     if (sid) {
       setSessionId(sid);
-    } else {
-      console.warn('⚠️ Aucun session_id dans l’URL de succès Stripe');
     }
   }, []);
 
@@ -45,7 +43,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
     }
     if (!sessionId) {
       setErrorMsg(
-        "Impossible de vérifier le paiement (identifiant de session Stripe manquant)."
+        "Impossible de retrouver l'identifiant de paiement. Recharge la page ou contacte le support."
       );
       return;
     }
@@ -53,8 +51,8 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
     setLoading(true);
 
     try {
-      // 1️⃣ Création du compte Supabase
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      // 1️⃣ Créer le compte Supabase (pour avoir un user_id)
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -64,60 +62,54 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
         },
       });
 
-      if (signUpError) {
-        console.error('Erreur Supabase signUp:', signUpError);
+      if (error) {
+        console.error('Erreur Supabase signUp:', error);
         setErrorMsg(
-          signUpError.message ||
-            "Impossible de créer ton compte. Vérifie ton email et ton mot de passe."
+          error.message ||
+            "Impossible de créer ton compte. Réessaie ou contacte le support."
         );
         setLoading(false);
         return;
       }
 
-      // 2️⃣ Confirmation coté backend : vérifie le paiement + met à jour plan/crédits
-      let confirmResponse;
-      try {
-        confirmResponse = await fetch('/api/confirm-stripe-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sessionId,
-            email,
-          }),
-        });
-      } catch (networkErr) {
-        console.error('❌ Erreur réseau vers /api/confirm-stripe-checkout:', networkErr);
+      const userId = data.user?.id;
+      if (!userId) {
         setErrorMsg(
-          "Impossible de vérifier le paiement (erreur réseau). Réessaie dans quelques instants."
+          "Impossible de récupérer ton identifiant utilisateur. Contacte le support."
         );
         setLoading(false);
         return;
       }
 
-      let confirmJson: any = null;
-      try {
-        confirmJson = await confirmResponse.json();
-      } catch {
-        // au cas où la réponse n'est pas du JSON
-      }
+      // 2️⃣ Vérifier le paiement + mettre à jour le plan/les crédits côté serveur
+      const confirmRes = await fetch('/api/confirm-stripe-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          email,
+          userId,
+        }),
+      });
 
-      if (!confirmResponse.ok) {
+      const confirmData = await confirmRes.json().catch(() => null);
+
+      if (!confirmRes.ok || !confirmData?.success) {
         console.error(
-          '❌ Réponse non OK de /api/confirm-stripe-checkout:',
-          confirmJson
+          '❌ Erreur confirm-stripe-checkout:',
+          confirmRes.status,
+          confirmData
         );
         setErrorMsg(
-          confirmJson?.error ||
+          confirmData?.error ||
             "Impossible de vérifier le paiement. Si le problème persiste, contacte le support avec ton email."
         );
         setLoading(false);
         return;
       }
 
-      console.log('✅ Paiement confirmé et profil mis à jour :', confirmJson);
-
-      // 3️⃣ Succès : on vide le mode invité et on entre dans l'app
-      setSuccessMsg('Compte créé et paiement vérifié ✅ Redirection vers Sommet…');
+      // 3️⃣ Tout est ok → on entre dans l'app
+      setSuccessMsg('Compte créé avec succès ! Redirection vers Sommet…');
       localStorage.removeItem('sommet_guest_mode');
 
       setTimeout(() => {
@@ -125,18 +117,12 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
       }, 600);
     } catch (err: any) {
       console.error('Erreur inattendue lors de la création de compte:', err);
-      setErrorMsg("Erreur inattendue. Réessaie dans quelques instants.");
+      setErrorMsg(
+        "Erreur inattendue. Réessaie dans quelques instants ou contacte le support."
+      );
       setLoading(false);
     }
   };
-
-  // Petite phrase en fonction du plan (optionnel, juste UX)
-  const planLabel =
-    plan === 'batisseur'
-      ? 'ton abonnement Bâtisseur'
-      : plan === 'explorateur'
-      ? 'ton pack Explorateur'
-      : 'ton achat';
 
   return (
     <div className="min-h-screen bg-dark-950 text-slate-50 flex items-center justify-center px-4">
@@ -149,9 +135,13 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
             Paiement confirmé 🎉
           </h1>
           <p className="mt-2 text-sm text-slate-400 text-center">
-            Dernière étape : crée ton mot de passe pour accéder à Sommet
-            et activer <span className="font-semibold text-slate-200">{planLabel}</span>.
+            Dernière étape : crée ton mot de passe pour accéder à Sommet.
           </p>
+          {plan && (
+            <p className="mt-1 text-xs text-gold-300 text-center">
+              Offre détectée : <strong>{plan === 'batisseur' ? 'Bâtisseur' : 'Explorateur'}</strong>
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleCreateAccount} className="space-y-4">
@@ -213,7 +203,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
             disabled={loading}
             className="w-full mt-2 py-3 bg-gold-500 hover:bg-gold-400 disabled:bg-gold-500/60 text-dark-900 font-bold text-sm rounded-xl transition-colors"
           >
-            {loading ? 'Création et vérification…' : 'Créer mon accès Sommet'}
+            {loading ? 'Création en cours…' : 'Créer mon accès Sommet'}
           </button>
         </form>
 

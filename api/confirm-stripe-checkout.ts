@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
+// Client Supabase "admin" (service_key) côté serveur
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL as string,
   process.env.SUPABASE_SERVICE_KEY as string,
@@ -19,17 +20,20 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { sessionId, email } = req.body as {
+  const { sessionId, email, userId } = req.body as {
     sessionId?: string;
     email?: string;
+    userId?: string;
   };
 
-  if (!sessionId || !email) {
-    return res.status(400).json({ error: 'sessionId ou email manquant' });
+  if (!sessionId || !email || !userId) {
+    return res
+      .status(400)
+      .json({ error: 'sessionId, email ou userId manquant' });
   }
 
   try {
-    // 1️⃣ Récupérer la session Stripe côté serveur (clé secrète)
+    // 1️⃣ Récupérer la session Stripe (côté serveur, avec la clé secrète)
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['subscription', 'customer'],
     });
@@ -47,6 +51,24 @@ export default async function handler(req: any, res: any) {
       });
     }
 
+    // 2️⃣ Vérifier que le userId correspond bien à cet email côté Supabase
+    const { data: userData, error: userErr } =
+      await supabaseAdmin.auth.admin.getUserById(userId);
+
+    if (userErr || !userData?.user) {
+      console.error('❌ Erreur getUserById ou user manquant:', userErr);
+      return res.status(400).json({ error: 'Utilisateur introuvable' });
+    }
+
+    const supaEmail = userData.user.email;
+    if (!supaEmail || supaEmail.toLowerCase() !== email.toLowerCase()) {
+      return res.status(400).json({
+        error:
+          "L'utilisateur Supabase ne correspond pas à l'email de paiement.",
+      });
+    }
+
+    // 3️⃣ Déterminer le plan à partir des metadata Stripe
     const plan =
       (session.metadata?.plan as 'explorateur' | 'batisseur' | undefined) ??
       'explorateur';
@@ -54,37 +76,10 @@ export default async function handler(req: any, res: any) {
     const stripeCustomerId = session.customer as string | null;
     const stripeSubscriptionId = session.subscription as string | null;
 
-    // 2️⃣ Retrouver l'utilisateur Supabase par son email via l'API admin
-    const { data: usersRes, error: usersErr } =
-      await supabaseAdmin.auth.admin.listUsers({
-        page: 1,
-        perPage: 1000,
-      });
-
-    if (usersErr) {
-      console.error('❌ Erreur listUsers:', usersErr);
-      return res.status(500).json({ error: 'Erreur récupération utilisateur' });
-    }
-
-    // 👉 On force le typage en any[] pour éviter l’erreur "never"
-    const users = (usersRes?.users ?? []) as any[];
-
-    const user =
-      users.find(
-        (u) =>
-          typeof u.email === 'string' &&
-          u.email.toLowerCase() === email.toLowerCase()
-      ) ?? null;
-
-    if (!user) {
-      console.error('❌ Aucun user avec cet email:', email);
-      return res.status(400).json({ error: 'Utilisateur introuvable' });
-    }
-
-    const userId = user.id;
-
-    // 3️⃣ Mettre à jour le profil en fonction du plan
-    let updates: any = { plan };
+    // 4️⃣ Mettre à jour le profil en fonction du plan
+    let updates: any = {
+      plan,
+    };
 
     if (plan === 'explorateur') {
       updates = {
@@ -94,6 +89,7 @@ export default async function handler(req: any, res: any) {
         mvp_blueprint_credits: 1,
       };
     } else if (plan === 'batisseur') {
+      // Illimité "virtuel" (tu pourras ajuster plus tard)
       updates = {
         ...updates,
         generation_credits: 999999,
@@ -109,10 +105,12 @@ export default async function handler(req: any, res: any) {
 
     if (profileErr) {
       console.error('❌ Erreur update profiles:', profileErr);
-      return res.status(500).json({ error: 'Erreur mise à jour profil' });
+      return res
+        .status(500)
+        .json({ error: 'Erreur lors de la mise à jour du profil' });
     }
 
-    // 4️⃣ Log de la session de checkout
+    // 5️⃣ Log dans stripe_checkout_sessions
     const { error: sessionErr } = await supabaseAdmin
       .from('stripe_checkout_sessions')
       .insert({
@@ -129,10 +127,10 @@ export default async function handler(req: any, res: any) {
         '❌ Erreur insert stripe_checkout_sessions:',
         sessionErr
       );
-      // On continue quand même, ce n'est pas bloquant pour l'utilisateur
+      // pas bloquant pour l'utilisateur
     }
 
-    // 5️⃣ Upsert de la subscription (si abonnement Bâtisseur)
+    // 6️⃣ Upsert dans stripe_subscriptions si abonnement Bâtisseur
     if (stripeSubscriptionId && stripeCustomerId) {
       const { error: subErr } = await supabaseAdmin
         .from('stripe_subscriptions')
@@ -149,7 +147,7 @@ export default async function handler(req: any, res: any) {
 
       if (subErr) {
         console.error('❌ Erreur upsert stripe_subscriptions:', subErr);
-        // pas bloquant pour l'utilisateur non plus
+        // pas bloquant non plus
       }
     }
 
