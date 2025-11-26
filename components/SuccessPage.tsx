@@ -1,102 +1,114 @@
 // components/SuccessPage.tsx
-import React, { useState } from 'react';
-import { IconMountain } from './Icons';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
+import { IconMountain } from './Icons';
 
-const SuccessPage: React.FC<{ onEnterApp: () => void }> = ({ onEnterApp }) => {
+interface SuccessPageProps {
+  onEnterApp: () => void;
+}
+
+const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp }) => {
+  const [firstName, setFirstName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const sessionId = new URLSearchParams(window.location.search).get('session_id');
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+    setSuccessMsg(null);
 
-    if (!sessionId) {
-      setErrorMsg("Session Stripe introuvable. Contacte le support.");
+    if (!email) {
+      setErrorMsg('Merci de renseigner ton email.');
+      return;
+    }
+    if (!password || password.length < 6) {
+      setErrorMsg('Ton mot de passe doit faire au moins 6 caractères.');
       return;
     }
 
-    if (password.length < 8) {
-      setErrorMsg('Le mot de passe doit contenir au moins 8 caractères.');
-      return;
-    }
+    setLoading(true);
 
     try {
-      setLoading(true);
-
-      // 1️⃣ On demande au backend de créer le compte (Stripe + Supabase admin)
-      const res = await fetch('/api/complete-signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          password,
-          fullName: fullName || undefined,
-        }),
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName || null,
+          },
+        },
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data?.error || 'Erreur lors de la création du compte');
-      }
-
-      const email = data.email as string;
-
-      // 2️⃣ On connecte l'utilisateur côté front avec Supabase (auth classique)
-      const { data: loginData, error: loginError } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-      if (loginError) {
-        console.error(loginError);
-        setErrorMsg(
-          "Votre compte a été créé, mais la connexion a échoué. Essayez de vous connecter depuis la page d'accueil."
-        );
+      if (error) {
+        console.error('Erreur Supabase signUp:', error);
+        setErrorMsg(error.message || "Impossible de créer ton compte. Réessaie ou contacte le support.");
+        setLoading(false);
         return;
       }
 
-      console.log('✅ Connecté en tant que', loginData.user?.email);
-      onEnterApp();
+      // Succès : on connecte l'utilisateur à l'app
+      setSuccessMsg('Compte créé avec succès ! Redirection vers Sommet…');
+      localStorage.removeItem('sommet_guest_mode');
+
+      // On laisse 500ms pour afficher le message puis on entre dans l’app
+      setTimeout(() => {
+        onEnterApp();
+      }, 500);
+
     } catch (err: any) {
-      console.error(err);
-      setErrorMsg(err.message || "Erreur inattendue lors de l'activation du compte.");
-    } finally {
+      console.error('Erreur inattendue lors de la création de compte:', err);
+      setErrorMsg("Erreur inattendue. Réessaie dans quelques instants.");
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-dark-950 text-slate-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-dark-900 border border-dark-700 rounded-2xl p-8 shadow-2xl">
+      <div className="w-full max-w-md bg-dark-900 border border-dark-700 rounded-3xl p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-6">
-          <div className="w-12 h-12 bg-dark-800 rounded-xl flex items-center justify-center border border-dark-700 mb-3">
+          <div className="w-12 h-12 rounded-2xl bg-dark-800 flex items-center justify-center mb-4">
             <IconMountain className="w-6 h-6 text-gold-400" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">
+          <h1 className="text-2xl font-extrabold text-white text-center">
             Paiement confirmé 🎉
           </h1>
-          <p className="text-slate-400 text-sm text-center">
-            Dernière étape : créez votre mot de passe pour accéder à Sommet.
+          <p className="mt-2 text-sm text-slate-400 text-center">
+            Dernière étape : crée ton mot de passe pour accéder à Sommet.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleCreateAccount} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-400 mb-1">
               Prénom (optionnel)
             </label>
             <input
               type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-dark-800 border border-dark-700 text-white rounded-xl py-2.5 px-3 text-sm focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none"
-              placeholder="Votre prénom"
+              className="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/60"
+              placeholder="Rémi"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 mb-1">
+              Email utilisé pour le paiement
+            </label>
+            <input
+              type="email"
+              className="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/60"
+              placeholder="toi@exemple.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -106,35 +118,37 @@ const SuccessPage: React.FC<{ onEnterApp: () => void }> = ({ onEnterApp }) => {
             </label>
             <input
               type="password"
+              className="w-full bg-dark-800 border border-dark-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500/60"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-dark-800 border border-dark-700 text-white rounded-xl py-2.5 px-3 text-sm focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none"
-              placeholder="Au moins 8 caractères"
               required
             />
           </div>
 
           {errorMsg && (
-            <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
+            <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/40 rounded-xl px-3 py-2">
               {errorMsg}
-            </p>
+            </div>
+          )}
+
+          {successMsg && (
+            <div className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-2">
+              {successMsg}
+            </div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-xl font-bold text-dark-900 transition-all shadow-lg mt-2 ${
-              loading
-                ? 'bg-slate-600 cursor-not-allowed'
-                : 'bg-gold-500 hover:bg-gold-400 hover:-translate-y-0.5'
-            }`}
+            className="w-full mt-2 py-3 bg-gold-500 hover:bg-gold-400 disabled:bg-gold-500/60 text-dark-900 font-bold text-sm rounded-xl transition-colors"
           >
-            {loading ? 'Activation en cours…' : "Créer mon accès Sommet"}
+            {loading ? 'Création en cours…' : 'Créer mon accès Sommet'}
           </button>
         </form>
 
-        <p className="mt-4 text-[11px] text-slate-500 text-center">
-          En cas de souci, contactez-nous avec l&apos;email utilisé pour le paiement.
+        <p className="mt-4 text-[10px] text-slate-500 text-center">
+          En cas de souci, contacte-nous avec l&apos;email utilisé pour le paiement.
         </p>
       </div>
     </div>
