@@ -16,7 +16,7 @@ import { IconMountain } from './components/Icons';
 import { DEMO_DATA } from './services/demoData';
 import { supabase } from './services/supabaseClient';
 import { fetchUserIdeas, createIdea, updateIdea, deleteIdea as deleteIdeaService } from './services/ideaService';
-import SuccessPage from './components/SuccessPage'; // 👈 NEW IMPORT
+import SuccessPage from './components/SuccessPage';
 
 const App: React.FC = () => {
   const [hasAccess, setHasAccess] = useState(false);
@@ -27,9 +27,12 @@ const App: React.FC = () => {
   const [ideaToBlueprint, setIdeaToBlueprint] = useState<SavedIdea | null>(null);
   const [ideaToChantier, setIdeaToChantier] = useState<SavedIdea | null>(null);
   const [toast, setToast] = useState<{ message: string; show: boolean }>({ message: '', show: false });
-  
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
+  // ✅ Nouveau : statut du retour Stripe (success / cancel)
+  const [checkoutStatus, setCheckoutStatus] = useState<'success' | 'cancel' | null>(null);
 
   // Listener global pour ouvrir la PricingModal
   useEffect(() => {
@@ -38,10 +41,10 @@ const App: React.FC = () => {
     return () => window.removeEventListener('sommet:open_pricing', handler);
   }, []);
 
-  // Load initial state
+  // Load initial state (auth + guest mode)
   useEffect(() => {
     const guestMode = localStorage.getItem('sommet_guest_mode');
-    
+
     if (guestMode === 'true') {
       setIsGuestMode(true);
       setHasAccess(true);
@@ -50,16 +53,18 @@ const App: React.FC = () => {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           setHasAccess(true);
-          fetchUserIdeas().then(ideas => {
+          fetchUserIdeas().then((ideas) => {
             setSavedIdeas(ideas);
           });
         }
       });
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session) {
           setHasAccess(true);
-          fetchUserIdeas().then(ideas => {
+          fetchUserIdeas().then((ideas) => {
             setSavedIdeas(ideas);
           });
         } else if (!localStorage.getItem('sommet_guest_mode')) {
@@ -72,16 +77,32 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // ✅ Nouveau : détecter le résultat du checkout via ?checkout=success|cancel
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('checkout');
+
+    if (status === 'success' || status === 'cancel') {
+      setCheckoutStatus(status);
+
+      // Nettoyer l'URL pour éviter de re-triggere au refresh
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, '', cleanUrl);
+    }
+  }, []);
+
   // --- DATA PERSISTENCE LOGIC ---
 
   const handleEnterApp = async () => {
     setHasAccess(true);
     setIsGuestMode(false);
     localStorage.removeItem('sommet_guest_mode');
-    
+
     const ideas = await fetchUserIdeas();
     setSavedIdeas(ideas);
-    
+
     window.scrollTo(0, 0);
   };
 
@@ -131,13 +152,13 @@ const App: React.FC = () => {
       handleAuthTrigger();
       return;
     }
-    
+
     if (savedIdeas.some((saved) => saved.id === idea.id)) return;
     const newIdeas = [idea, ...savedIdeas];
     setSavedIdeas(newIdeas);
-    
+
     await createIdea(idea);
-    
+
     showToastMessage('Pépite enregistrée avec succès !');
   };
 
@@ -146,12 +167,12 @@ const App: React.FC = () => {
       handleAuthTrigger();
       return;
     }
-    
-    const newIdeas = savedIdeas.filter(idea => idea.id !== id);
+
+    const newIdeas = savedIdeas.filter((idea) => idea.id !== id);
     setSavedIdeas(newIdeas);
-    
+
     await deleteIdeaService(id);
-    
+
     showToastMessage('Projet supprimé.');
   };
 
@@ -162,8 +183,8 @@ const App: React.FC = () => {
 
   const handleSaveAnalysis = async (ideaId: string, analysis: MarketAnalysis) => {
     if (isGuestMode) return;
-    
-    const updatedIdeas = savedIdeas.map(idea => {
+
+    const updatedIdeas = savedIdeas.map((idea) => {
       if (idea.id === ideaId) {
         return { ...idea, analysis };
       }
@@ -171,7 +192,7 @@ const App: React.FC = () => {
     });
     setSavedIdeas(updatedIdeas);
 
-    const ideaToUpdate = updatedIdeas.find(i => i.id === ideaId);
+    const ideaToUpdate = updatedIdeas.find((i) => i.id === ideaId);
     if (ideaToUpdate) await updateIdea(ideaToUpdate);
   };
 
@@ -188,7 +209,7 @@ const App: React.FC = () => {
   const handleSaveBlueprint = async (ideaId: string, blueprint: MVPBlueprint) => {
     if (isGuestMode) return;
 
-    const updatedIdeas = savedIdeas.map(idea => {
+    const updatedIdeas = savedIdeas.map((idea) => {
       if (idea.id === ideaId) {
         return { ...idea, blueprint };
       }
@@ -196,16 +217,16 @@ const App: React.FC = () => {
     });
     setSavedIdeas(updatedIdeas);
 
-    const ideaToUpdate = updatedIdeas.find(i => i.id === ideaId);
+    const ideaToUpdate = updatedIdeas.find((i) => i.id === ideaId);
     if (ideaToUpdate) await updateIdea(ideaToUpdate);
 
     showToastMessage('Plan MVP généré et sauvegardé !');
   };
-  
+
   const handleSaveKanban = async (ideaId: string, kanban: KanbanBoard) => {
     if (isGuestMode) return;
-    
-    const updatedIdeas = savedIdeas.map(idea => {
+
+    const updatedIdeas = savedIdeas.map((idea) => {
       if (idea.id === ideaId) {
         return { ...idea, kanbanBoard: kanban };
       }
@@ -213,15 +234,12 @@ const App: React.FC = () => {
     });
     setSavedIdeas(updatedIdeas);
 
-    const ideaToUpdate = updatedIdeas.find(i => i.id === ideaId);
+    const ideaToUpdate = updatedIdeas.find((i) => i.id === ideaId);
     if (ideaToUpdate) await updateIdea(ideaToUpdate);
   };
 
-  // 🔥 ROUTAGE PAR URL : page de succès Stripe
-  const path = typeof window !== 'undefined' ? window.location.pathname : '/';
-
-  if (path === '/success') {
-    // On affiche la page de succès / création de mot de passe
+  // ✅ Si on revient d'un paiement réussi et que l'utilisateur n'a pas encore accès
+  if (!hasAccess && checkoutStatus === 'success') {
     return (
       <SuccessPage
         onEnterApp={handleEnterApp}
@@ -237,10 +255,9 @@ const App: React.FC = () => {
   // Sinon, l'app principale
   return (
     <div className="flex min-h-screen bg-dark-900 font-sans text-slate-50 selection:bg-brand-500 selection:text-white animate-fade-in">
-      
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        initialMode="REGISTER" 
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        initialMode="REGISTER"
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={() => {
           setIsAuthModalOpen(false);
@@ -248,20 +265,20 @@ const App: React.FC = () => {
         }}
       />
 
-      <PricingModal 
+      <PricingModal
         isOpen={isPricingModalOpen}
         onClose={() => setIsPricingModalOpen(false)}
       />
 
-      <Sidebar 
-        currentView={currentView} 
-        onViewChange={setCurrentView} 
+      <Sidebar
+        currentView={currentView}
+        onViewChange={setCurrentView}
         isGuestMode={isGuestMode}
         onTriggerAuth={handleAuthTrigger}
         onOpenPricing={() => setIsPricingModalOpen(true)}
         onLogout={handleLogout}
       />
-      
+
       <main className="flex-1 lg:ml-64 p-6 lg:p-10 overflow-x-hidden">
         <header className="lg:hidden flex items-center justify-between mb-8">
           <div className="font-extrabold text-xl flex items-center gap-2">
@@ -271,9 +288,9 @@ const App: React.FC = () => {
         </header>
 
         {currentView === AppView.DASHBOARD && (
-          <Dashboard 
-            savedIdeas={savedIdeas} 
-            onDelete={handleDeleteIdea} 
+          <Dashboard
+            savedIdeas={savedIdeas}
+            onDelete={handleDeleteIdea}
             onAnalyze={handleAnalyzeRequest}
             onNavigate={handleNavigateFromDashboard}
             isGuestMode={isGuestMode}
@@ -281,9 +298,9 @@ const App: React.FC = () => {
         )}
 
         {currentView === AppView.GENERATOR && (
-          <IdeaGenerator 
-            onSave={handleSaveIdea} 
-            savedIdeaIds={savedIdeas.map(idea => idea.id)}
+          <IdeaGenerator
+            onSave={handleSaveIdea}
+            savedIdeaIds={savedIdeas.map((idea) => idea.id)}
             isGuestMode={isGuestMode}
             onTriggerAuth={handleAuthTrigger}
             onOpenPricing={() => setIsPricingModalOpen(true)}
@@ -291,8 +308,8 @@ const App: React.FC = () => {
         )}
 
         {currentView === AppView.VALIDATOR && (
-          <MarketAnalyzer 
-            initialIdea={ideaToAnalyze} 
+          <MarketAnalyzer
+            initialIdea={ideaToAnalyze}
             onSave={handleSaveAnalysis}
             isGuestMode={isGuestMode}
             onTriggerAuth={handleAuthTrigger}
@@ -301,14 +318,14 @@ const App: React.FC = () => {
         )}
 
         {currentView === AppView.BLUEPRINT && (
-          <MVPBuilder 
+          <MVPBuilder
             savedIdeas={savedIdeas}
             initialIdea={ideaToBlueprint}
             onSaveBlueprint={handleSaveBlueprint}
             onOpenPricing={() => setIsPricingModalOpen(true)}
           />
         )}
-        
+
         {currentView === AppView.CHANTIER && (
           <LeChantier
             savedIdeas={savedIdeas}
@@ -326,7 +343,7 @@ const App: React.FC = () => {
 
         {currentView === AppView.SETTINGS && (
           <Settings
-            userEmail="utilisateur@exemple.com" 
+            userEmail="utilisateur@exemple.com"
             userName={localStorage.getItem('sommet_user_name') || 'Entrepreneur'}
             onUpdateProfile={handleUpdateProfile}
             onOpenPricing={() => setIsPricingModalOpen(true)}
@@ -336,9 +353,9 @@ const App: React.FC = () => {
       </main>
 
       {toast.show && (
-        <Toast 
-          message={toast.message} 
-          onClose={() => setToast(prev => ({ ...prev, show: false }))} 
+        <Toast
+          message={toast.message}
+          onClose={() => setToast((prev) => ({ ...prev, show: false }))}
         />
       )}
     </div>
