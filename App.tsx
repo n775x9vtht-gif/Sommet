@@ -19,6 +19,9 @@ import { DEMO_DATA } from './services/demoData';
 import { supabase } from './services/supabaseClient';
 import { fetchUserIdeas, createIdea, updateIdea, deleteIdea as deleteIdeaService } from './services/ideaService';
 
+// Plan Sommet côté front
+type PlanType = 'camp_de_base' | 'explorateur' | 'batisseur';
+
 const App: React.FC = () => {
   const [hasAccess, setHasAccess] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
@@ -31,6 +34,75 @@ const App: React.FC = () => {
   
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
+  // 🆕 Infos compte / abonnement
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [profilePlan, setProfilePlan] = useState<PlanType>('camp_de_base');
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [cancelAt, setCancelAt] = useState<string | null>(null);
+  const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState<boolean | null>(null);
+
+  // --- Utils ---
+
+  const showToastMessage = (message: string) => {
+    setToast({ message, show: true });
+  };
+
+  // 🆕 Charge les données utilisateur (profil + abonnement) une fois connecté
+  const loadUserData = async (session: any) => {
+    setHasAccess(true);
+    setIsGuestMode(false);
+    localStorage.removeItem('sommet_guest_mode');
+
+    // Email
+    const email = session?.user?.email ?? '';
+    if (email) {
+      setUserEmail(email);
+    }
+
+    // Idées
+    const ideas = await fetchUserIdeas();
+    setSavedIdeas(ideas);
+
+    const userId = session.user?.id as string | undefined;
+    if (!userId) {
+      return;
+    }
+
+    // Profil (plan)
+    const { data: profile, error: profileErr } = await supabase
+      .from('profiles')
+      .select('plan')
+      .eq('id', userId)
+      .single();
+
+    if (!profileErr && profile && profile.plan) {
+      setProfilePlan(profile.plan as PlanType);
+    } else {
+      setProfilePlan('camp_de_base');
+    }
+
+    // Dernière subscription Stripe (s’il y en a une)
+    const { data: subRows, error: subErr } = await supabase
+      .from('stripe_subscriptions')
+      .select('status, cancel_at, cancel_at_period_end')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (!subErr && subRows && subRows.length > 0) {
+      const s = subRows[0] as any;
+      setSubscriptionStatus(s.status ?? null);
+      setCancelAt(s.cancel_at ?? null);
+      setCancelAtPeriodEnd(
+        typeof s.cancel_at_period_end === 'boolean' ? s.cancel_at_period_end : null
+      );
+    } else {
+      setSubscriptionStatus(null);
+      setCancelAt(null);
+      setCancelAtPeriodEnd(null);
+    }
+  };
 
   // Listener global pour ouvrir la PricingModal
   useEffect(() => {
@@ -48,26 +120,28 @@ const App: React.FC = () => {
       setHasAccess(true);
       setSavedIdeas(DEMO_DATA);
     } else {
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabase.auth.getSession().then(async ({ data: { session } }) => {
         if (session) {
-          setHasAccess(true);
-          fetchUserIdeas().then(ideas => {
-            setSavedIdeas(ideas);
-          });
+          await loadUserData(session);
         }
       });
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session) {
-          setHasAccess(true);
-          fetchUserIdeas().then(ideas => {
-            setSavedIdeas(ideas);
-          });
-        } else if (!localStorage.getItem('sommet_guest_mode')) {
-          setHasAccess(false);
-          setSavedIdeas([]);
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (_event, session) => {
+          if (session) {
+            await loadUserData(session);
+          } else if (!localStorage.getItem('sommet_guest_mode')) {
+            setHasAccess(false);
+            setIsGuestMode(false);
+            setSavedIdeas([]);
+            setUserEmail('');
+            setProfilePlan('camp_de_base');
+            setSubscriptionStatus(null);
+            setCancelAt(null);
+            setCancelAtPeriodEnd(null);
+          }
         }
-      });
+      );
 
       return () => subscription.unsubscribe();
     }
@@ -76,12 +150,19 @@ const App: React.FC = () => {
   // --- DATA PERSISTENCE LOGIC ---
 
   const handleEnterApp = async () => {
-    setHasAccess(true);
-    setIsGuestMode(false);
-    localStorage.removeItem('sommet_guest_mode');
-    
-    const ideas = await fetchUserIdeas();
-    setSavedIdeas(ideas);
+    // On recharge la session pour avoir userId/email à jour
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (session) {
+      await loadUserData(session);
+    } else {
+      // fallback minimal si jamais
+      setHasAccess(true);
+      setIsGuestMode(false);
+      localStorage.removeItem('sommet_guest_mode');
+      const ideas = await fetchUserIdeas();
+      setSavedIdeas(ideas);
+    }
     
     window.scrollTo(0, 0);
 
@@ -110,6 +191,11 @@ const App: React.FC = () => {
     setHasAccess(false);
     setIsGuestMode(false);
     setSavedIdeas([]);
+    setUserEmail('');
+    setProfilePlan('camp_de_base');
+    setSubscriptionStatus(null);
+    setCancelAt(null);
+    setCancelAtPeriodEnd(null);
     localStorage.removeItem('sommet_guest_mode');
     setCurrentView(AppView.DASHBOARD);
     window.scrollTo(0, 0);
@@ -119,12 +205,12 @@ const App: React.FC = () => {
     setIsAuthModalOpen(true);
   };
 
-  const showToastMessage = (message: string) => {
-    setToast({ message, show: true });
-  };
-
   const handleUpdateProfile = (name: string, email: string) => {
     localStorage.setItem('sommet_user_name', name);
+    // côté back tu pourras plus tard aussi update Supabase
+    if (email) {
+      setUserEmail(email);
+    }
     showToastMessage('Profil mis à jour avec succès');
     window.dispatchEvent(new Event('storage'));
   };
@@ -225,6 +311,31 @@ const App: React.FC = () => {
 
     const ideaToUpdate = updatedIdeas.find(i => i.id === ideaId);
     if (ideaToUpdate) await updateIdea(ideaToUpdate);
+  };
+
+  // 🆕 Gérer l’accès au portail Stripe (factures + résiliation)
+  const handleManageBilling = async () => {
+    try {
+      const resp = await fetch('/api/create-billing-portal-session', {
+        method: 'POST',
+      });
+
+      if (!resp.ok) {
+        console.error('❌ Erreur create-billing-portal-session:', await resp.text());
+        showToastMessage("Impossible d'ouvrir la page de facturation.");
+        return;
+      }
+
+      const data = await resp.json();
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        showToastMessage("Réponse inattendue de la page de facturation.");
+      }
+    } catch (err) {
+      console.error('❌ Erreur handleManageBilling:', err);
+      showToastMessage("Erreur lors de l'ouverture de la page de facturation.");
+    }
   };
 
   // 🔥 ROUTAGE PAR QUERY PARAMS : page de succès Stripe
@@ -347,11 +458,16 @@ const App: React.FC = () => {
 
         {currentView === AppView.SETTINGS && (
           <Settings
-            userEmail="utilisateur@exemple.com" 
+            userEmail={userEmail || 'utilisateur@exemple.com'}
             userName={localStorage.getItem('sommet_user_name') || 'Entrepreneur'}
             onUpdateProfile={handleUpdateProfile}
             onOpenPricing={() => setIsPricingModalOpen(true)}
             onDeleteAccount={handleDeleteAccount}
+            plan={profilePlan}
+            subscriptionStatus={subscriptionStatus}
+            cancelAt={cancelAt}
+            cancelAtPeriodEnd={cancelAtPeriodEnd}
+            onManageBilling={handleManageBilling}
           />
         )}
       </main>

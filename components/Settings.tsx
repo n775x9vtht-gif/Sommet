@@ -10,7 +10,8 @@ import {
   IconMountain, 
   IconTrash 
 } from './Icons';
-import { supabase } from '../services/supabaseClient';
+
+type PlanType = 'camp_de_base' | 'explorateur' | 'batisseur';
 
 interface SettingsProps {
   userEmail: string;
@@ -18,9 +19,69 @@ interface SettingsProps {
   onUpdateProfile: (name: string, email: string) => void;
   onOpenPricing: () => void;
   onDeleteAccount: () => void;
+
+  // 🆕 Infos d’abonnement
+  plan: PlanType;
+  subscriptionStatus?: string | null;
+  cancelAt?: string | null;
+  cancelAtPeriodEnd?: boolean | null;
+
+  // 🆕 Handler pour ouvrir le portail Stripe (factures + résiliation)
+  onManageBilling?: () => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ userEmail, userName, onUpdateProfile, onOpenPricing, onDeleteAccount }) => {
+// Format de date lisible
+function formatDate(dateStr: string | null | undefined): string | null {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+// Label du plan
+function getPlanLabel(plan: PlanType): string {
+  switch (plan) {
+    case 'camp_de_base':
+      return 'Camp de Base (gratuit)';
+    case 'explorateur':
+      return "Explorateur (pack)";
+    case 'batisseur':
+      return 'Bâtisseur (abonnement)';
+    default:
+      return 'Inconnu';
+  }
+}
+
+// Classe du badge plan
+function getPlanBadgeClass(plan: PlanType): string {
+  switch (plan) {
+    case 'camp_de_base':
+      return 'bg-slate-800 text-slate-200 border border-slate-600';
+    case 'explorateur':
+      return 'bg-brand-900/30 text-brand-200 border border-brand-500/40';
+    case 'batisseur':
+      return 'bg-amber-500/15 text-amber-100 border border-amber-400/60';
+    default:
+      return 'bg-slate-800 text-slate-200 border border-slate-600';
+  }
+}
+
+const Settings: React.FC<SettingsProps> = ({
+  userEmail,
+  userName,
+  onUpdateProfile,
+  onOpenPricing,
+  onDeleteAccount,
+  plan,
+  subscriptionStatus,
+  cancelAt,
+  cancelAtPeriodEnd,
+  onManageBilling,
+}) => {
   const [name, setName] = useState(userName);
   const [email, setEmail] = useState(userEmail);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -79,52 +140,40 @@ const Settings: React.FC<SettingsProps> = ({ userEmail, userName, onUpdateProfil
 
   const handleDelete = () => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et toutes vos données seront perdues.")) {
-      // Double confirmation
       if (window.confirm("Vraiment sûr ? Tapez OK pour confirmer.")) {
         onDeleteAccount();
       }
     }
   };
 
-  // 👉 Ouvre le portail de facturation Stripe (factures + résiliation)
-  const handleManageBilling = async () => {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  // 🧠 Texte contextuel sur l'abonnement
+  const formattedCancelAt = formatDate(cancelAt);
+  let subscriptionInfoLine = '';
+  let showManageBillingButton = false;
 
-      if (!user?.email) {
-        alert("Impossible de récupérer ton email. Réessaie ou reconnecte-toi.");
-        return;
-      }
+  if (plan === 'camp_de_base') {
+    subscriptionInfoLine = "Vous êtes actuellement sur le plan gratuit Camp de Base.";
+    showManageBillingButton = false;
+  } else if (plan === 'explorateur') {
+    subscriptionInfoLine =
+      "Vous avez un pack Explorateur (one-shot). Il n'y a pas d'abonnement récurrent à gérer.";
+    showManageBillingButton = !!onManageBilling; // tu peux laisser true ou false selon ton choix
+  } else if (plan === 'batisseur') {
+    showManageBillingButton = !!onManageBilling;
 
-      const res = await fetch('/api/create-billing-portal-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        console.error('❌ Erreur Billing Portal:', err);
-        alert(
-          err?.error ||
-          "Impossible d'ouvrir le portail de facturation. Réessaie plus tard."
-        );
-        return;
-      }
-
-      const data = await res.json();
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        alert("URL du portail de facturation manquante.");
-      }
-    } catch (e) {
-      console.error('❌ Erreur handleManageBilling:', e);
-      alert("Erreur inattendue. Réessaie dans quelques instants.");
+    if (subscriptionStatus === 'canceled') {
+      subscriptionInfoLine =
+        "Votre abonnement Bâtisseur est terminé. Vous pouvez le reprendre à tout moment depuis la page Tarifs.";
+    } else if (subscriptionStatus === 'active' && cancelAtPeriodEnd && formattedCancelAt) {
+      subscriptionInfoLine = `Votre abonnement Bâtisseur reste actif jusqu'au ${formattedCancelAt}. Il ne sera pas renouvelé après cette date.`;
+    } else if (subscriptionStatus === 'active') {
+      subscriptionInfoLine =
+        "Votre abonnement Bâtisseur est actif avec renouvellement automatique.";
+    } else {
+      subscriptionInfoLine =
+        "Statut de l'abonnement Bâtisseur : " + (subscriptionStatus ?? 'inconnu');
     }
-  };
+  }
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in pb-20">
@@ -273,11 +322,15 @@ const Settings: React.FC<SettingsProps> = ({ userEmail, userName, onUpdateProfil
                 </div>
                 Votre Abonnement
               </h2>
-              <p className="text-slate-400 text-sm">Gérez votre plan et vos factures.</p>
+              <p className="text-slate-400 text-sm">
+                {subscriptionInfoLine}
+              </p>
             </div>
             <div className="flex items-center gap-3 bg-dark-950/50 p-2 rounded-xl border border-dark-700">
               <span className="text-xs font-bold text-slate-500 uppercase px-2">Plan Actuel :</span>
-              <span className="px-3 py-1 bg-slate-700 text-white text-xs font-bold rounded-lg">Gratuit</span>
+              <span className={`px-3 py-1 rounded-lg text-xs font-bold ${getPlanBadgeClass(plan)}`}>
+                {getPlanLabel(plan)}
+              </span>
             </div>
           </div>
 
@@ -287,23 +340,49 @@ const Settings: React.FC<SettingsProps> = ({ userEmail, userName, onUpdateProfil
                 <IconRocket className="w-6 h-6 text-brand-500" />
               </div>
               <div>
-                <h3 className="font-bold text-white">Passez à la vitesse supérieure</h3>
-                <p className="text-sm text-slate-400">Débloquez le Chantier, le Sherpa et les exports illimités.</p>
+                {plan === 'camp_de_base' ? (
+                  <>
+                    <h3 className="font-bold text-white">Passez à la vitesse supérieure</h3>
+                    <p className="text-sm text-slate-400">
+                      Débloquez le Chantier, le Sherpa et les exports illimités.
+                    </p>
+                  </>
+                ) : plan === 'explorateur' ? (
+                  <>
+                    <h3 className="font-bold text-white">Pack Explorateur</h3>
+                    <p className="text-sm text-slate-400">
+                      Vous pouvez racheter un pack ou passer à l’abonnement Bâtisseur.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="font-bold text-white">Abonnement Bâtisseur</h3>
+                    <p className="text-sm text-slate-400">
+                      Gérez votre facturation, vos moyens de paiement et la résiliation depuis le portail sécurisé Stripe.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button 
-                onClick={onOpenPricing}
-                className="px-6 py-3 bg-white hover:bg-slate-100 text-dark-900 font-bold rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-white/10 whitespace-nowrap"
-              >
-                Voir les offres
-              </button>
-              <button
-                onClick={handleManageBilling}
-                className="px-6 py-3 bg-dark-800 hover:bg-dark-700 text-white font-bold rounded-xl border border-dark-600 text-sm whitespace-nowrap"
-              >
-                Gérer mon abonnement & mes factures
-              </button>
+
+            <div className="flex flex-col gap-3 w-full md:w-auto">
+              {plan === 'camp_de_base' && (
+                <button 
+                  onClick={onOpenPricing}
+                  className="w-full px-6 py-3 bg-white hover:bg-slate-100 text-dark-900 font-bold rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-white/10 whitespace-nowrap"
+                >
+                  Voir les offres
+                </button>
+              )}
+
+              {plan !== 'camp_de_base' && onManageBilling && (
+                <button
+                  onClick={onManageBilling}
+                  className="w-full px-6 py-3 bg-dark-800 hover:bg-dark-700 text-slate-100 font-bold rounded-xl border border-dark-600 transition-all hover:-translate-y-0.5 whitespace-nowrap"
+                >
+                  Gérer mon abonnement & mes factures
+                </button>
+              )}
             </div>
           </div>
         </div>
