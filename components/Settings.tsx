@@ -20,17 +20,15 @@ interface SettingsProps {
   onOpenPricing: () => void;
   onDeleteAccount: () => void;
 
-  // Infos d’abonnement
   plan: PlanType;
   subscriptionStatus?: string | null;
   cancelAt?: string | null;
   cancelAtPeriodEnd?: boolean | null;
 
-  // Handler pour ouvrir le portail Stripe (factures + résiliation)
   onManageBilling?: () => void;
 }
 
-// Format de date lisible
+// Format date lisible
 function formatDate(dateStr: string | null | undefined): string | null {
   if (!dateStr) return null;
   const d = new Date(dateStr);
@@ -42,31 +40,31 @@ function formatDate(dateStr: string | null | undefined): string | null {
   });
 }
 
-// Label du plan
+// Label du plan (sans "(abonnement)")
 function getPlanLabel(plan: PlanType): string {
   switch (plan) {
     case 'camp_de_base':
-      return 'Camp de Base (gratuit)';
+      return 'Camp de Base';
     case 'explorateur':
-      return "Explorateur (pack)";
+      return 'Explorateur';
     case 'batisseur':
-      return 'Bâtisseur (abonnement)';
+      return 'Bâtisseur';
     default:
       return 'Inconnu';
   }
 }
 
-// Classe du badge plan
+// Classe du badge plan (style pill / glassmorphism)
 function getPlanBadgeClass(plan: PlanType): string {
   switch (plan) {
     case 'camp_de_base':
-      return 'bg-slate-900/70 border border-slate-700/80 text-slate-100/90 backdrop-blur-md';
+      return 'bg-slate-900/40 border-slate-600/60 text-slate-100';
     case 'explorateur':
-      return 'bg-brand-900/40 border border-brand-500/60 text-brand-50 backdrop-blur-md';
+      return 'bg-brand-900/40 border-brand-500/60 text-brand-50';
     case 'batisseur':
-      return 'bg-amber-500/15 border border-amber-400/70 text-amber-50 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.25)]';
+      return 'bg-amber-500/15 border-amber-400/70 text-amber-50';
     default:
-      return 'bg-slate-900/70 border border-slate-700/80 text-slate-100/90 backdrop-blur-md';
+      return 'bg-slate-900/40 border-slate-600/60 text-slate-100';
   }
 }
 
@@ -83,6 +81,7 @@ const Settings: React.FC<SettingsProps> = ({
   cancelAtPeriodEnd,
   onManageBilling,
 }) => {
+  // 👇 États locaux pour le formulaire profil
   const [localFirstName, setLocalFirstName] = useState(firstName);
   const [localLastName, setLocalLastName] = useState(lastName);
   const [email, setEmail] = useState(userEmail);
@@ -96,6 +95,7 @@ const Settings: React.FC<SettingsProps> = ({
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [passwordError, setPasswordError] = useState('');
 
+  // Quand les props changent (connexion / reload), on sync le formulaire
   useEffect(() => {
     setLocalFirstName(firstName);
     setLocalLastName(lastName);
@@ -105,13 +105,13 @@ const Settings: React.FC<SettingsProps> = ({
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingProfile(true);
-    
+
     setTimeout(() => {
       onUpdateProfile(localFirstName, localLastName, email);
       setIsSavingProfile(false);
       setProfileSaved(true);
       setTimeout(() => setProfileSaved(false), 3000);
-    }, 500);
+    }, 400);
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -136,7 +136,7 @@ const Settings: React.FC<SettingsProps> = ({
       setNewPassword('');
       setConfirmPassword('');
       setTimeout(() => setPasswordSaved(false), 3000);
-    }, 800);
+    }, 700);
   };
 
   const handleDelete = () => {
@@ -147,21 +147,16 @@ const Settings: React.FC<SettingsProps> = ({
     }
   };
 
-  // Texte contextuel abonnement
+  // 🧠 Texte contextuel abonnement
   const formattedCancelAt = formatDate(cancelAt);
   let subscriptionInfoLine = '';
-  let showManageBillingButton = false;
 
   if (plan === 'camp_de_base') {
     subscriptionInfoLine = "Vous êtes actuellement sur le plan gratuit Camp de Base.";
-    showManageBillingButton = false;
   } else if (plan === 'explorateur') {
     subscriptionInfoLine =
       "Vous avez un pack Explorateur (one-shot). Il n'y a pas d'abonnement récurrent à gérer.";
-    showManageBillingButton = !!onManageBilling;
   } else if (plan === 'batisseur') {
-    showManageBillingButton = !!onManageBilling;
-
     if (subscriptionStatus === 'canceled') {
       subscriptionInfoLine =
         "Votre abonnement Bâtisseur est terminé. Vous pouvez le reprendre à tout moment depuis la page Tarifs.";
@@ -176,10 +171,14 @@ const Settings: React.FC<SettingsProps> = ({
     }
   }
 
+  const canManageBilling = !!onManageBilling && (plan === 'explorateur' || plan === 'batisseur');
+
   return (
     <div className="max-w-7xl mx-auto animate-fade-in pb-20">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-black text-white mb-4 tracking-tight">Paramètres du Compte</h1>
+        <h1 className="text-4xl font-black text-white mb-4 tracking-tight">
+          Paramètres du Compte
+        </h1>
         <p className="text-slate-400 text-lg max-w-2xl mx-auto">
           Gérez vos informations personnelles, votre sécurité et votre abonnement.
         </p>
@@ -266,7 +265,7 @@ const Settings: React.FC<SettingsProps> = ({
         <div className="bg-dark-800 border border-dark-700 rounded-[2rem] p-8 shadow-lg">
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
             <div className="p-2 bg-dark-700 rounded-lg">
-              <IconLock className="w-5 h-5 text-gold-500" />
+              <IconLock className="w-5 h-5 text-amber-400" />
             </div>
             Sécurité
           </h2>
@@ -281,7 +280,7 @@ const Settings: React.FC<SettingsProps> = ({
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all placeholder-slate-600"
+                className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none transition-all placeholder-slate-600"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -294,7 +293,7 @@ const Settings: React.FC<SettingsProps> = ({
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all placeholder-slate-600"
+                  className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none transition-all placeholder-slate-600"
                 />
               </div>
               <div className="space-y-2">
@@ -306,7 +305,7 @@ const Settings: React.FC<SettingsProps> = ({
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all placeholder-slate-600"
+                  className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none transition-all placeholder-slate-600"
                 />
               </div>
             </div>
@@ -339,7 +338,7 @@ const Settings: React.FC<SettingsProps> = ({
 
         {/* 3. Abonnement */}
         <div className="lg:col-span-2 bg-gradient-to-r from-dark-800 to-dark-900 border border-dark-700 rounded-[2rem] p-8 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 relative z-10">
             <div>
@@ -353,13 +352,23 @@ const Settings: React.FC<SettingsProps> = ({
                 {subscriptionInfoLine}
               </p>
             </div>
-            <div className="flex items-center gap-3 bg-dark-950/60 px-3 py-2 rounded-full border border-dark-700/80 backdrop-blur-md">
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+
+            {/* 🔥 Badge Plan actuel en une seule ligne */}
+            <div className="flex items-center gap-2 bg-dark-950/50 px-3 py-2 rounded-xl border border-dark-700">
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
                 Plan actuel
               </span>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 ${getPlanBadgeClass(plan)}`}>
-                {getPlanLabel(plan)}
-              </span>
+              <div
+                className={
+                  'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md shadow-sm ' +
+                  getPlanBadgeClass(plan)
+                }
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(16,185,129,0.35)]" />
+                <span className="whitespace-nowrap">
+                  {getPlanLabel(plan)}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -404,7 +413,7 @@ const Settings: React.FC<SettingsProps> = ({
                 </button>
               )}
 
-              {plan !== 'camp_de_base' && onManageBilling && (
+              {canManageBilling && (
                 <button
                   onClick={onManageBilling}
                   className="w-full px-6 py-3 bg-dark-800 hover:bg-dark-700 text-slate-100 font-bold rounded-xl border border-dark-600 transition-all hover:-translate-y-0.5 whitespace-nowrap"
