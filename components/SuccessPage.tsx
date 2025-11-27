@@ -1,6 +1,6 @@
 // components/SuccessPage.tsx
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../services/supabaseClient';
+import React, { useEffect, useMemo, useState } from 'react';
+import { getSupabaseClient } from '../services/supabaseClient';
 import { IconMountain } from './Icons';
 
 type SuccessPlan = 'explorateur' | 'batisseur';
@@ -48,6 +48,8 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ onEnterApp, plan }) => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState(''); // rempli depuis Stripe
   const [sessionId, setSessionId] = useState<string | null>(null);
+
+  const supabase = useMemo(() => getSupabaseClient(), []);
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
