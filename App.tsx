@@ -313,23 +313,39 @@ const App: React.FC = () => {
     if (ideaToUpdate) await updateIdea(ideaToUpdate);
   };
 
-  // 🆕 Gérer l’accès au portail Stripe (factures + résiliation)
+    // 🆕 Gérer l’accès au portail Stripe (factures + résiliation)
   const handleManageBilling = async () => {
     try {
+      // 1️⃣ Récupérer la session côté client
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data.session?.access_token;
+
+      if (!accessToken) {
+        showToastMessage("Tu dois être connecté pour gérer ton abonnement.");
+        return;
+      }
+
+      // 2️⃣ Appeler notre endpoint avec le token
       const resp = await fetch('/api/create-billing-portal-session', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken }),
       });
 
       if (!resp.ok) {
-        console.error('❌ Erreur create-billing-portal-session:', await resp.text());
+        const errText = await resp.text();
+        console.error('❌ Erreur create-billing-portal-session:', errText);
         showToastMessage("Impossible d'ouvrir la page de facturation.");
         return;
       }
 
-      const data = await resp.json();
-      if (data?.url) {
-        window.location.href = data.url;
+      const dataJson = await resp.json();
+
+      if (dataJson?.url) {
+        // 3️⃣ Redirection vers le portail Stripe
+        window.location.href = dataJson.url;
       } else {
+        console.error('Réponse inattendue:', dataJson);
         showToastMessage("Réponse inattendue de la page de facturation.");
       }
     } catch (err) {
