@@ -1,37 +1,43 @@
 // services/supabaseClient.ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-// ⚠️ Mets ici les infos de TON projet Supabase
-// (Depuis Supabase -> Settings -> API -> Project URL + anon public)
-const HARDCODED_SUPABASE_URL = 'https://ujfifxsvataasviiacxy.supabase.co';
-const HARDCODED_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVqZmlmeHN2YXRhYXN2aWlhY3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2ODIwNjUsImV4cCI6MjA3OTI1ODA2NX0.3wh5j_c-sD1E_c1zoJyoXXLz2xQru9UigNsO-YZ_p5c';
+type EnvKeys = 'VITE_SUPABASE_URL' | 'VITE_SUPABASE_ANON_KEY';
 
-// Safe environment variable access (Vite / Node)
-const metaEnv =
-  typeof import.meta !== 'undefined' && import.meta.env
-    ? import.meta.env
-    : ({} as any);
+const getEnv = (key: EnvKeys): string | undefined => {
+  const fromImportMeta =
+    typeof import.meta !== 'undefined' ? import.meta.env?.[key] : undefined;
 
-// @ts-ignore
-const processEnv = typeof process !== 'undefined' ? process.env || {} : {};
+  if (fromImportMeta) return fromImportMeta;
 
-// Front (Vite) : VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
-// Backend (si un jour tu en as un) : SUPABASE_URL / SUPABASE_ANON_KEY
-const supabaseUrl: string =
-  (metaEnv as any).VITE_SUPABASE_URL ||
-  (processEnv as any).SUPABASE_URL ||
-  HARDCODED_SUPABASE_URL;
+  if (typeof process !== 'undefined' && process.env) {
+    const nodeKey = key.replace('VITE_', '');
+    return process.env[key] ?? process.env[nodeKey];
+  }
 
-const supabaseAnonKey: string =
-  (metaEnv as any).VITE_SUPABASE_ANON_KEY ||
-  (processEnv as any).SUPABASE_ANON_KEY ||
-  HARDCODED_SUPABASE_ANON_KEY;
+  return undefined;
+};
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    '⚠️ Supabase non configuré : supabaseUrl ou supabaseAnonKey vides.'
-  );
-}
+let cachedSupabase: SupabaseClient | null = null;
 
-// 👉 ICI : on crée toujours un client (avec les fallbacks si besoin)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const getSupabaseClient = (): SupabaseClient => {
+  if (cachedSupabase) return cachedSupabase;
+
+  const supabaseUrl = getEnv('VITE_SUPABASE_URL');
+  const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY');
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn(
+      'Supabase non configuré : définis VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans ton environnement. Utilisation d’un client placeholder pour garder l’UI affichable.'
+    );
+
+    // On retourne un client placeholder pour éviter de casser le rendu côté client.
+    cachedSupabase = createClient(
+      supabaseUrl ?? 'https://placeholder.supabase.co',
+      supabaseAnonKey ?? 'public-anon-key'
+    );
+    return cachedSupabase;
+  }
+
+  cachedSupabase = createClient(supabaseUrl, supabaseAnonKey);
+  return cachedSupabase;
+};
