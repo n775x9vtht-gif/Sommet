@@ -1,5 +1,5 @@
 // services/mvpService.ts
-import { supabase } from './supabaseClient';
+import { getSupabaseClient } from './supabaseClient';
 
 /**
  * Consomme 1 "slot" d'analyse MVP.
@@ -10,12 +10,8 @@ import { supabase } from './supabaseClient';
  *  - null : erreur
  */
 export async function consumeMvpAnalysis(): Promise<number | null> {
-  if (!supabase) {
-    console.error('Supabase non configuré');
-    return null;
-  }
-
   try {
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase.rpc('consume_mvp_analysis');
 
     if (error) {

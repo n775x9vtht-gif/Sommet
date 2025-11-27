@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { getSupabaseClient } from './supabaseClient';
 
 /**
  * Petit helper pour dire au reste de l'app "le profil a changé"
@@ -59,6 +59,7 @@ const extractNumberField = (
  */
 export const consumeCredit = async (): Promise<number | null> => {
   try {
+    const supabase = getSupabaseClient();
     const {
       data: { user },
       error: userError,
@@ -121,6 +122,7 @@ export const consumeCredit = async (): Promise<number | null> => {
  */
 export const consumeMarketAnalysis = async (): Promise<number | null> => {
   try {
+    const supabase = getSupabaseClient();
     const {
       data: { user },
       error: userError,
@@ -188,6 +190,7 @@ export const consumeMarketAnalysis = async (): Promise<number | null> => {
  */
 export const consumeMvpBlueprint = async (): Promise<number | null> => {
   try {
+    const supabase = getSupabaseClient();
     const {
       data: { user },
       error: userError,
