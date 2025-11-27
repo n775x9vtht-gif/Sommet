@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { getSupabaseClient } from './supabaseClient';
 
 export type PlanType = 'camp_de_base' | 'explorateur' | 'batisseur';
 
@@ -19,6 +19,7 @@ export interface UserProfile {
  */
 export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
   try {
+    const supabase = getSupabaseClient();
     // 1) Récupérer l'utilisateur connecté
     const {
       data: { user },
