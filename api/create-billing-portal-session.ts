@@ -1,31 +1,51 @@
 // api/create-billing-portal-session.ts
 
 import Stripe from 'stripe';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const resolveEnv = () => {
+  const supabaseUrl =
+    process.env.SUPABASE_URL ||
+    process.env.VITE_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_KEY as string,
-  { auth: { persistSession: false } }
-);
+  const supabaseServiceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+
+  const stripeSecret = process.env.STRIPE_SECRET_KEY;
+
+  return { supabaseUrl, supabaseServiceKey, stripeSecret };
+};
+
+const getClients = () => {
+  const { supabaseUrl, supabaseServiceKey, stripeSecret } = resolveEnv();
+
+  if (!stripeSecret || !supabaseUrl || !supabaseServiceKey) {
+    const missing: string[] = [];
+    if (!stripeSecret) missing.push('STRIPE_SECRET_KEY');
+    if (!supabaseUrl) missing.push('SUPABASE_URL (ou VITE_SUPABASE_URL)');
+    if (!supabaseServiceKey) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+
+    return {
+      stripe: null as Stripe | null,
+      supabaseAdmin: null as SupabaseClient | null,
+      missing,
+    };
+  }
+
+  return {
+    stripe: new Stripe(stripeSecret),
+    supabaseAdmin: createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { persistSession: false },
+    }),
+    missing: [],
+  };
+};
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  if (
-    !process.env.STRIPE_SECRET_KEY ||
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.SUPABASE_SERVICE_KEY
-  ) {
-    console.error('❌ Config manquante pour create-billing-portal-session');
-    return res
-      .status(500)
-      .json({ error: 'Configuration serveur incomplète (Stripe/Supabase).' });
   }
 
   const { userId } = req.body as { userId?: string };
@@ -35,6 +55,18 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    const { stripe, supabaseAdmin, missing } = getClients();
+
+    if (!stripe || !supabaseAdmin) {
+      console.error('❌ Config manquante pour create-billing-portal-session', {
+        missing,
+      });
+      return res.status(500).json({
+        error:
+          'Configuration Stripe/Supabase incomplète. Vérifie les variables STRIPE_SECRET_KEY et SUPABASE_SERVICE_ROLE_KEY.',
+      });
+    }
+
     // 1️⃣ On récupère la dernière subscription pour cet utilisateur
     const { data: subRows, error: subErr } = await supabaseAdmin
       .from('stripe_subscriptions')
