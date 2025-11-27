@@ -7,8 +7,10 @@ import {
   IconArrowRight,
   IconCheck,
   IconPlus,
+  IconSherpa,
   IconTrash,
 } from './Icons';
+import { askSherpa } from '../services/geminiService';
 
 interface LeChantierProps {
   savedIdeas: SavedIdea[];
@@ -51,6 +53,10 @@ const LeChantier: React.FC<LeChantierProps> = ({
   const [selectedIdeaId, setSelectedIdeaId] = useState<string>('');
   const [board, setBoard] = useState<KanbanBoard | null>(null);
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [sherpaPrompt, setSherpaPrompt] = useState('');
+  const [sherpaAnswer, setSherpaAnswer] = useState<string | null>(null);
+  const [sherpaError, setSherpaError] = useState<string | null>(null);
+  const [isSherpaLoading, setIsSherpaLoading] = useState(false);
 
   // ---------- Sélection de l'idée ----------
 
@@ -129,6 +135,45 @@ const LeChantier: React.FC<LeChantierProps> = ({
   const getTasksForColumn = (columnId: ColumnId) =>
     tasks.filter((t) => t.columnId === columnId);
 
+  const projectContext = useMemo(() => {
+    if (!selectedIdea) return '';
+
+    const base = (
+      [
+        `Projet : ${selectedIdea.title}`,
+        selectedIdea.tagline ? `Tagline : ${selectedIdea.tagline}` : null,
+        selectedIdea.description
+          ? `Description : ${selectedIdea.description}`
+          : null,
+      ] as (string | null)[]
+    ).filter(Boolean) as string[];
+
+    const blueprintLines =
+      selectedIdea.blueprint?.roadmap.map(
+        (step) =>
+          `Semaine ${step.week} (${step.phase}) → ${step.tasks
+            .slice(0, 3)
+            .join(' ; ')}`
+      ) ?? [];
+
+    const kanbanLines = board?.tasks
+      .slice(0, 6)
+      .map(
+        (task) =>
+          `${task.columnId.toUpperCase()} · S${task.week} · ${task.phase} · ${task.content}`
+      ) ?? [];
+
+    const lines = [...base];
+    if (blueprintLines.length > 0) {
+      lines.push('--- Blueprint / Roadmap ---', ...blueprintLines);
+    }
+    if (kanbanLines.length > 0) {
+      lines.push('--- Kanban ---', ...kanbanLines);
+    }
+
+    return lines.join('\n');
+  }, [board, selectedIdea]);
+
   // ---------- Drag & Drop ----------
 
   const handleDragStart = (taskId: string) => {
@@ -194,6 +239,30 @@ const LeChantier: React.FC<LeChantierProps> = ({
       tasks: newTasks,
     };
     persistBoard(newBoard);
+  };
+
+  const handleAskSherpa = async () => {
+    if (!sherpaPrompt.trim()) {
+      setSherpaError('Décris une tâche ou un blocage pour solliciter le Sherpa.');
+      return;
+    }
+
+    if (!projectContext) {
+      setSherpaError('Ajoute d’abord un projet ou un Blueprint pour donner du contexte au Sherpa.');
+      return;
+    }
+
+    setSherpaError(null);
+    setIsSherpaLoading(true);
+
+    try {
+      const response = await askSherpa(sherpaPrompt.trim(), projectContext);
+      setSherpaAnswer(response);
+    } catch (error) {
+      setSherpaError("Impossible de joindre le Sherpa. Vérifie la clé API Gemini ou réessaie.");
+    } finally {
+      setIsSherpaLoading(false);
+    }
   };
 
   const handleAddTask = (columnId: ColumnId) => {
@@ -340,6 +409,51 @@ const LeChantier: React.FC<LeChantierProps> = ({
             <IconArrowRight className="w-4 h-4 ml-2" />
           </button>
         )}
+      </div>
+
+      {/* SOS Sherpa */}
+      <div className="bg-dark-800/70 border border-dark-700 rounded-2xl p-5 md:p-6 mb-10 shadow-xl max-w-5xl mx-auto">
+        <div className="flex flex-col gap-3 md:gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-dark-900 border border-dark-700">
+              <IconSherpa className="w-5 h-5 text-gold-400" />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-gold-300/80">SOS Sherpa</p>
+              <h3 className="text-lg font-bold text-white">Bloqué sur une tâche ? Le Sherpa te débloque en quelques secondes.</h3>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 items-start">
+            <div className="flex flex-col gap-3">
+              <textarea
+                value={sherpaPrompt}
+                onChange={(e) => setSherpaPrompt(e.target.value)}
+                placeholder="Décris la tâche du Kanban qui bloque (ex: connecter Stripe, sécuriser une API, requête Supabase, automatiser un script)..."
+                className="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[120px]"
+              />
+              <div className="flex items-center justify-between text-[12px] text-slate-500">
+                <span>Le Sherpa reçoit le contexte du projet (Blueprint + tâches actuelles).</span>
+                {sherpaError && <span className="text-red-400 font-semibold">{sherpaError}</span>}
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={handleAskSherpa}
+                disabled={isSherpaLoading}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gold-500/90 hover:bg-gold-400 text-dark-900 font-bold shadow-lg shadow-gold-500/30 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isSherpaLoading ? 'Le Sherpa réfléchit...' : 'Obtenir la solution du Sherpa'}
+              </button>
+              {sherpaAnswer && (
+                <div className="bg-dark-900 border border-dark-700 rounded-xl p-3 text-sm text-slate-100 whitespace-pre-wrap leading-relaxed shadow-inner">
+                  {sherpaAnswer}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Si pas encore de kanban et pas de blueprint */}

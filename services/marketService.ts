@@ -1,5 +1,5 @@
 // services/marketService.ts
-import { supabase } from './supabaseClient';
+import { getSupabaseClient } from './supabaseClient';
 
 /**
  * Consomme 1 analyse de marché.
@@ -11,6 +11,7 @@ import { supabase } from './supabaseClient';
  */
 export async function consumeMarketAnalysis(): Promise<number | null> {
   try {
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase.rpc('consume_market_analysis');
 
     if (error) {

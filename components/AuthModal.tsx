@@ -1,7 +1,7 @@
 // components/AuthModal.tsx
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { IconMountain, IconX, IconMail, IconLock, IconUser, IconGoogle } from './Icons';
-import { supabase } from '../services/supabaseClient';
+import { getSupabaseClient, isSupabaseConfigured } from '../services/supabaseClient';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -24,6 +24,15 @@ const AuthModal: React.FC<AuthModalProps> = ({
     password: '',
   });
 
+  const supabase = useMemo(() => {
+    try {
+      return getSupabaseClient();
+    } catch (error) {
+      console.error('Supabase non configuré :', error);
+      return null;
+    }
+  }, []);
+
   // Sync mode if prop changes
   React.useEffect(() => {
     setMode(initialMode);
@@ -31,14 +40,18 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null;
 
-  const ensureSupabaseReady = (): boolean => {
-    if (!supabase) {
+  const ensureSupabaseReady = () => {
+    if (!isSupabaseConfigured()) {
       alert(
         "Supabase n'est pas configuré (variables d'environnement manquantes). Vérifie VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY sur Vercel."
       );
-      return false;
+      return null;
     }
-    return true;
+    if (!supabase) {
+      alert("Le client Supabase n'a pas pu être initialisé.");
+      return null;
+    }
+    return supabase;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,13 +59,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setLoading(true);
 
     try {
-      if (!ensureSupabaseReady()) {
-        return;
-      }
+      const supabaseClient = ensureSupabaseReady();
+      if (!supabaseClient) return;
 
       if (mode === 'REGISTER') {
         // Inscription Supabase
-        const { data, error } = await supabase!.auth.signUp({
+        const { data, error } = await supabaseClient.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
@@ -76,7 +88,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         onSuccess();
       } else {
         // Connexion Supabase
-        const { data, error } = await supabase!.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
@@ -100,10 +112,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const handleGoogleLogin = async () => {
-    if (!ensureSupabaseReady()) return;
+    const supabaseClient = ensureSupabaseReady();
+    if (!supabaseClient) return;
 
     try {
-      const { error } = await supabase!.auth.signInWithOAuth({
+      const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: window.location.origin,
