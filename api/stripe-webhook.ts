@@ -3,7 +3,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-// ⚠️ Pas d'apiVersion ici, pour ne pas avoir l'erreur "2025-11-17.clover"
+// ⚠️ Pas d'apiVersion ici, pour éviter le souci "2025-11-17.clover"
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 const supabaseAdmin = createClient(
@@ -58,6 +58,7 @@ export default async function handler(req: any, res: any) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
+        // 👉 Tu gères déjà le créditage/plan dans /api/confirm-stripe-checkout
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('✅ checkout.session.completed reçu (webhook) :', session.id);
         break;
@@ -65,35 +66,32 @@ export default async function handler(req: any, res: any) {
 
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted': {
-        // Cast en any pour récupérer les champs epoch (cancel_at, current_period_end, etc.)
-        const subscription = event.data.object as any;
-
-        const stripeSubscriptionId = subscription.id as string;
+        const subscription = event.data.object as Stripe.Subscription;
+        const stripeSubscriptionId = subscription.id;
         const stripeCustomerId = subscription.customer as string;
-        const status = subscription.status as string; // active, past_due, canceled, unpaid...
-
-        // Champs chrono envoyés par Stripe (epoch seconds → ISO string)
-        const cancelAtPeriodEnd: boolean =
-          subscription.cancel_at_period_end ?? false;
-
-        const cancelAt: string | null = subscription.cancel_at
-          ? new Date(subscription.cancel_at * 1000).toISOString()
-          : null;
-
-        const currentPeriodEnd: string | null = subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000).toISOString()
-          : null;
+        const status = subscription.status; // active, past_due, canceled, unpaid...
 
         console.log('🔔 Event subscription:', event.type, {
           stripeSubscriptionId,
           stripeCustomerId,
           status,
-          cancelAtPeriodEnd,
-          cancelAt,
-          currentPeriodEnd,
         });
 
-        // 1️⃣ On récupère la row stripe_subscriptions existante
+        // Convertir quelques timestamps Unix → ISO string (via any pour éviter TS chiant)
+        const cancelAtUnix = (subscription as any).cancel_at as number | null | undefined;
+        const currentPeriodEndUnix = (subscription as any)
+          .current_period_end as number | null | undefined;
+
+        const cancel_at = cancelAtUnix
+          ? new Date(cancelAtUnix * 1000).toISOString()
+          : null;
+        const current_period_end = currentPeriodEndUnix
+          ? new Date(currentPeriodEndUnix * 1000).toISOString()
+          : null;
+        const cancel_at_period_end =
+          (subscription as any).cancel_at_period_end ?? false;
+
+        // 1️⃣ On essaie de retrouver la souscription par son id
         const { data: subRows, error: subSelectErr } = await supabaseAdmin
           .from('stripe_subscriptions')
           .select('id, user_id, plan')
@@ -102,39 +100,125 @@ export default async function handler(req: any, res: any) {
 
         if (subSelectErr) {
           console.error('❌ Erreur lecture stripe_subscriptions:', subSelectErr);
-          break;
+          break; // on évite de faire planter le webhook
         }
 
-        const subscriptionRow = subRows && subRows[0];
-        if (!subscriptionRow) {
+        let userId: string | null = null;
+        let existingPlan: string | null = null;
+
+        if (subRows && subRows.length > 0) {
+          // ✅ On a déjà une row pour cette subscription
+          userId = subRows[0].user_id as string;
+          existingPlan = subRows[0].plan as string | null;
+        } else {
+          // ❓ Pas encore de row pour cette subscription (cas réabonnement / nouvelle sub)
+          // → On essaie de retrouver l'user via le stripe_customer_id sur une ancienne sub
+          const { data: rowsByCustomer, error: byCustomerErr } =
+            await supabaseAdmin
+              .from('stripe_subscriptions')
+              .select('user_id, plan')
+              .eq('stripe_customer_id', stripeCustomerId)
+              .limit(1);
+
+          if (byCustomerErr) {
+            console.error(
+              '❌ Erreur lecture stripe_subscriptions par customer_id:',
+              byCustomerErr
+            );
+            break;
+          }
+
+          if (!rowsByCustomer || rowsByCustomer.length === 0) {
+            console.warn(
+              '⚠️ Aucune subscription associée à ce customer Stripe :',
+              stripeCustomerId
+            );
+            // On ne peut pas deviner quel user c'est → on log et on sort
+            break;
+          }
+
+          userId = rowsByCustomer[0].user_id as string;
+          existingPlan = rowsByCustomer[0].plan as string | null;
+        }
+
+        if (!userId) {
           console.warn(
-            '⚠️ Aucune row stripe_subscriptions pour cette subscription :',
+            '⚠️ Impossible de déterminer user_id pour cette subscription :',
             stripeSubscriptionId
           );
           break;
         }
 
-        const { user_id: userId, plan } = subscriptionRow;
+        // On considère que toutes les subscriptions Stripe ici sont pour Bâtisseur
+        const plan = (existingPlan as 'camp_de_base' | 'explorateur' | 'batisseur') || 'batisseur';
 
-        // 2️⃣ Mise à jour des métadonnées d’abonnement dans stripe_subscriptions
-        const { error: subUpdateErr } = await supabaseAdmin
+        // 2️⃣ Upsert propre de la subscription
+        const { error: subUpsertErr } = await supabaseAdmin
           .from('stripe_subscriptions')
-          .update({
-            status,
-            stripe_customer_id: stripeCustomerId,
-            cancel_at: cancelAt,
-            cancel_at_period_end: cancelAtPeriodEnd,
-            current_period_end: currentPeriodEnd,
-          })
-          .eq('stripe_subscription_id', stripeSubscriptionId);
+          .upsert(
+            {
+              user_id: userId,
+              stripe_customer_id: stripeCustomerId,
+              stripe_subscription_id: stripeSubscriptionId,
+              plan,
+              status,
+              cancel_at,
+              cancel_at_period_end,
+              current_period_end,
+            },
+            {
+              onConflict: 'stripe_subscription_id',
+            }
+          );
 
-        if (subUpdateErr) {
-          console.error('❌ Erreur update stripe_subscriptions:', subUpdateErr);
+        if (subUpsertErr) {
+          console.error('❌ Erreur upsert stripe_subscriptions:', subUpsertErr);
+          break;
         }
 
-        // 3️⃣ Downgrade du profil UNIQUEMENT si l'abo est réellement terminé
-        if (status === 'canceled' || status === 'unpaid' || status === 'past_due') {
-          console.log('🔻 Abonnement terminé, downgrade du profil user_id =', userId);
+        // 3️⃣ Vérifier si l'utilisateur a encore AU MOINS UNE subscription active
+        const { data: activeSubs, error: activeErr } = await supabaseAdmin
+          .from('stripe_subscriptions')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('status', 'active');
+
+        if (activeErr) {
+          console.error(
+            '❌ Erreur lecture des subscriptions actives pour user:',
+            activeErr
+          );
+          break;
+        }
+
+        if (activeSubs && activeSubs.length > 0) {
+          // ✅ Au moins un abonnement actif → maintenir / repasser en Bâtisseur
+          console.log(
+            '✅ User a au moins une sub active, on le garde en Bâtisseur :',
+            userId
+          );
+          const { error: profileErr } = await supabaseAdmin
+            .from('profiles')
+            .update({
+              plan: 'batisseur',
+              generation_credits: 999999,
+              analysis_credits: 999999,
+              mvp_blueprint_credits: 999999,
+            })
+            .eq('id', userId);
+
+          if (profileErr) {
+            console.error(
+              '❌ Erreur update profiles (maintien Bâtisseur):',
+              profileErr
+            );
+          }
+        } else {
+          // ❌ Plus aucune sub active → downgrade en Camp de Base
+          console.log(
+            '🔻 Aucune sub active restante, downgrade en Camp de Base pour user_id =',
+            userId
+          );
 
           const { error: profileErr } = await supabaseAdmin
             .from('profiles')
@@ -147,7 +231,10 @@ export default async function handler(req: any, res: any) {
             .eq('id', userId);
 
           if (profileErr) {
-            console.error('❌ Erreur update profiles (downgrade):', profileErr);
+            console.error(
+              '❌ Erreur update profiles (downgrade):',
+              profileErr
+            );
           }
         }
 
@@ -155,6 +242,7 @@ export default async function handler(req: any, res: any) {
       }
 
       default: {
+        // Pour éviter les erreurs 400 "unexpected event", on accepte le reste
         console.log(`ℹ️ Event Stripe non géré: ${event.type}`);
       }
     }
