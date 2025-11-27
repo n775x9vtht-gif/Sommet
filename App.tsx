@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import IdeaGenerator from './components/IdeaGenerator';
@@ -16,7 +16,7 @@ import SuccessPage from './components/SuccessPage';
 import { AppView, SavedIdea, MVPBlueprint, MarketAnalysis, KanbanBoard } from './types';
 import { IconMountain } from './components/Icons';
 import { DEMO_DATA } from './services/demoData';
-import { supabase } from './services/supabaseClient';
+import { getSupabaseClient } from './services/supabaseClient';
 import { fetchUserIdeas, createIdea, updateIdea, deleteIdea as deleteIdeaService } from './services/ideaService';
 
 // Plan Sommet côté front
@@ -31,7 +31,9 @@ const App: React.FC = () => {
   const [ideaToBlueprint, setIdeaToBlueprint] = useState<SavedIdea | null>(null);
   const [ideaToChantier, setIdeaToChantier] = useState<SavedIdea | null>(null);
   const [toast, setToast] = useState<{ message: string; show: boolean }>({ message: '', show: false });
-  
+
+  const supabase = useMemo(() => getSupabaseClient(), []);
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 

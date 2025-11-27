@@ -1,16 +1,27 @@
-
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { GeminiIdeaResponse, GeminiAnalysisResponse, GeminiDailyResponse, GeminiBlueprintResponse, ChatMessage } from "../types";
 
-// Safe environment variable access to prevent "undefined is not an object" crash
-// @ts-ignore
-const metaEnv = typeof import.meta !== 'undefined' ? import.meta.env || {} : {};
-// @ts-ignore
-const processEnv = typeof process !== 'undefined' ? process.env || {} : {};
+const getEnvValue = (key: string): string | undefined => {
+  const fromImportMeta =
+    typeof import.meta !== 'undefined' ? import.meta.env?.[key] : undefined;
 
-// Try all possible sources for the API Key
-const apiKey = metaEnv.VITE_GEMINI_API_KEY || metaEnv.API_KEY || processEnv.VITE_GEMINI_API_KEY || processEnv.API_KEY || '';
+  if (fromImportMeta) return fromImportMeta;
 
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[key];
+  }
+
+  return undefined;
+};
+
+const apiKey =
+  getEnvValue('VITE_GEMINI_API_KEY') ??
+  getEnvValue('API_KEY') ??
+  '';
+
+if (!apiKey) {
+  throw new Error('Gemini non configuré : définis VITE_GEMINI_API_KEY (ou API_KEY) dans ton environnement.');
+}
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
 const ideaSchema: Schema = {
