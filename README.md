@@ -51,3 +51,35 @@ API_KEY=your_gemini_key
 2. Vérifier que les variables ci-dessus sont renseignées dans `.env.local` (et `.env` si nécessaire).
 3. Lancer le serveur de dev :
    `npm run dev`
+
+## Pousser les modifications sur GitHub
+
+Si tu ne vois pas les derniers commits sur GitHub, voici la marche à suivre :
+
+1. Vérifie que ton dépôt local pointe vers le dépôt GitHub :
+   ```bash
+   git remote -v
+   # s'il n'y a rien, ajoute le dépôt
+   git remote add origin https://github.com/<TON_ORG>/<TON_REPO>.git
+   ```
+2. Vérifie les changements en attente et ajoute-les à l'index :
+   ```bash
+   git status
+   git add .
+   ```
+3. Crée un commit avec un message clair :
+   ```bash
+   git commit -m "Message décrivant la modification"
+   ```
+4. Envoie la branche courante vers GitHub (avec suivi) :
+   ```bash
+   # si ta branche s'appelle work
+   git push -u origin work
+   ```
+5. Après le premier push, tu peux simplement utiliser :
+   ```bash
+   git push
+   ```
+
+Astuce : si le push est refusé à cause de commits distants, récupère-les d'abord avec
+`git pull --rebase origin work`, résous les éventuels conflits, puis relance `git push`.
