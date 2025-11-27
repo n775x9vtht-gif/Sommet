@@ -1,14 +1,16 @@
 // components/LeChantier.tsx
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { SavedIdea, KanbanBoard, KanbanTask } from '../types';
+import { ChatMessage, SavedIdea, KanbanBoard, KanbanTask } from '../types';
 import {
   IconConstruction,
   IconArrowRight,
   IconCheck,
   IconPlus,
+  IconSherpa,
   IconTrash,
 } from './Icons';
+import { askSherpa } from '../services/geminiService';
 
 interface LeChantierProps {
   savedIdeas: SavedIdea[];
@@ -51,6 +53,15 @@ const LeChantier: React.FC<LeChantierProps> = ({
   const [selectedIdeaId, setSelectedIdeaId] = useState<string>('');
   const [board, setBoard] = useState<KanbanBoard | null>(null);
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [sherpaPrompt, setSherpaPrompt] = useState('');
+  const [sherpaAnswer, setSherpaAnswer] = useState<string | null>(null);
+  const [sherpaError, setSherpaError] = useState<string | null>(null);
+  const [isSherpaLoading, setIsSherpaLoading] = useState(false);
+  const [isSherpaModalOpen, setIsSherpaModalOpen] = useState(false);
+  const [codeCopyState, setCodeCopyState] = useState<Record<string, 'idle' | 'copied' | 'error'>>({});
+  const [sherpaHistory, setSherpaHistory] = useState<ChatMessage[]>([]);
+  const [activeSherpaEntry, setActiveSherpaEntry] = useState<{ prompt: string; answer: string } | null>(null);
+  const [followUpPrompt, setFollowUpPrompt] = useState('');
 
   // ---------- Sélection de l'idée ----------
 
@@ -66,6 +77,51 @@ const LeChantier: React.FC<LeChantierProps> = ({
     () => savedIdeas.find((i) => i.id === selectedIdeaId) || null,
     [savedIdeas, selectedIdeaId]
   );
+
+  const historyStorageKey = useMemo(
+    () => (selectedIdea ? `sherpa-history-${selectedIdea.id}` : null),
+    [selectedIdea]
+  );
+
+  useEffect(() => {
+    if (!historyStorageKey || typeof window === 'undefined') return;
+    try {
+      const raw = localStorage.getItem(historyStorageKey);
+      if (raw) {
+        const parsed: ChatMessage[] = JSON.parse(raw);
+        setSherpaHistory(parsed);
+      } else {
+        setSherpaHistory([]);
+      }
+    } catch (error) {
+      console.error('Impossible de charger l’historique Sherpa', error);
+      setSherpaHistory([]);
+    }
+  }, [historyStorageKey]);
+
+  useEffect(() => {
+    if (sherpaHistory.length >= 2) {
+      const last = sherpaHistory[sherpaHistory.length - 1];
+      const prev = sherpaHistory[sherpaHistory.length - 2];
+      if (last.role === 'sherpa' && prev.role === 'user') {
+        setSherpaAnswer(last.content);
+        setActiveSherpaEntry({ prompt: prev.content, answer: last.content });
+        return;
+      }
+    }
+    setSherpaAnswer(null);
+    setActiveSherpaEntry(null);
+  }, [sherpaHistory, selectedIdeaId]);
+
+  const persistSherpaHistory = (messages: ChatMessage[]) => {
+    setSherpaHistory(messages);
+    if (!historyStorageKey || typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(historyStorageKey, JSON.stringify(messages));
+    } catch (error) {
+      console.error('Impossible de sauvegarder l’historique Sherpa', error);
+    }
+  };
 
   // ---------- Chargement du KanbanBoard associé au projet ----------
 
@@ -128,6 +184,45 @@ const LeChantier: React.FC<LeChantierProps> = ({
 
   const getTasksForColumn = (columnId: ColumnId) =>
     tasks.filter((t) => t.columnId === columnId);
+
+  const projectContext = useMemo(() => {
+    if (!selectedIdea) return '';
+
+    const base = (
+      [
+        `Projet : ${selectedIdea.title}`,
+        selectedIdea.tagline ? `Tagline : ${selectedIdea.tagline}` : null,
+        selectedIdea.description
+          ? `Description : ${selectedIdea.description}`
+          : null,
+      ] as (string | null)[]
+    ).filter(Boolean) as string[];
+
+    const blueprintLines =
+      selectedIdea.blueprint?.roadmap.map(
+        (step) =>
+          `Semaine ${step.week} (${step.phase}) → ${step.tasks
+            .slice(0, 3)
+            .join(' ; ')}`
+      ) ?? [];
+
+    const kanbanLines = board?.tasks
+      .slice(0, 6)
+      .map(
+        (task) =>
+          `${task.columnId.toUpperCase()} · S${task.week} · ${task.phase} · ${task.content}`
+      ) ?? [];
+
+    const lines = [...base];
+    if (blueprintLines.length > 0) {
+      lines.push('--- Blueprint / Roadmap ---', ...blueprintLines);
+    }
+    if (kanbanLines.length > 0) {
+      lines.push('--- Kanban ---', ...kanbanLines);
+    }
+
+    return lines.join('\n');
+  }, [board, selectedIdea]);
 
   // ---------- Drag & Drop ----------
 
@@ -195,6 +290,138 @@ const LeChantier: React.FC<LeChantierProps> = ({
     };
     persistBoard(newBoard);
   };
+
+  const handleAskSherpa = async (customPrompt?: string) => {
+    const promptToSend = (customPrompt ?? sherpaPrompt).trim();
+
+    if (!promptToSend) {
+      setSherpaError('Décris une tâche ou un blocage pour solliciter le Sherpa.');
+      return;
+    }
+
+    if (!projectContext) {
+      setSherpaError('Ajoute d’abord un projet ou un Blueprint pour donner du contexte au Sherpa.');
+      return;
+    }
+
+    setSherpaError(null);
+    setIsSherpaLoading(true);
+
+    try {
+      const response = await askSherpa(promptToSend, projectContext);
+      const newHistory: ChatMessage[] = [
+        ...sherpaHistory,
+        { role: 'user', content: promptToSend, timestamp: Date.now() },
+        { role: 'sherpa', content: response, timestamp: Date.now() },
+      ];
+
+      persistSherpaHistory(newHistory);
+      setSherpaAnswer(response);
+      setActiveSherpaEntry({ prompt: promptToSend, answer: response });
+      setIsSherpaModalOpen(true);
+      setFollowUpPrompt('');
+    } catch (error) {
+      setSherpaError("Impossible de joindre le Sherpa. Vérifie la clé API Gemini ou réessaie.");
+    } finally {
+      setIsSherpaLoading(false);
+    }
+  };
+
+  const handleAskSherpaFromTask = (task: KanbanTask) => {
+    const taskPrompt = `Aide-moi à débloquer cette tâche du Kanban: "${task.content}" (colonne: ${task.columnId}, semaine ${task.week}, phase ${task.phase}). Donne-moi un plan d'action clair, des snippets de code et des vérifications à effectuer.`;
+    setSherpaPrompt(taskPrompt);
+    setFollowUpPrompt('');
+    void handleAskSherpa(taskPrompt);
+  };
+
+  const handleCopySherpaCode = async (code: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCodeCopyState((prev) => ({ ...prev, [key]: 'copied' }));
+      setTimeout(() => {
+        setCodeCopyState((prev) => ({ ...prev, [key]: 'idle' }));
+      }, 2000);
+    } catch (error) {
+      setCodeCopyState((prev) => ({ ...prev, [key]: 'error' }));
+      setTimeout(() => {
+        setCodeCopyState((prev) => ({ ...prev, [key]: 'idle' }));
+      }, 2000);
+    }
+  };
+
+  const extractCodeBlocks = (content: string) => {
+    const regex = /```(\w+)?\n([\s\S]*?)```/g;
+    const blocks: { language: string; code: string; id: string }[] = [];
+    let match;
+    let index = 0;
+    while ((match = regex.exec(content))) {
+      const language = match[1] || 'code';
+      const code = match[2].trim();
+      blocks.push({ language, code, id: `${language}-${index}` });
+      index += 1;
+    }
+    return blocks;
+  };
+
+  const renderSherpaContent = (content: string) => {
+    const blocks = extractCodeBlocks(content);
+    if (blocks.length === 0) {
+      return (
+        <div className="prose prose-invert max-w-none text-slate-100 text-sm whitespace-pre-wrap leading-relaxed">
+          {content}
+        </div>
+      );
+    }
+
+    const segments = content.split(/```\w*\n[\s\S]*?```/g);
+
+    return (
+      <div className="flex flex-col gap-4 max-h-[68vh] overflow-y-auto pr-1">
+        {segments.map((segment, idx) => (
+          <React.Fragment key={`segment-${idx}`}>
+            {segment && (
+              <div className="prose prose-invert max-w-none text-slate-100 text-sm whitespace-pre-wrap leading-relaxed">
+                {segment.trim()}
+              </div>
+            )}
+            {blocks[idx] && (
+              <div className="relative bg-dark-800 border border-dark-600 rounded-xl overflow-hidden shadow-inner">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-dark-700 text-[12px] text-slate-300">
+                  <span className="font-semibold">Snippet {blocks[idx].language}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopySherpaCode(blocks[idx].code, blocks[idx].id)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-dark-700 border border-dark-600 hover:border-emerald-400/60 hover:text-emerald-100 transition-colors"
+                  >
+                    {codeCopyState[blocks[idx].id] === 'copied'
+                      ? 'Copié'
+                      : codeCopyState[blocks[idx].id] === 'error'
+                      ? 'Erreur copie'
+                      : 'Copier le code'}
+                  </button>
+                </div>
+                <pre className="text-[12px] leading-relaxed text-slate-100 overflow-auto p-3 bg-dark-900/70">{blocks[idx].code}</pre>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  };
+
+  const sherpaSessions = useMemo(() => {
+    const sessions: { prompt: ChatMessage; answer: ChatMessage }[] = [];
+    for (let i = 0; i < sherpaHistory.length; i += 2) {
+      const userMsg = sherpaHistory[i];
+      const sherpaMsg = sherpaHistory[i + 1];
+      if (userMsg?.role === 'user' && sherpaMsg?.role === 'sherpa') {
+        sessions.unshift({ prompt: userMsg, answer: sherpaMsg });
+      }
+    }
+    return sessions;
+  }, [sherpaHistory]);
+
+  const activeContent = activeSherpaEntry ?? (sherpaAnswer ? { prompt: sherpaPrompt, answer: sherpaAnswer } : null);
 
   const handleAddTask = (columnId: ColumnId) => {
     if (!board && !selectedIdea) return;
@@ -342,6 +569,263 @@ const LeChantier: React.FC<LeChantierProps> = ({
         )}
       </div>
 
+      {/* SOS Sherpa */}
+      <div className="bg-dark-800/70 border border-dark-700 rounded-2xl p-5 md:p-6 mb-10 shadow-xl max-w-5xl mx-auto">
+        <div className="flex flex-col gap-3 md:gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-dark-900 border border-dark-700">
+              <IconSherpa className="w-5 h-5 text-gold-400" />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-gold-300/80">SOS Sherpa</p>
+              <h3 className="text-lg font-bold text-white">Bloqué sur une tâche ? Le Sherpa te débloque en quelques secondes.</h3>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 items-start">
+            <div className="flex flex-col gap-3">
+              <textarea
+                value={sherpaPrompt}
+                onChange={(e) => setSherpaPrompt(e.target.value)}
+                placeholder="Décris la tâche du Kanban qui bloque (ex: connecter Stripe, sécuriser une API, requête Supabase, automatiser un script)..."
+                className="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[120px]"
+              />
+              <div className="flex items-center justify-between text-[12px] text-slate-500">
+                <span>Le Sherpa reçoit le contexte du projet (Blueprint + tâches actuelles).</span>
+                {sherpaError && <span className="text-red-400 font-semibold">{sherpaError}</span>}
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={handleAskSherpa}
+                disabled={isSherpaLoading}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gold-500/90 hover:bg-gold-400 text-dark-900 font-bold shadow-lg shadow-gold-500/30 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isSherpaLoading ? 'Le Sherpa réfléchit...' : 'Obtenir la solution du Sherpa'}
+              </button>
+              {sherpaAnswer && (
+                <div className="bg-dark-900 border border-dark-700 rounded-xl p-3 text-sm text-slate-100 leading-relaxed shadow-inner flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[13px] text-slate-300 font-semibold">Réponse prête</span>
+                    <div className="flex items-center gap-2 text-[12px] text-slate-400">
+                      <button
+                        type="button"
+                        onClick={() => setIsSherpaModalOpen(true)}
+                        className="px-3 py-1.5 rounded-lg bg-dark-800 border border-dark-700 hover:border-gold-400/50 hover:text-gold-100 transition-colors"
+                      >
+                        Ouvrir en pop-up
+                      </button>
+                      {extractCodeBlocks(sherpaAnswer).length > 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const [first] = extractCodeBlocks(sherpaAnswer);
+                            if (first) handleCopySherpaCode(first.code, 'inline');
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-dark-800 border border-dark-700 hover:border-emerald-400/60 hover:text-emerald-100 transition-colors"
+                        >
+                          {codeCopyState.inline === 'copied'
+                            ? 'Code copié'
+                            : codeCopyState.inline === 'error'
+                            ? 'Copie impossible'
+                            : 'Copier le code'}
+                        </button>
+                      ) : (
+                        <span className="px-3 py-1.5 rounded-lg bg-dark-800 border border-dark-700 text-slate-500">Aucun code à copier</span>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-[12px] text-slate-400">
+                    La réponse complète s'affiche dans une fenêtre pour éviter de pousser le Kanban vers le bas.
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="bg-dark-900/60 border border-dark-700 rounded-xl p-4 text-sm text-slate-200 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] uppercase tracking-wider text-slate-500 font-bold">Historique Sherpa</p>
+                  <p className="text-xs text-slate-400">Retrouve tes derniers échanges et les codes générés.</p>
+                </div>
+                {sherpaSessions.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsSherpaModalOpen(true)}
+                    className="text-[12px] px-3 py-1.5 rounded-lg bg-dark-800 border border-dark-700 hover:border-gold-400/50 hover:text-gold-100 transition-colors"
+                  >
+                    Ouvrir le dernier échange
+                  </button>
+                )}
+              </div>
+
+              {sherpaSessions.length === 0 ? (
+                <p className="text-slate-500 text-sm">Pas encore d'échange enregistré pour ce chantier.</p>
+              ) : (
+                <div className="space-y-3 max-h-[280px] overflow-y-auto pr-1">
+                  {sherpaSessions.map((session, idx) => {
+                    const codeBlocks = extractCodeBlocks(session.answer.content);
+                    const preview = session.answer.content.split('\n').slice(0, 2).join(' ');
+                    return (
+                      <div
+                        key={`${session.prompt.timestamp}-${idx}`}
+                        className="rounded-lg border border-dark-700 bg-dark-800/70 p-3 flex flex-col gap-2 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-[12px] text-slate-400">
+                            {new Date(session.prompt.timestamp).toLocaleString('fr-FR')}
+                          </div>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                            {codeBlocks.length > 0 && (
+                              <span className="px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-200">
+                                {codeBlocks.length} code{codeBlocks.length > 1 ? 's' : ''}
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveSherpaEntry({ prompt: session.prompt.content, answer: session.answer.content });
+                                setIsSherpaModalOpen(true);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-dark-700 border border-dark-600 hover:border-gold-400/60 hover:text-gold-100 transition-colors"
+                            >
+                              Consulter
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-[13px] text-slate-200 line-clamp-2">{session.prompt.content}</p>
+                        <p className="text-[12px] text-slate-400 line-clamp-2">{preview}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {activeContent && isSherpaModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsSherpaModalOpen(false)}
+          ></div>
+          <div className="relative w-full max-w-6xl bg-dark-900 border border-dark-700 rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
+            <div className="flex items-start justify-between px-6 py-4 border-b border-dark-700 bg-dark-800/95 gap-3">
+              <div className="flex flex-col gap-1 text-white">
+                <div className="flex items-center gap-2 text-lg font-bold">
+                  <IconSherpa className="w-5 h-5 text-gold-400" />
+                  Réponse du Sherpa
+                </div>
+                <p className="text-sm text-slate-400 leading-snug line-clamp-2">
+                  {activeContent.prompt}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {extractCodeBlocks(activeContent.answer).length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const [first] = extractCodeBlocks(activeContent.answer);
+                      if (first) handleCopySherpaCode(first.code, 'modal');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-slate-200 hover:border-emerald-400/60 hover:text-emerald-100 transition-colors text-sm"
+                  >
+                    {codeCopyState.modal === 'copied'
+                      ? 'Code copié'
+                      : codeCopyState.modal === 'error'
+                      ? 'Copie impossible'
+                      : 'Copier le code'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsSherpaModalOpen(false)}
+                  className="p-2 rounded-lg bg-dark-700 border border-dark-600 text-slate-300 hover:text-white hover:border-slate-500 transition-colors"
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+            <div className="max-h-[78vh] overflow-hidden grid grid-cols-1 lg:grid-cols-[3fr_1fr]">
+              <div className="p-6 border-r border-dark-800 max-h-[78vh] overflow-y-auto flex flex-col gap-4">
+                {renderSherpaContent(activeContent.answer)}
+
+                <div className="mt-2 bg-dark-900/60 border border-dark-800 rounded-xl p-4 shadow-inner">
+                  <p className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                    <IconSherpa className="w-4 h-4 text-gold-400" />
+                    Continuer la discussion
+                  </p>
+                  <p className="text-[12px] text-slate-400 mb-3">
+                    Pose une question complémentaire ou demande un code plus précis sur cette tâche.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      value={followUpPrompt}
+                      onChange={(e) => setFollowUpPrompt(e.target.value)}
+                      placeholder="Ex: propose un test unitaire pour ce code, ou détaille le déploiement."
+                      className="w-full bg-dark-900 border border-dark-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 min-h-[90px]"
+                    />
+                    <div className="flex items-center justify-between">
+                      {sherpaError && (
+                        <span className="text-[12px] text-red-400 font-semibold">{sherpaError}</span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleAskSherpa(followUpPrompt)}
+                        disabled={isSherpaLoading}
+                        className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gold-500/90 hover:bg-gold-400 text-dark-900 font-semibold shadow-lg shadow-gold-500/30 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {isSherpaLoading ? 'Le Sherpa réfléchit...' : 'Envoyer'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-dark-900/60 p-4 flex flex-col gap-3 max-h-[78vh] overflow-y-auto">
+                <div className="flex items-center justify-between text-slate-200">
+                  <p className="font-semibold text-sm">Historique</p>
+                  {sherpaSessions.length > 0 && (
+                    <span className="text-[12px] text-slate-500">{sherpaSessions.length} échange(s)</span>
+                  )}
+                </div>
+                {sherpaSessions.length === 0 ? (
+                  <p className="text-slate-500 text-sm">Aucun échange enregistré pour ce projet.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {sherpaSessions.map((session, idx) => (
+                      <button
+                        key={`modal-session-${session.prompt.timestamp}-${idx}`}
+                        type="button"
+                        onClick={() => {
+                          setActiveSherpaEntry({ prompt: session.prompt.content, answer: session.answer.content });
+                        }}
+                        className={`w-full text-left rounded-lg border px-3 py-2 transition-colors ${
+                          activeContent.answer === session.answer.content
+                            ? 'border-gold-400/60 bg-gold-500/5 text-slate-100'
+                            : 'border-dark-700 bg-dark-800/70 text-slate-300 hover:border-gold-400/40'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[12px] text-slate-400 mb-1">
+                          <span>{new Date(session.prompt.timestamp).toLocaleString('fr-FR')}</span>
+                          {extractCodeBlocks(session.answer.content).length > 0 && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-200">
+                              Code
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[13px] text-slate-100 line-clamp-2">{session.prompt.content}</p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Si pas encore de kanban et pas de blueprint */}
       {!board && !hasBlueprint && (
         <div className="bg-dark-800 border border-dark-700 rounded-[2rem] p-10 md:p-12 text-center max-w-4xl mx-auto shadow-2xl">
@@ -434,25 +918,35 @@ const LeChantier: React.FC<LeChantierProps> = ({
                         <p className="text-[13px] leading-relaxed">
                           {task.content}
                         </p>
-                        <div className="flex items-center justify-between pt-1">
-                          {colId !== 'done' ? (
+                        <div className="flex items-center justify-between pt-1 gap-2">
+                          <div className="flex items-center gap-3">
                             <button
                               type="button"
-                              onClick={() => {
-                                // Passer directement en "Terminé"
-                                handleDropOnTask(task.id, 'done');
-                              }}
-                              className="inline-flex items-center gap-1 text-[11px] text-emerald-400 hover:text-emerald-300"
+                              onClick={() => handleAskSherpaFromTask(task)}
+                              className="inline-flex items-center gap-1 text-[11px] text-gold-300 hover:text-gold-100"
                             >
-                              <IconCheck className="w-3.5 h-3.5" />
-                              Marquer comme fait
+                              <IconSherpa className="w-3.5 h-3.5" />
+                              SOS Sherpa
                             </button>
-                          ) : (
-                            <span className="text-[11px] text-emerald-400 inline-flex items-center gap-1">
-                              <IconCheck className="w-3.5 h-3.5" />
-                              Terminé
-                            </span>
-                          )}
+                            {colId !== 'done' ? (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  // Passer directement en "Terminé"
+                                  handleDropOnTask(task.id, 'done');
+                                }}
+                                className="inline-flex items-center gap-1 text-[11px] text-emerald-400 hover:text-emerald-300"
+                              >
+                                <IconCheck className="w-3.5 h-3.5" />
+                                Marquer comme fait
+                              </button>
+                            ) : (
+                              <span className="text-[11px] text-emerald-400 inline-flex items-center gap-1">
+                                <IconCheck className="w-3.5 h-3.5" />
+                                Terminé
+                              </span>
+                            )}
+                          </div>
                           <button
                             type="button"
                             onClick={() => handleDeleteTask(task.id)}
