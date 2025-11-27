@@ -359,16 +359,15 @@ const Settings: React.FC<SettingsProps> = ({
                 Plan actuel
               </span>
               <div
-                className={
-                  'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md shadow-sm ' +
-                  getPlanBadgeClass(plan)
-                }
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(16,185,129,0.35)]" />
-                <span className="whitespace-nowrap">
-                  {getPlanLabel(plan)}
-                </span>
-              </div>
+  className={
+    'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md shadow-sm ' +
+    getPlanBadgeClass(plan)
+  }
+>
+  <span className="whitespace-nowrap">
+    {getPlanLabel(plan)}
+  </span>
+</div>
             </div>
           </div>
 

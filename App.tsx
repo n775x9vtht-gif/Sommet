@@ -422,29 +422,44 @@ const App: React.FC = () => {
   };
 
   // 🆕 Gérer l’accès au portail Stripe (factures + résiliation)
-  const handleManageBilling = async () => {
-    try {
-      const resp = await fetch('/api/create-billing-portal-session', {
-        method: 'POST',
-      });
+const handleManageBilling = async () => {
+  try {
+    // On récupère l'utilisateur courant côté front
+    const { data: { session } } = await supabase.auth.getSession();
 
-      if (!resp.ok) {
-        console.error('❌ Erreur create-billing-portal-session:', await resp.text());
-        showToastMessage("Impossible d'ouvrir la page de facturation.");
-        return;
-      }
-
-      const data = await resp.json();
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        showToastMessage("Réponse inattendue de la page de facturation.");
-      }
-    } catch (err) {
-      console.error('❌ Erreur handleManageBilling:', err);
-      showToastMessage("Erreur lors de l'ouverture de la page de facturation.");
+    if (!session?.user?.id) {
+      showToastMessage("Tu dois être connecté pour gérer ton abonnement.");
+      return;
     }
-  };
+
+    const resp = await fetch('/api/create-billing-portal-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: session.user.id,
+      }),
+    });
+
+    if (!resp.ok) {
+      const text = await resp.text();
+      console.error('❌ Erreur create-billing-portal-session:', text);
+      showToastMessage("Impossible d'ouvrir la page de facturation.");
+      return;
+    }
+
+    const data = await resp.json();
+    if (data?.url) {
+      window.location.href = data.url;
+    } else {
+      showToastMessage("Réponse inattendue de la page de facturation.");
+    }
+  } catch (err) {
+    console.error('❌ Erreur handleManageBilling:', err);
+    showToastMessage("Erreur lors de l'ouverture de la page de facturation.");
+  }
+};
 
   // 🔥 ROUTAGE PAR QUERY PARAMS : page de succès Stripe
   let checkoutStatus: string | null = null;
