@@ -58,15 +58,32 @@ function getPlanLabel(plan: PlanType): string {
 
 // Classe du badge plan
 function getPlanBadgeClass(plan: PlanType): string {
+  const base =
+    'inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold ' +
+    'backdrop-blur bg-white/5 border shadow-sm shadow-black/30 whitespace-nowrap';
+
   switch (plan) {
     case 'camp_de_base':
-      return 'bg-slate-800 text-slate-200 border border-slate-600';
+      return `${base} text-slate-200 border-slate-500/50`;
     case 'explorateur':
-      return 'bg-brand-900/30 text-brand-200 border border-brand-500/40';
+      return `${base} text-sky-100 border-sky-400/60 bg-sky-500/15`;
     case 'batisseur':
-      return 'bg-amber-500/15 text-amber-100 border border-amber-400/60';
+      return `${base} text-amber-100 border-amber-400/80 bg-amber-500/20`;
     default:
-      return 'bg-slate-800 text-slate-200 border border-slate-600';
+      return `${base} text-slate-200 border-slate-500/50`;
+  }
+}
+
+function getPlanDotClass(plan: PlanType): string {
+  switch (plan) {
+    case 'camp_de_base':
+      return 'w-2 h-2 rounded-full bg-slate-400';
+    case 'explorateur':
+      return 'w-2 h-2 rounded-full bg-sky-400';
+    case 'batisseur':
+      return 'w-2 h-2 rounded-full bg-amber-400';
+    default:
+      return 'w-2 h-2 rounded-full bg-slate-400';
   }
 }
 
@@ -326,12 +343,15 @@ const Settings: React.FC<SettingsProps> = ({
                 {subscriptionInfoLine}
               </p>
             </div>
-            <div className="flex items-center gap-3 bg-dark-950/50 p-2 rounded-xl border border-dark-700">
-              <span className="text-xs font-bold text-slate-500 uppercase px-2">Plan Actuel :</span>
-              <span className={`px-3 py-1 rounded-lg text-xs font-bold ${getPlanBadgeClass(plan)}`}>
-                {getPlanLabel(plan)}
-              </span>
-            </div>
+            <div className="flex items-center gap-3 bg-dark-950/50 p-2 rounded-xl border border-dark-700 flex-nowrap">
+  <span className="text-[10px] font-semibold tracking-[0.14em] text-slate-500 uppercase px-2 whitespace-nowrap">
+    Plan actuel
+  </span>
+  <span className={getPlanBadgeClass(plan)}>
+    <span className={getPlanDotClass(plan)} />
+    <span>{getPlanLabel(plan).replace(' (abonnement)', '')}</span>
+  </span>
+</div>
           </div>
 
           <div className="bg-dark-950/50 rounded-xl border border-dark-700 p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
