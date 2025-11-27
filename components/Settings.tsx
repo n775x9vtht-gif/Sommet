@@ -7,7 +7,6 @@ import {
   IconX, 
   IconDiamond, 
   IconRocket, 
-  IconMountain, 
   IconTrash 
 } from './Icons';
 
@@ -15,18 +14,19 @@ type PlanType = 'camp_de_base' | 'explorateur' | 'batisseur';
 
 interface SettingsProps {
   userEmail: string;
-  userName: string;
-  onUpdateProfile: (name: string, email: string) => void;
+  firstName: string;
+  lastName: string;
+  onUpdateProfile: (firstName: string, lastName: string, email: string) => void;
   onOpenPricing: () => void;
   onDeleteAccount: () => void;
 
-  // 🆕 Infos d’abonnement
+  // Infos d’abonnement
   plan: PlanType;
   subscriptionStatus?: string | null;
   cancelAt?: string | null;
   cancelAtPeriodEnd?: boolean | null;
 
-  // 🆕 Handler pour ouvrir le portail Stripe (factures + résiliation)
+  // Handler pour ouvrir le portail Stripe (factures + résiliation)
   onManageBilling?: () => void;
 }
 
@@ -46,11 +46,11 @@ function formatDate(dateStr: string | null | undefined): string | null {
 function getPlanLabel(plan: PlanType): string {
   switch (plan) {
     case 'camp_de_base':
-      return 'Camp de Base';
+      return 'Camp de Base (gratuit)';
     case 'explorateur':
-      return 'Explorateur';
+      return "Explorateur (pack)";
     case 'batisseur':
-      return 'Bâtisseur';
+      return 'Bâtisseur (abonnement)';
     default:
       return 'Inconnu';
   }
@@ -58,38 +58,22 @@ function getPlanLabel(plan: PlanType): string {
 
 // Classe du badge plan
 function getPlanBadgeClass(plan: PlanType): string {
-  const base =
-    'inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold ' +
-    'backdrop-blur bg-white/5 border shadow-sm shadow-black/30 whitespace-nowrap';
-
   switch (plan) {
     case 'camp_de_base':
-      return `${base} text-slate-200 border-slate-500/50`;
+      return 'bg-slate-900/70 border border-slate-700/80 text-slate-100/90 backdrop-blur-md';
     case 'explorateur':
-      return `${base} text-sky-100 border-sky-400/60 bg-sky-500/15`;
+      return 'bg-brand-900/40 border border-brand-500/60 text-brand-50 backdrop-blur-md';
     case 'batisseur':
-      return `${base} text-amber-100 border-amber-400/80 bg-amber-500/20`;
+      return 'bg-amber-500/15 border border-amber-400/70 text-amber-50 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.25)]';
     default:
-      return `${base} text-slate-200 border-slate-500/50`;
-  }
-}
-
-function getPlanDotClass(plan: PlanType): string {
-  switch (plan) {
-    case 'camp_de_base':
-      return 'w-2 h-2 rounded-full bg-slate-400';
-    case 'explorateur':
-      return 'w-2 h-2 rounded-full bg-sky-400';
-    case 'batisseur':
-      return 'w-2 h-2 rounded-full bg-amber-400';
-    default:
-      return 'w-2 h-2 rounded-full bg-slate-400';
+      return 'bg-slate-900/70 border border-slate-700/80 text-slate-100/90 backdrop-blur-md';
   }
 }
 
 const Settings: React.FC<SettingsProps> = ({
   userEmail,
-  userName,
+  firstName,
+  lastName,
   onUpdateProfile,
   onOpenPricing,
   onDeleteAccount,
@@ -99,7 +83,8 @@ const Settings: React.FC<SettingsProps> = ({
   cancelAtPeriodEnd,
   onManageBilling,
 }) => {
-  const [name, setName] = useState(userName);
+  const [localFirstName, setLocalFirstName] = useState(firstName);
+  const [localLastName, setLocalLastName] = useState(lastName);
   const [email, setEmail] = useState(userEmail);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
@@ -112,21 +97,21 @@ const Settings: React.FC<SettingsProps> = ({
   const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
-    setName(userName);
+    setLocalFirstName(firstName);
+    setLocalLastName(lastName);
     setEmail(userEmail);
-  }, [userName, userEmail]);
+  }, [firstName, lastName, userEmail]);
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingProfile(true);
     
-    // Simulate API call
     setTimeout(() => {
-      onUpdateProfile(name, email);
+      onUpdateProfile(localFirstName, localLastName, email);
       setIsSavingProfile(false);
       setProfileSaved(true);
       setTimeout(() => setProfileSaved(false), 3000);
-    }, 1000);
+    }, 500);
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -138,13 +123,12 @@ const Settings: React.FC<SettingsProps> = ({
       return;
     }
 
-    if (newPassword.length < 6) {
-      setPasswordError("Le mot de passe doit contenir au moins 6 caractères.");
+    if (newPassword.length < 8) {
+      setPasswordError("Le mot de passe doit contenir au moins 8 caractères.");
       return;
     }
 
     setIsSavingPassword(true);
-    // Simulate API call
     setTimeout(() => {
       setIsSavingPassword(false);
       setPasswordSaved(true);
@@ -152,7 +136,7 @@ const Settings: React.FC<SettingsProps> = ({
       setNewPassword('');
       setConfirmPassword('');
       setTimeout(() => setPasswordSaved(false), 3000);
-    }, 1000);
+    }, 800);
   };
 
   const handleDelete = () => {
@@ -163,7 +147,7 @@ const Settings: React.FC<SettingsProps> = ({
     }
   };
 
-  // 🧠 Texte contextuel sur l'abonnement
+  // Texte contextuel abonnement
   const formattedCancelAt = formatDate(cancelAt);
   let subscriptionInfoLine = '';
   let showManageBillingButton = false;
@@ -174,7 +158,7 @@ const Settings: React.FC<SettingsProps> = ({
   } else if (plan === 'explorateur') {
     subscriptionInfoLine =
       "Vous avez un pack Explorateur (one-shot). Il n'y a pas d'abonnement récurrent à gérer.";
-    showManageBillingButton = !!onManageBilling; // tu peux laisser true ou false selon ton choix
+    showManageBillingButton = !!onManageBilling;
   } else if (plan === 'batisseur') {
     showManageBillingButton = !!onManageBilling;
 
@@ -213,20 +197,40 @@ const Settings: React.FC<SettingsProps> = ({
           </h2>
           
           <form onSubmit={handleProfileSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Prénom</label>
-              <div className="relative">
-                <IconUser className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                  Prénom
+                </label>
+                <div className="relative">
+                  <IconUser className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                  <input 
+                    type="text" 
+                    value={localFirstName}
+                    onChange={(e) => setLocalFirstName(e.target.value)}
+                    className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all placeholder-slate-600"
+                    placeholder="Rémi"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                  Nom
+                </label>
                 <input 
                   type="text" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all placeholder-slate-600"
+                  value={localLastName}
+                  onChange={(e) => setLocalLastName(e.target.value)}
+                  className="w-full bg-dark-900 border border-dark-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all placeholder-slate-600"
+                  placeholder="Moreira"
                 />
               </div>
             </div>
+
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Email</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                Email
+              </label>
               <div className="relative">
                 <IconMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 <input 
@@ -269,7 +273,9 @@ const Settings: React.FC<SettingsProps> = ({
           
           <form onSubmit={handlePasswordSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Mot de passe actuel</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                Mot de passe actuel
+              </label>
               <input 
                 type="password" 
                 value={currentPassword}
@@ -280,7 +286,9 @@ const Settings: React.FC<SettingsProps> = ({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Nouveau</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                  Nouveau
+                </label>
                 <input 
                   type="password" 
                   value={newPassword}
@@ -290,7 +298,9 @@ const Settings: React.FC<SettingsProps> = ({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Confirmer</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                  Confirmer
+                </label>
                 <input 
                   type="password" 
                   value={confirmPassword}
@@ -327,7 +337,7 @@ const Settings: React.FC<SettingsProps> = ({
           </form>
         </div>
 
-        {/* 3. Abonnement (Full Width) */}
+        {/* 3. Abonnement */}
         <div className="lg:col-span-2 bg-gradient-to-r from-dark-800 to-dark-900 border border-dark-700 rounded-[2rem] p-8 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
           
@@ -343,15 +353,14 @@ const Settings: React.FC<SettingsProps> = ({
                 {subscriptionInfoLine}
               </p>
             </div>
-            <div className="flex items-center gap-3 bg-dark-950/50 p-2 rounded-xl border border-dark-700 flex-nowrap">
-  <span className="text-[10px] font-semibold tracking-[0.14em] text-slate-500 uppercase px-2 whitespace-nowrap">
-    Plan actuel
-  </span>
-  <span className={getPlanBadgeClass(plan)}>
-    <span className={getPlanDotClass(plan)} />
-    <span>{getPlanLabel(plan).replace(' (abonnement)', '')}</span>
-  </span>
-</div>
+            <div className="flex items-center gap-3 bg-dark-950/60 px-3 py-2 rounded-full border border-dark-700/80 backdrop-blur-md">
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                Plan actuel
+              </span>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 ${getPlanBadgeClass(plan)}`}>
+                {getPlanLabel(plan)}
+              </span>
+            </div>
           </div>
 
           <div className="bg-dark-950/50 rounded-xl border border-dark-700 p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
@@ -400,14 +409,14 @@ const Settings: React.FC<SettingsProps> = ({
                   onClick={onManageBilling}
                   className="w-full px-6 py-3 bg-dark-800 hover:bg-dark-700 text-slate-100 font-bold rounded-xl border border-dark-600 transition-all hover:-translate-y-0.5 whitespace-nowrap"
                 >
-                  Gérer mon abonnement & mes factures
+                  Gérer mon abonnement &amp; mes factures
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* 4. Danger Zone (Full Width) */}
+        {/* 4. Danger Zone */}
         <div className="lg:col-span-2 border border-red-500/20 bg-red-500/5 rounded-[2rem] p-8">
           <h2 className="text-xl font-bold text-red-500 mb-4 flex items-center gap-3">
             <IconTrash className="w-5 h-5" />

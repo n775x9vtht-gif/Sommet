@@ -37,6 +37,8 @@ const App: React.FC = () => {
 
   // 🆕 Infos compte / abonnement
   const [userEmail, setUserEmail] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>('Entrepreneur');
+  const [lastName, setLastName] = useState<string>('');
   const [profilePlan, setProfilePlan] = useState<PlanType>('camp_de_base');
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [cancelAt, setCancelAt] = useState<string | null>(null);
@@ -48,60 +50,137 @@ const App: React.FC = () => {
     setToast({ message, show: true });
   };
 
+  // 🧠 Calcule prénom / nom à partir du full_name / metadata / email
+  function computeNames(opts: {
+    profileFullName?: string | null;
+    meta?: any;
+    email?: string | null;
+  }): { first: string; last: string } {
+    const { profileFullName, meta, email } = opts;
+
+    const cap = (s: string) =>
+      s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
+    // 1. Priorité au full_name en base (profiles.full_name)
+    if (profileFullName && profileFullName.trim().length > 0) {
+      const parts = profileFullName.trim().split(/\s+/);
+      const first = parts[0];
+      const last = parts.slice(1).join(' ');
+      return {
+        first: cap(first),
+        last: cap(last),
+      };
+    }
+
+    // 2. Sinon, metadata (par ex. first_name / last_name)
+    const metaFirst =
+      meta?.first_name ??
+      meta?.prenom ??
+      '';
+    const metaLast =
+      meta?.last_name ??
+      meta?.nom ??
+      '';
+
+    if (metaFirst || metaLast) {
+      return {
+        first: cap(metaFirst || 'Entrepreneur'),
+        last: cap(metaLast || ''),
+      };
+    }
+
+    // 3. Sinon, on dérive du mail (avant le @)
+    if (email && email.includes('@')) {
+      const local = email.split('@')[0];
+      return {
+        first: cap(local || 'Entrepreneur'),
+        last: '',
+      };
+    }
+
+    // 4. Fallback
+    return {
+      first: 'Entrepreneur',
+      last: '',
+    };
+  }
+
   // 🆕 Charge les données utilisateur (profil + abonnement) une fois connecté
   const loadUserData = async (session: any) => {
     setHasAccess(true);
     setIsGuestMode(false);
     localStorage.removeItem('sommet_guest_mode');
 
-    // Email
     const email = session?.user?.email ?? '';
     if (email) {
       setUserEmail(email);
     }
 
-    // Idées
-    const ideas = await fetchUserIdeas();
-    setSavedIdeas(ideas);
-
     const userId = session.user?.id as string | undefined;
-    if (!userId) {
-      return;
-    }
+    const userMeta = session.user?.user_metadata ?? {};
 
-    // Profil (plan)
-    const { data: profile, error: profileErr } = await supabase
-      .from('profiles')
-      .select('plan')
-      .eq('id', userId)
-      .single();
+    let profileFullName: string | null = null;
 
-    if (!profileErr && profile && profile.plan) {
-      setProfilePlan(profile.plan as PlanType);
+    if (userId) {
+      // Profil (plan + full_name)
+      const { data: profile, error: profileErr } = await supabase
+        .from('profiles')
+        .select('plan, full_name')
+        .eq('id', userId)
+        .single();
+
+      if (!profileErr && profile) {
+        if (profile.plan) {
+          setProfilePlan(profile.plan as PlanType);
+        } else {
+          setProfilePlan('camp_de_base');
+        }
+        profileFullName = profile.full_name ?? null;
+      } else {
+        setProfilePlan('camp_de_base');
+      }
+
+      // Dernière subscription Stripe
+      const { data: subRows, error: subErr } = await supabase
+        .from('stripe_subscriptions')
+        .select('status, cancel_at, cancel_at_period_end')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (!subErr && subRows && subRows.length > 0) {
+        const s = subRows[0] as any;
+        setSubscriptionStatus(s.status ?? null);
+        setCancelAt(s.cancel_at ?? null);
+        setCancelAtPeriodEnd(
+          typeof s.cancel_at_period_end === 'boolean' ? s.cancel_at_period_end : null
+        );
+      } else {
+        setSubscriptionStatus(null);
+        setCancelAt(null);
+        setCancelAtPeriodEnd(null);
+      }
     } else {
       setProfilePlan('camp_de_base');
-    }
-
-    // Dernière subscription Stripe (s’il y en a une)
-    const { data: subRows, error: subErr } = await supabase
-      .from('stripe_subscriptions')
-      .select('status, cancel_at, cancel_at_period_end')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (!subErr && subRows && subRows.length > 0) {
-      const s = subRows[0] as any;
-      setSubscriptionStatus(s.status ?? null);
-      setCancelAt(s.cancel_at ?? null);
-      setCancelAtPeriodEnd(
-        typeof s.cancel_at_period_end === 'boolean' ? s.cancel_at_period_end : null
-      );
-    } else {
       setSubscriptionStatus(null);
       setCancelAt(null);
       setCancelAtPeriodEnd(null);
     }
+
+    // Prénom / Nom pour Settings + Sidebar
+    const names = computeNames({
+      profileFullName,
+      meta: userMeta,
+      email,
+    });
+
+    setFirstName(names.first || 'Entrepreneur');
+    setLastName(names.last || '');
+    localStorage.setItem('sommet_user_name', names.first || 'Entrepreneur');
+
+    // Idées
+    const ideas = await fetchUserIdeas();
+    setSavedIdeas(ideas);
   };
 
   // Listener global pour ouvrir la PricingModal
@@ -135,6 +214,8 @@ const App: React.FC = () => {
             setIsGuestMode(false);
             setSavedIdeas([]);
             setUserEmail('');
+            setFirstName('Entrepreneur');
+            setLastName('');
             setProfilePlan('camp_de_base');
             setSubscriptionStatus(null);
             setCancelAt(null);
@@ -150,13 +231,11 @@ const App: React.FC = () => {
   // --- DATA PERSISTENCE LOGIC ---
 
   const handleEnterApp = async () => {
-    // On recharge la session pour avoir userId/email à jour
     const { data: { session } } = await supabase.auth.getSession();
 
     if (session) {
       await loadUserData(session);
     } else {
-      // fallback minimal si jamais
       setHasAccess(true);
       setIsGuestMode(false);
       localStorage.removeItem('sommet_guest_mode');
@@ -166,7 +245,6 @@ const App: React.FC = () => {
     
     window.scrollTo(0, 0);
 
-    // Nettoie les query params de checkout une fois entré
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       url.searchParams.delete('checkout');
@@ -192,6 +270,8 @@ const App: React.FC = () => {
     setIsGuestMode(false);
     setSavedIdeas([]);
     setUserEmail('');
+    setFirstName('Entrepreneur');
+    setLastName('');
     setProfilePlan('camp_de_base');
     setSubscriptionStatus(null);
     setCancelAt(null);
@@ -205,14 +285,42 @@ const App: React.FC = () => {
     setIsAuthModalOpen(true);
   };
 
-  const handleUpdateProfile = (name: string, email: string) => {
-    localStorage.setItem('sommet_user_name', name);
-    // côté back tu pourras plus tard aussi update Supabase
+  // 🆕 Mise à jour profil (Prénom / Nom / Email + Supabase)
+  const handleUpdateProfile = async (newFirstName: string, newLastName: string, email: string) => {
+    const cap = (s: string) =>
+      s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
+    const f = cap(newFirstName.trim() || 'Entrepreneur');
+    const l = cap(newLastName.trim());
+
+    setFirstName(f);
+    setLastName(l);
     if (email) {
       setUserEmail(email);
     }
+
+    // Pour la Sidebar (fallback)
+    localStorage.setItem('sommet_user_name', f);
+
+    // Mise à jour Supabase (full_name)
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id) {
+        await supabase
+          .from('profiles')
+          .update({
+            full_name: l ? `${f} ${l}` : f,
+          })
+          .eq('id', user.id);
+      }
+    } catch (e) {
+      console.error('Erreur mise à jour full_name Supabase:', e);
+    }
+
+    // Optionnel : notifier la Sidebar qu’elle peut rafraîchir
+    window.dispatchEvent(new Event('sommetProfileShouldRefresh'));
+
     showToastMessage('Profil mis à jour avec succès');
-    window.dispatchEvent(new Event('storage'));
   };
 
   const handleDeleteAccount = async () => {
@@ -313,39 +421,23 @@ const App: React.FC = () => {
     if (ideaToUpdate) await updateIdea(ideaToUpdate);
   };
 
-    // 🆕 Gérer l’accès au portail Stripe (factures + résiliation)
+  // 🆕 Gérer l’accès au portail Stripe (factures + résiliation)
   const handleManageBilling = async () => {
     try {
-      // 1️⃣ Récupérer la session côté client
-      const { data } = await supabase.auth.getSession();
-      const accessToken = data.session?.access_token;
-
-      if (!accessToken) {
-        showToastMessage("Tu dois être connecté pour gérer ton abonnement.");
-        return;
-      }
-
-      // 2️⃣ Appeler notre endpoint avec le token
       const resp = await fetch('/api/create-billing-portal-session', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessToken }),
       });
 
       if (!resp.ok) {
-        const errText = await resp.text();
-        console.error('❌ Erreur create-billing-portal-session:', errText);
+        console.error('❌ Erreur create-billing-portal-session:', await resp.text());
         showToastMessage("Impossible d'ouvrir la page de facturation.");
         return;
       }
 
-      const dataJson = await resp.json();
-
-      if (dataJson?.url) {
-        // 3️⃣ Redirection vers le portail Stripe
-        window.location.href = dataJson.url;
+      const data = await resp.json();
+      if (data?.url) {
+        window.location.href = data.url;
       } else {
-        console.error('Réponse inattendue:', dataJson);
         showToastMessage("Réponse inattendue de la page de facturation.");
       }
     } catch (err) {
@@ -368,7 +460,6 @@ const App: React.FC = () => {
   }
 
   if (checkoutStatus === 'success') {
-    // On affiche la page de succès / création de mot de passe
     return (
       <SuccessPage
         onEnterApp={handleEnterApp}
@@ -408,6 +499,8 @@ const App: React.FC = () => {
         onTriggerAuth={handleAuthTrigger}
         onOpenPricing={() => setIsPricingModalOpen(true)}
         onLogout={handleLogout}
+        // ✅ On n’envoie que le prénom à la Sidebar
+        userName={firstName}
       />
       
       <main className="flex-1 lg:ml-64 p-6 lg:p-10 overflow-x-hidden">
@@ -475,7 +568,8 @@ const App: React.FC = () => {
         {currentView === AppView.SETTINGS && (
           <Settings
             userEmail={userEmail || 'utilisateur@exemple.com'}
-            userName={localStorage.getItem('sommet_user_name') || 'Entrepreneur'}
+            firstName={firstName}
+            lastName={lastName}
             onUpdateProfile={handleUpdateProfile}
             onOpenPricing={() => setIsPricingModalOpen(true)}
             onDeleteAccount={handleDeleteAccount}

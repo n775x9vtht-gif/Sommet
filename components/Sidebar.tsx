@@ -9,7 +9,6 @@ import {
   IconUser,
   IconLock,
   IconLockOpen,
-  IconSparkles,
   IconDiamond,
   IconBulb,
   IconBlueprint,
@@ -22,10 +21,11 @@ import { getCurrentUserProfile } from '../services/profileService';
 interface SidebarProps {
   currentView: AppView;
   onViewChange: (view: AppView) => void;
-  isGuestMode?: boolean;
-  onTriggerAuth?: () => void;
-  onOpenPricing?: () => void;
-  onLogout?: () => void;
+  isGuestMode: boolean;
+  onTriggerAuth: () => void;
+  onOpenPricing: () => void;
+  onLogout: () => void;
+  userName: string; // 🆕 fourni par App.tsx
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -35,21 +35,17 @@ const Sidebar: React.FC<SidebarProps> = ({
   onTriggerAuth,
   onOpenPricing,
   onLogout,
+  userName,
 }) => {
-  const [userName, setUserName] = useState('Entrepreneur');
+  // 🔁 On ne gère plus le nom ici, seulement le plan & les crédits
   const [plan, setPlan] = useState<string | null>(null);
-  const [generationCredits, setGenerationCredits] = useState<number | null>(
-    null
-  );
-  const [maxGenerationCredits, setMaxGenerationCredits] = useState<
-    number | null
-  >(null);
+  const [generationCredits, setGenerationCredits] = useState<number | null>(null);
+  const [maxGenerationCredits, setMaxGenerationCredits] = useState<number | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
   // --------- Chargement du profil + crédits ----------
   const fetchProfile = useCallback(async () => {
     if (isGuestMode) {
-      setUserName('Visiteur');
       setPlan(null);
       setGenerationCredits(null);
       setMaxGenerationCredits(null);
@@ -62,21 +58,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       const userPlan = profile?.plan || 'camp_de_base';
       setPlan(userPlan);
-
-      // nom : priorité au profil, sinon localStorage, sinon fallback
-      if (profile?.full_name) {
-        const name = profile.full_name.trim();
-        setUserName(name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Entrepreneur');
-      } else {
-        const storedName = localStorage.getItem('sommet_user_name');
-        if (storedName) {
-          setUserName(
-            storedName.charAt(0).toUpperCase() + storedName.slice(1)
-          );
-        } else {
-          setUserName('Entrepreneur');
-        }
-      }
 
       // crédits de génération selon plan
       const gen = profile?.generation_credits ?? null;
@@ -97,7 +78,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   useEffect(() => {
     if (isGuestMode) {
-      setUserName('Visiteur');
       setProfileLoading(false);
       return;
     }
@@ -177,16 +157,16 @@ const Sidebar: React.FC<SidebarProps> = ({
       maxGenerationCredits > 0
     ) {
       creditsLabel = `${generationCredits} / ${maxGenerationCredits} crédits`;
-      const ratio = Math.max(
-        0,
-        Math.min(1, generationCredits / maxGenerationCredits)
-      );
+      const ratio = Math.max(0, Math.min(1, generationCredits / maxGenerationCredits));
       creditsWidth = `${ratio * 100}%`;
     } else {
       creditsLabel = '0 crédits de génération restants';
       creditsWidth = '0%';
     }
   }
+
+  // 🧊 Nom affiché : invité → "Visiteur", sinon le userName fourni par App
+  const displayName = isGuestMode ? 'Visiteur' : userName || 'Entrepreneur';
 
   return (
     <aside className="w-20 lg:w-64 fixed left-0 top-0 h-screen bg-dark-800 border-r border-dark-700 flex flex-col z-50">
@@ -264,13 +244,13 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-white truncate max-w-[80px]">
-                {userName}
+                {displayName}
               </p>
               <p className="text-[10px] text-slate-500 truncate">
                 {isGuestMode
                   ? 'Mode Démo'
                   : plan === 'explorateur'
-                  ? "Plan Explorateur"
+                  ? 'Plan Explorateur'
                   : plan === 'batisseur'
                   ? 'Plan Bâtisseur'
                   : 'Plan Gratuit'}
