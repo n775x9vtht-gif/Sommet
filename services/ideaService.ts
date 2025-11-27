@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { getSupabaseClient } from './supabaseClient';
 import { SavedIdea } from '../types';
 
 // Database interface matching the Supabase table structure (snake_case)
@@ -14,6 +14,7 @@ interface DatabaseIdea {
 // 1. FETCH ALL IDEAS
 export const fetchUserIdeas = async (): Promise<SavedIdea[]> => {
   try {
+    const supabase = getSupabaseClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return [];
 
@@ -27,8 +28,8 @@ export const fetchUserIdeas = async (): Promise<SavedIdea[]> => {
     // Map database rows back to SavedIdea objects
     // We primarily use the 'content' JSONB field which holds the full structure
     return (data || []).map((row: DatabaseIdea) => ({
-        ...row.content,
-        id: row.id // Ensure the top-level ID matches the DB ID
+      ...row.content,
+      id: row.id // Ensure the top-level ID matches the DB ID
     }));
   } catch (error) {
     console.error('Error fetching ideas:', error);
@@ -39,6 +40,7 @@ export const fetchUserIdeas = async (): Promise<SavedIdea[]> => {
 // 2. CREATE IDEA
 export const createIdea = async (idea: SavedIdea): Promise<SavedIdea | null> => {
   try {
+    const supabase = getSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
@@ -68,6 +70,7 @@ export const createIdea = async (idea: SavedIdea): Promise<SavedIdea | null> => 
 // 3. UPDATE IDEA (Analysis, Blueprint, Kanban changes)
 export const updateIdea = async (idea: SavedIdea): Promise<boolean> => {
   try {
+    const supabase = getSupabaseClient();
     const { error } = await supabase
       .from('ideas')
       .update({ content: idea }) // Update the JSON content
@@ -84,6 +87,7 @@ export const updateIdea = async (idea: SavedIdea): Promise<boolean> => {
 // 4. DELETE IDEA
 export const deleteIdea = async (id: string): Promise<boolean> => {
   try {
+    const supabase = getSupabaseClient();
     const { error } = await supabase
       .from('ideas')
       .delete()
