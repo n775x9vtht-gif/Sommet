@@ -46,11 +46,11 @@ function formatDate(dateStr: string | null | undefined): string | null {
 function getPlanLabel(plan: PlanType): string {
   switch (plan) {
     case 'camp_de_base':
-      return 'Camp de Base (gratuit)';
+      return 'Camp de Base';
     case 'explorateur':
-      return "Explorateur (pack)";
+      return 'Explorateur';
     case 'batisseur':
-      return 'Bâtisseur (abonnement)';
+      return 'Bâtisseur';
     default:
       return 'Inconnu';
   }
