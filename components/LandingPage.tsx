@@ -95,11 +95,42 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <nav className="sticky top-0 z-50 bg-white/60 backdrop-blur-2xl border-b border-slate-900/5">
         <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
           <div className="flex items-center gap-3 group cursor-pointer">
-            {/* New geometric logo */}
+            {/* Logo: Ascending path to summit */}
             <div className="relative w-9 h-9">
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 via-purple-600 to-cyan-500 rounded-lg rotate-45 group-hover:rotate-[50deg] transition-transform duration-500"></div>
-              <div className="absolute inset-[3px] bg-white rounded-lg rotate-45"></div>
-              <div className="absolute inset-[6px] bg-gradient-to-tr from-blue-600 via-purple-600 to-cyan-500 rounded-sm rotate-45"></div>
+              {/* Mountain peak */}
+              <svg viewBox="0 0 36 36" className="w-9 h-9" fill="none">
+                {/* Base gradient definition */}
+                <defs>
+                  <linearGradient id="summitGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#2563eb" />
+                    <stop offset="50%" stopColor="#7c3aed" />
+                    <stop offset="100%" stopColor="#06b6d4" />
+                  </linearGradient>
+                </defs>
+                {/* Mountain outline */}
+                <path
+                  d="M 6 28 L 18 8 L 30 28 Z"
+                  fill="url(#summitGradient)"
+                  className="group-hover:opacity-90 transition-opacity"
+                />
+                {/* Ascending path/arrow */}
+                <path
+                  d="M 8 26 Q 14 20, 18 14 Q 22 20, 28 26"
+                  stroke="white"
+                  strokeWidth="2.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  className="group-hover:stroke-[3] transition-all"
+                />
+                {/* Success flag at summit */}
+                <circle
+                  cx="18"
+                  cy="8"
+                  r="2.5"
+                  fill="white"
+                  className="group-hover:r-3 transition-all"
+                />
+              </svg>
             </div>
             <span className="font-bold text-xl bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent tracking-tight">
               Sommet
@@ -506,11 +537,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <div className="relative w-7 h-7">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 via-purple-600 to-cyan-500 rounded-lg rotate-45"></div>
-                <div className="absolute inset-[2px] bg-white rounded-lg rotate-45"></div>
-                <div className="absolute inset-[4px] bg-gradient-to-tr from-blue-600 via-purple-600 to-cyan-500 rounded-sm rotate-45"></div>
-              </div>
+              {/* Footer logo - same as navbar */}
+              <svg viewBox="0 0 36 36" className="w-7 h-7" fill="none">
+                <defs>
+                  <linearGradient id="summitGradientFooter" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#2563eb" />
+                    <stop offset="50%" stopColor="#7c3aed" />
+                    <stop offset="100%" stopColor="#06b6d4" />
+                  </linearGradient>
+                </defs>
+                <path d="M 6 28 L 18 8 L 30 28 Z" fill="url(#summitGradientFooter)" />
+                <path d="M 8 26 Q 14 20, 18 14 Q 22 20, 28 26" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                <circle cx="18" cy="8" r="2.5" fill="white" />
+              </svg>
               <span className="font-semibold text-slate-900">Sommet</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-600">
