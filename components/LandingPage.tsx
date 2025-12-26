@@ -62,7 +62,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        console.error('❌ Pas d'URL dans la réponse Stripe :', data);
+        console.error('❌ Pas d\'URL dans la réponse Stripe :', data);
         alert("Impossible de démarrer le paiement Stripe.");
       }
     } catch (error) {
