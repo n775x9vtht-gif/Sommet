@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import { 
-  IconRocket, 
-  IconMountain, 
-  IconCheck, 
-  IconArrowRight, 
-  IconTrophy, 
-  IconChart, 
-  IconClock, 
-  IconSherpa, 
-  IconDiamond, 
+import {
+  IconRocket,
+  IconMountain,
+  IconCheck,
+  IconArrowRight,
+  IconTrophy,
+  IconChart,
+  IconClock,
+  IconSherpa,
+  IconDiamond,
   IconX,
   IconPlus,
   IconCopy,
   IconCodeBlockCopy,
-  IconBulb, 
-  IconConstruction, 
-  IconBlueprint, 
-  IconList, 
-  IconTools 
+  IconBulb,
+  IconConstruction,
+  IconBlueprint,
+  IconList,
+  IconTools
 } from './Icons';
 import AuthModal from './AuthModal';
 
@@ -35,15 +35,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
     setIsAuthModalOpen(true);
   };
 
-  // ✅ Handler Stripe unique, qui envoie priceId + mode au backend
   const handleCheckout = async (plan: 'explorateur' | 'batisseur') => {
-    // Tes Price IDs Stripe
     const priceId =
       plan === 'explorateur'
-        ? 'price_1SXR8gF1yiAtAmIj0NQNnVmH' // Explorateur
-        : 'price_1SXR94F1yiAtAmIjmLg0JIkT'; // Bâtisseur
+        ? 'price_1SXR8gF1yiAtAmIj0NQNnVmH'
+        : 'price_1SXR94F1yiAtAmIjmLg0JIkT';
 
-    // Explorateur = one-shot, Bâtisseur = abonnement
     const mode: 'payment' | 'subscription' =
       plan === 'explorateur' ? 'payment' : 'subscription';
 
@@ -63,9 +60,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       const data = await response.json();
 
       if (data?.url) {
-        window.location.href = data.url; // redirection vers Stripe Checkout
+        window.location.href = data.url;
       } else {
-        console.error('❌ Pas d’URL dans la réponse Stripe :', data);
+        console.error('❌ Pas d'URL dans la réponse Stripe :', data);
         alert("Impossible de démarrer le paiement Stripe.");
       }
     } catch (error) {
@@ -75,820 +72,687 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 text-slate-50 font-sans overflow-x-hidden selection:bg-gold-500/30 selection:text-white">
+    <div className="min-h-screen bg-white text-slate-900 font-sans overflow-x-hidden antialiased">
       {/* Auth Modal */}
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        initialMode={authMode} 
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        initialMode={authMode}
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={onEnterApp}
       />
 
-      {/* Navbar */}
-      <nav className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center animate-fade-in sticky top-0 z-40 bg-dark-950/80 backdrop-blur-md border-b border-white/5">
-        <div className="flex items-center gap-3">
-          {/* Logo */}
-          <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center shadow-lg shadow-brand-900/20">
-            <IconMountain className="w-6 h-6 text-white" />
+      {/* Navbar - Modern & Clean */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 rotate-3 hover:rotate-0 transition-transform">
+              <IconMountain className="w-6 h-6 text-white" />
+            </div>
+            <span className="font-extrabold text-2xl bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+              Sommet
+            </span>
           </div>
-          <span className="font-extrabold text-2xl text-white tracking-tight">Sommet</span>
-        </div>
 
-        <div className="flex items-center gap-4 md:gap-6">
-          {/* Lien FAQ */}
-          <a
-            href="#faq"
-            className="text-slate-400 hover:text-white font-medium transition-colors text-sm hidden sm:block"
-          >
-            FAQ
-          </a>
-
-          {/* Lien Tarifs */}
-          <a
-            href="#pricing"
-            className="text-slate-400 hover:text-white font-medium transition-colors text-sm hidden sm:block"
-          >
-            Tarifs
-          </a>
-
-          {/* Connexion */}
-          <button 
-            onClick={() => openAuth('LOGIN')} 
-            className="text-slate-400 hover:text-white font-medium transition-colors text-sm hidden sm:block"
-          >
-            Connexion
-          </button>
-
-          {/* CTA Accès */}
-          <button 
-            onClick={() => openAuth('REGISTER')}
-            className="bg-white text-dark-900 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-100 transition-all hover:translate-y-[-1px] shadow-lg"
-          >
-            Accéder à la plateforme
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => openAuth('LOGIN')}
+              className="hidden sm:block text-slate-600 hover:text-slate-900 font-semibold text-sm transition-colors"
+            >
+              Connexion
+            </button>
+            <button
+              onClick={() => openAuth('REGISTER')}
+              className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-bold text-sm transition-all hover:shadow-lg hover:shadow-slate-900/25 hover:scale-105"
+            >
+              Commencer gratuitement
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header className="relative pt-24 pb-32 px-6 overflow-hidden text-center">
-        {/* Background Effects - Softened */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-brand-900/10 rounded-full blur-[100px] -z-10"></div>
-        
-        <div className="max-w-5xl mx-auto animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-dark-900 border border-dark-700 text-gold-400 text-xs font-bold mb-8 tracking-widest uppercase shadow-sm">
-            <IconTrophy className="w-3.5 h-3.5" />
+      {/* Hero Section - Bold & Minimal */}
+      <section className="relative pt-20 pb-24 px-6 overflow-hidden">
+        {/* Subtle gradient background */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-blue-50 via-white to-transparent rounded-full blur-3xl opacity-60 -z-10"></div>
+
+        <div className="max-w-6xl mx-auto text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 text-amber-900 text-sm font-bold mb-8 shadow-sm">
+            <IconTrophy className="w-4 h-4 text-amber-600" />
             <span>De l'idée à la Licorne</span>
           </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8 leading-[1.1] text-white">
-            Gravissez le
-            <br />
-            {/* Title Fix: Clean gradient, soft shadow, no harsh halo */}
-            <span className="relative inline-block mt-2">
-              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-gold-300 to-gold-500 drop-shadow-xl text-6xl md:text-8xl tracking-tighter">
-                SOMMET
-              </span>
+
+          {/* Main headline */}
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.95]">
+            <span className="block text-slate-900">Transformez</span>
+            <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+              votre idée
             </span>
+            <span className="block text-slate-900">en business</span>
           </h1>
-          
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light">
-            La première plateforme IA qui <span className="text-white font-medium">génère</span> vos idées, <span className="text-white font-medium">analyse</span> leur potentiel et <span className="text-white font-medium">trace</span> votre route vers le succès.
+
+          {/* Subheadline */}
+          <p className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed font-medium">
+            L'IA qui génère vos idées, valide leur potentiel et construit votre roadmap complète en quelques minutes.
           </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-            <button 
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <button
               onClick={() => openAuth('REGISTER')}
-              className="w-full sm:w-auto px-8 py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl font-bold text-lg transition-all shadow-lg shadow-brand-900/30 flex items-center justify-center group hover:-translate-y-1"
+              className="group w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full font-bold text-lg transition-all shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40 hover:scale-105 flex items-center justify-center gap-3"
             >
-              <IconRocket className="w-5 h-5 mr-2" />
-              Lancer mon projet
+              Démarrer gratuitement
+              <IconArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button 
+            <button
               onClick={onEnterDemo}
-              className="w-full sm:w-auto px-8 py-4 bg-dark-800 hover:bg-dark-700 text-slate-300 hover:text-white rounded-2xl font-medium text-lg border border-dark-600 hover:border-slate-500 transition-all flex items-center justify-center"
+              className="w-full sm:w-auto px-10 py-5 bg-white hover:bg-slate-50 text-slate-700 rounded-full font-semibold text-lg border-2 border-slate-200 hover:border-slate-300 transition-all"
             >
               Voir la démo
             </button>
           </div>
-        </div>
-      </header>
-      
-      {/* DAILY NEWS SECTION */}
-      <section className="max-w-7xl mx-auto px-6 -mt-12 mb-32 relative z-20 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-        <div className="bg-dark-900 border border-dark-700 rounded-[2.5rem] p-1.5 shadow-2xl overflow-hidden">
-          <div className="bg-dark-900 rounded-[2.2rem] p-8 md:p-16 flex flex-col md:flex-row items-center gap-16 relative overflow-hidden">
-            {/* Subtle ambient light */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-900/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-            {/* Text Content */}
-            <div className="flex-1 space-y-8 relative z-10 text-left">
-              <div className="inline-flex items-center gap-2 text-gold-400 font-bold text-xs uppercase tracking-widest border-b border-gold-500/20 pb-2">
-                <IconClock className="w-4 h-4" />
-                <span>Tous les jours à 06h00</span>
+          {/* Social proof */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-slate-500">
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 border-2 border-white"></div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white"></div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white"></div>
               </div>
-              
-              <h2 className="text-4xl md:text-5xl font-display font-bold text-white leading-tight">
-                Ne manquez jamais <br/>
-                <span className="text-gold-300">la prochaine vague.</span>
-              </h2>
-              
-              <p className="text-slate-400 text-lg leading-relaxed">
-                Pendant que vos concurrents dorment, notre IA scanne le web pour dénicher <strong>une opportunité business vérifiée</strong>.
-                <br/><br/>
-                <span className="text-white font-medium">Le Daily Sommet</span> : Un audit technologique de 3 minutes, livré chaque matin.
-              </p>
-              
-              <div className="pt-4">
-                <button onClick={() => openAuth('REGISTER')} className="group flex items-center gap-3 text-white font-bold text-lg hover:text-gold-300 transition-colors">
-                  Lire l'édition d'aujourd'hui 
-                  <IconArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+              <span className="font-semibold text-slate-700">+500 fondateurs</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <IconCheck className="w-5 h-5 text-green-600" />
+              <span>Aucune carte bancaire requise</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Bento Grid - Modern Layout */}
+      <section className="py-20 px-6 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          {/* Section header */}
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-black tracking-tight mb-6 text-slate-900">
+              Tout ce qu'il faut pour <br/>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">réussir votre lancement</span>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              De l'idéation à l'exécution, une plateforme complète pour les fondateurs ambitieux.
+            </p>
+          </div>
+
+          {/* Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Feature 1 - Large */}
+            <div className="lg:col-span-2 bg-gradient-to-br from-blue-500 to-blue-700 rounded-3xl p-10 text-white relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6">
+                  <IconBulb className="w-8 h-8" />
+                </div>
+                <h3 className="text-3xl font-black mb-4">Générateur d'idées IA</h3>
+                <p className="text-blue-100 text-lg mb-6 max-w-md">
+                  Entrez vos domaines d'intérêt et laissez notre IA analyser les tendances pour vous proposer des micro-SaaS réalisables et rentables.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold">100% personnalisé</span>
+                  <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold">Niches rentables</span>
+                </div>
               </div>
             </div>
 
-            {/* Newspaper Card (STRAIGHT) */}
-            <div className="flex-1 w-full relative flex justify-center md:justify-end">
-              <div
-                className="relative w-full max-w-md bg-[#FDFBF7] text-dark-900 p-10 rounded-xl shadow-2xl border border-slate-200 cursor-pointer transition-transform hover:-translate-y-2 duration-300"
-                onClick={() => openAuth('REGISTER')}
-              >
-                {/* Paper Header */}
-                <div className="border-b-2 border-dark-900/10 pb-6 mb-6 flex justify-between items-end">
-                  <div>
-                    <span className="block font-display font-black text-4xl tracking-tight text-dark-900 mb-1">Sommet</span>
-                    <span className="font-serif italic text-slate-500 text-base">Daily Brief</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center justify-end gap-2 text-gold-600 mb-1">
-                      <div className="w-2 h-2 bg-gold-500 rounded-full animate-pulse"></div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider">Live</span>
+            {/* Feature 2 - Small */}
+            <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-8 text-white relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
+                <IconChart className="w-7 h-7" />
+              </div>
+              <h3 className="text-2xl font-black mb-3">Validation instantanée</h3>
+              <p className="text-orange-50 text-base">
+                Score de viabilité sur 100 avec analyse SWOT complète
+              </p>
+            </div>
+
+            {/* Feature 3 - Small */}
+            <div className="bg-gradient-to-br from-purple-500 to-purple-700 rounded-3xl p-8 text-white relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
+                <IconBlueprint className="w-7 h-7" />
+              </div>
+              <h3 className="text-2xl font-black mb-3">Blueprint MVP</h3>
+              <p className="text-purple-50 text-base">
+                Stack technique et roadmap sur 4 semaines
+              </p>
+            </div>
+
+            {/* Feature 4 - Large */}
+            <div className="lg:col-span-2 bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-10 text-white relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl">
+              <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6">
+                  <IconConstruction className="w-8 h-8 text-amber-400" />
+                </div>
+                <h3 className="text-3xl font-black mb-4">Le Chantier + Sherpa IA</h3>
+                <p className="text-slate-300 text-lg mb-6 max-w-md">
+                  Tableau Kanban intelligent qui transforme votre plan en tâches concrètes. Bloqué ? Le Sherpa vous donne le code exact à copier-coller.
+                </p>
+                <div className="bg-slate-950/50 backdrop-blur-sm p-4 rounded-xl border border-white/10 font-mono text-sm text-green-400">
+                  <span className="text-slate-500">// Votre assistant technique personnel</span><br/>
+                  <span>supabase.auth.signUp(&#123;...&#125;)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 5 - Daily News */}
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-8 text-white relative overflow-hidden group hover:scale-[1.02] transition-transform shadow-xl">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
+                <IconClock className="w-7 h-7" />
+              </div>
+              <h3 className="text-2xl font-black mb-3">Daily Brief</h3>
+              <p className="text-green-50 text-base mb-4">
+                Opportunité business vérifiée chaque matin à 6h
+              </p>
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <span>Actif aujourd'hui</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works - Step by step */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-black tracking-tight mb-6 text-slate-900">
+              De l'idée au lancement<br/>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">en 4 étapes simples</span>
+            </h2>
+          </div>
+
+          <div className="space-y-20">
+            {/* Step 1 */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl p-8 border border-slate-200 shadow-lg">
+                  <div className="bg-white rounded-2xl p-6 mb-4 shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex gap-2">
+                        <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-bold">SaaS</span>
+                        <span className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold">IA</span>
+                      </div>
+                      <span className="text-xs font-bold px-3 py-1.5 rounded-lg bg-green-100 text-green-700">Faible concurrence</span>
                     </div>
-                    <span className="text-xs font-bold text-slate-400">N° 142</span>
-                  </div>
-                </div>
-                
-                {/* Paper Body */}
-                <div className="space-y-4">
-                  <div className="inline-block bg-dark-900 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wide">Audit Tech</div>
-                  <h3 className="font-display font-bold text-2xl leading-tight text-dark-900">
-                    L'IA Agentique : Pourquoi c'est maintenant ou jamais.
-                  </h3>
-                  <p className="font-news text-slate-600 text-base leading-relaxed line-clamp-3">
-                    Une analyse croisée de Google Trends et des derniers dépôts de brevets montre une opportunité massive...
-                  </p>
-                </div>
-
-                {/* Paper Footer */}
-                <div className="mt-8 pt-6 border-t border-slate-200 flex justify-between items-center">
-                  <span className="font-sans text-[10px] font-bold text-slate-400 uppercase">Google Grounding</span>
-                  <span className="font-sans text-xs font-bold text-brand-700 flex items-center gap-1">
-                    Lire <IconArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* VISUAL DEMO SECTION (Straight & Clean Grid) */}
-      <section className="py-12 px-6 max-w-7xl mx-auto space-y-40">
-        {/* Step 1: Generation */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8 order-1">
-            <div className="w-14 h-14 bg-dark-800 rounded-2xl flex items-center justify-center border border-dark-700 shadow-lg">
-              <IconBulb className="w-7 h-7 text-white" />
-            </div>
-            <h2 className="text-4xl font-black text-white tracking-tight leading-tight">
-              Ne cherchez plus l'idée du siècle. <br/>
-              <span className="text-slate-500">Générez-la.</span>
-            </h2>
-            <p className="text-slate-400 text-xl leading-relaxed font-light">
-              Entrez simplement vos domaines d'intérêt. Notre IA analyse les tendances pour vous proposer des micro-SaaS réalisables.
-            </p>
-            <ul className="space-y-4 pt-2">
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-brand-500 mr-4" /> 100% adapté à vos compétences
-              </li>
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-brand-500 mr-4" /> Niches peu concurrentielles
-              </li>
-            </ul>
-          </div>
-          
-          {/* Mock UI Card - Generation */}
-          <div className="order-2 relative">
-            <div className="bg-dark-800 border border-dark-700 rounded-[2rem] p-8 shadow-2xl relative z-10 hover:border-brand-500/30 transition-colors duration-500">
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex gap-2">
-                  <span className="px-3 py-1.5 rounded-lg bg-dark-900/50 text-slate-300 text-xs font-bold border border-dark-700 uppercase">Immobilier</span>
-                  <span className="px-3 py-1.5 rounded-lg bg-dark-900/50 text-slate-300 text-xs font-bold border border-dark-700 uppercase">SaaS</span>
-                </div>
-                <span className="text-xs font-bold px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20">Diff: Faible</span>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Proprio-Zen AI</h3>
-              <p className="text-gold-500 text-sm mb-6 italic font-medium">
-                "Automatisez la gestion locative pour les particuliers."
-              </p>
-              <div className="pl-5 border-l-2 border-dark-600 mb-8">
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Une plateforme qui scanne les documents des locataires, vérifie la solvabilité via OpenBanking et génère les baux automatiquement.
-                </p>
-              </div>
-              <div className="w-full py-4 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-sm hover:bg-brand-500 transition-colors cursor-pointer shadow-lg shadow-brand-900/20">
-                Sauvegarder cette pépite
-              </div>
-            </div>
-            {/* Underlayer card for depth */}
-            <div className="absolute top-6 left-6 w-full h-full bg-dark-900 rounded-[2.5rem] border border-dark-700 -z-10 opacity-60"></div>
-          </div>
-        </div>
-
-        {/* Step 2: Validation */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          {/* Mock UI Card - Analysis */}
-          <div className="order-2 md:order-1 relative">
-            <div className="bg-dark-800 border border-dark-700 rounded-[2rem] overflow-hidden shadow-2xl relative z-10 hover:border-gold-500/30 transition-colors duration-500">
-              <div className="bg-dark-900/50 p-6 border-b border-dark-700 flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <IconMountain className="w-5 h-5 text-gold-500" />
-                  <span className="font-bold text-white text-lg">Rapport d'analyse</span>
-                </div>
-                <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">
-                  Généré à l'instant
-                </div>
-              </div>
-              <div className="p-10 flex flex-col items-center text-center">
-                <div className="relative w-32 h-32 flex items-center justify-center mb-6">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      className="text-dark-900"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    />
-                    <path
-                      className="text-green-500"
-                      strokeDasharray="94, 100"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    />
-                  </svg>
-                  <div className="absolute flex flex-col items-center">
-                    <span className="text-4xl font-black text-white tracking-tight">94</span>
-                  </div>
-                </div>
-                <div className="text-green-400 text-xs font-bold mb-8 bg-green-500/10 px-4 py-1.5 rounded-full border border-green-500/20 uppercase tracking-wide">
-                  Potentiel Élevé
-                </div>
-                <div className="w-full grid grid-cols-2 gap-4 text-left">
-                  <div className="bg-dark-900 p-4 rounded-xl border border-dark-700">
-                    <div className="text-[10px] text-slate-500 uppercase font-bold mb-1.5">Forces</div>
-                    <div className="text-sm text-slate-300 font-medium">Marché en demande</div>
-                  </div>
-                  <div className="bg-dark-900 p-4 rounded-xl border border-dark-700">
-                    <div className="text-[10px] text-slate-500 uppercase font-bold mb-1.5">Concurrents</div>
-                    <div className="text-sm text-slate-300 font-medium">Faible intensité</div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-2">NoteForce AI</h3>
+                    <p className="text-amber-600 text-sm mb-4 italic font-semibold">
+                      "Transformez vos meetings en actions automatiques"
+                    </p>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                      Un outil qui enregistre vos réunions, génère des résumés et crée automatiquement des tâches dans votre gestionnaire de projet.
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="absolute top-6 right-6 w-full h-full bg-dark-900 rounded-[2.5rem] border border-dark-700 -z-10 opacity-60"></div>
-          </div>
-
-          <div className="space-y-8 order-1 md:order-2">
-            <div className="w-14 h-14 bg-dark-800 rounded-2xl flex items-center justify-center border border-dark-700 shadow-lg">
-              <IconChart className="w-7 h-7 text-white" />
-            </div>
-            <h2 className="text-4xl font-black text-white tracking-tight leading-tight">
-              Évitez l'échec. <br/>
-              <span className="text-gold-500">Validez avant de coder.</span>
-            </h2>
-            <p className="text-slate-400 text-xl leading-relaxed font-light">
-              Obtenez un audit impitoyable de votre idée. SWOT, concurrents cachés, barrières à l'entrée. Ne lancez que ce qui peut gagner.
-            </p>
-            <ul className="space-y-4 pt-2">
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-gold-500 mr-4" /> Score de viabilité sur 100
-              </li>
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-gold-500 mr-4" /> Analyse des menaces
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Step 3: Strategy (Blueprint) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8 order-1">
-            <div className="w-14 h-14 bg-dark-800 rounded-2xl flex items-center justify-center border border-dark-700 shadow-lg">
-              <IconBlueprint className="w-7 h-7 text-white" />
-            </div>
-            <h2 className="text-4xl font-black text-white tracking-tight leading-tight">
-              Passez à l'action. <br/>
-              <span className="text-brand-500">Plan d'attaque inclus.</span>
-            </h2>
-            <p className="text-slate-400 text-xl leading-relaxed font-light">
-              Ne restez pas bloqué au stade de l'idée. Sommet génère votre stratégie technique et votre roadmap sur mesure.
-            </p>
-            <ul className="space-y-4 pt-2">
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-brand-500 mr-4" /> Stack Technique (Outils)
-              </li>
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-brand-500 mr-4" /> Roadmap sur 4 semaines
-              </li>
-            </ul>
-          </div>
-          
-          {/* Mock UI Card - Blueprint */}
-          <div className="order-2 relative">
-            <div className="bg-dark-800 border border-dark-700 rounded-[2rem] p-8 shadow-2xl relative z-10 hover:border-brand-500/30 transition-colors duration-500">
-              <h3 className="text-xl font-bold text-white mb-8 flex items-center gap-3">
-                <div className="w-10 h-10 bg-dark-900 rounded-lg flex items-center justify-center border border-dark-600">
-                  <IconList className="w-5 h-5 text-brand-500" /> 
+              <div className="order-1 md:order-2">
+                <div className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-bold mb-4">
+                  Étape 1
                 </div>
-                Roadmap MVP
-              </h3>
-              
-              <div className="space-y-8 relative border-l-2 border-dark-600 ml-5 py-2">
-                <div className="relative pl-8">
-                  <div className="absolute -left-[1px] -translate-x-1/2 top-1.5 w-4 h-4 rounded-full bg-dark-900 border-2 border-brand-500 z-10"></div>
-                  <span className="text-[10px] font-bold text-brand-400 uppercase tracking-widest bg-brand-900/20 px-2 py-1 rounded border border-brand-500/20 mb-2 inline-block">
-                    Semaine 1
-                  </span>
-                  <p className="text-white font-bold text-lg mb-1">Fondations & Design</p>
-                  <p className="text-sm text-slate-400">Landing page, Maquettes Figma, Setup Next.js.</p>
-                </div>
-                
-                <div className="relative opacity-60 pl-8">
-                  <div className="absolute -left-[1px] -translate-x-1/2 top-1.5 w-4 h-4 rounded-full bg-dark-900 border-2 border-dark-500 z-10"></div>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-dark-900 px-2 py-1 rounded border border-dark-700 mb-2 inline-block">
-                    Semaine 2
-                  </span>
-                  <p className="text-white font-bold text-lg mb-1">Développement Core</p>
-                  <p className="text-sm text-slate-400">Base de données, Auth, Feature principale.</p>
-                </div>
-              </div>
-            </div>
-            <div className="absolute top-6 left-6 w-full h-full bg-dark-900 rounded-[2.5rem] border border-dark-700 -z-10 opacity-60"></div>
-          </div>
-        </div>
-
-        {/* Step 4: Execution (Le Chantier) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          {/* Mock UI Card - Execution */}
-          <div className="order-2 md:order-1 relative">
-            <div className="bg-dark-800 border border-dark-700 rounded-[2rem] p-8 shadow-2xl relative z-10 hover:border-gold-500/30 transition-colors duration-500">
-              {/* Header */}
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-xl font-bold text-white flex items-center gap-3">
-                  <div className="w-10 h-10 bg-dark-900 rounded-lg flex items-center justify-center border border-dark-600">
-                    <IconConstruction className="w-5 h-5 text-gold-500" />
-                  </div>
-                  Le Chantier
+                <h3 className="text-4xl font-black text-slate-900 mb-6">
+                  Générez des idées<br/>
+                  <span className="text-blue-600">sur mesure</span>
                 </h3>
-                <span className="text-[10px] bg-green-500/10 text-green-400 px-3 py-1 rounded-lg font-bold border border-green-500/20 uppercase tracking-wide">
-                  Actif
-                </span>
-              </div>
-
-              {/* Kanban Card */}
-              <div className="bg-dark-900 p-5 rounded-2xl border border-dark-600 mb-6 shadow-lg">
-                <div className="flex justify-between mb-3">
-                  <span className="text-[10px] font-bold uppercase bg-brand-900/20 text-brand-400 px-2 py-1 rounded border border-brand-500/20">
-                    Semaine 1
-                  </span>
-                </div>
-                <p className="text-slate-200 text-sm font-medium mb-4">
-                  Configurer l'authentification Supabase
+                <p className="text-xl text-slate-600 leading-relaxed mb-6">
+                  Indiquez vos domaines d'intérêt et compétences. L'IA analyse les tendances du marché et vous propose 5 idées de micro-SaaS réalisables.
                 </p>
-                <div className="w-full py-2 rounded-lg bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-bold flex items-center justify-center gap-2">
-                  <IconSherpa className="w-3.5 h-3.5" /> SOS Sherpa
-                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-blue-600 mr-3" />
+                    Adapté à votre profil
+                  </li>
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-blue-600 mr-3" />
+                    Marchés peu saturés
+                  </li>
+                </ul>
               </div>
+            </div>
 
-              {/* Sherpa Overlay */}
-              <div className="relative bg-dark-950 border border-gold-500/30 p-5 rounded-2xl shadow-2xl">
-                <div className="flex items-center gap-3 mb-3 border-b border-dark-800 pb-3">
-                  <div className="w-8 h-8 bg-gold-500/10 rounded-lg flex items-center justify-center border border-gold-500/20">
-                    <IconSherpa className="w-4 h-4 text-gold-500" />
+            {/* Step 2 */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-block px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-sm font-bold mb-4">
+                  Étape 2
+                </div>
+                <h3 className="text-4xl font-black text-slate-900 mb-6">
+                  Validez le potentiel<br/>
+                  <span className="text-amber-600">avant de coder</span>
+                </h3>
+                <p className="text-xl text-slate-600 leading-relaxed mb-6">
+                  Obtenez un score de viabilité sur 100, une analyse SWOT complète et identifiez les concurrents cachés. Ne lancez que ce qui peut gagner.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-amber-600 mr-3" />
+                    Score objectif et détaillé
+                  </li>
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-amber-600 mr-3" />
+                    Analyse des menaces réelles
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 border border-amber-200 shadow-lg">
+                  <div className="bg-white rounded-2xl p-8 text-center shadow-sm">
+                    <div className="relative w-32 h-32 mx-auto mb-6">
+                      <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                        <path
+                          className="text-slate-100"
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        />
+                        <path
+                          className="text-green-500"
+                          strokeDasharray="87, 100"
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-5xl font-black text-slate-900">87</span>
+                      </div>
+                    </div>
+                    <div className="inline-block px-4 py-2 bg-green-100 text-green-700 text-sm font-bold rounded-full mb-6">
+                      Potentiel Élevé
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-left">
+                      <div className="bg-slate-50 p-4 rounded-xl">
+                        <div className="text-xs text-slate-500 font-bold mb-1">FORCES</div>
+                        <div className="text-sm text-slate-900 font-bold">Marché en croissance</div>
+                      </div>
+                      <div className="bg-slate-50 p-4 rounded-xl">
+                        <div className="text-xs text-slate-500 font-bold mb-1">CONCURRENCE</div>
+                        <div className="text-sm text-slate-900 font-bold">Faible</div>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-sm font-bold text-white">Le Sherpa</span>
                 </div>
-                <div className="bg-dark-900 p-3 rounded-xl border border-dark-800 font-mono text-[10px] text-green-400 mb-3 leading-relaxed">
-                  supabase.auth.signUp(&#123;<br/>&nbsp;&nbsp;email: 'user@example.com',<br/>&nbsp;&nbsp;password: 'secret'<br/>&#125;)
-                </div>
-                <button className="w-full py-2 bg-dark-800 hover:bg-dark-700 border border-dark-700 text-slate-300 text-[10px] font-bold rounded-lg flex items-center justify-center gap-2 transition-colors">
-                  <IconCodeBlockCopy className="w-3 h-3" /> Copier le code
-                </button>
               </div>
             </div>
-            <div className="absolute top-6 right-6 w-full h-full bg-dark-900 rounded-[2.5rem] border border-dark-700 -z-10 opacity-60"></div>
-          </div>
 
-          <div className="space-y-8 order-1 md:order-2">
-            <div className="w-14 h-14 bg-dark-800 rounded-2xl flex items-center justify-center border border-dark-700 shadow-lg">
-              <IconConstruction className="w-7 h-7 text-white" />
+            {/* Step 3 */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl p-8 border border-purple-200 shadow-lg">
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                      <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <IconList className="w-5 h-5 text-purple-600" />
+                      </div>
+                      Roadmap MVP
+                    </h3>
+                    <div className="space-y-6 relative border-l-2 border-purple-200 ml-5 py-2">
+                      <div className="relative pl-8">
+                        <div className="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-purple-600 border-2 border-white shadow-lg"></div>
+                        <span className="inline-block text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full mb-2">
+                          SEMAINE 1
+                        </span>
+                        <p className="text-slate-900 font-bold text-lg mb-1">Fondations & Design</p>
+                        <p className="text-sm text-slate-600">Landing page, maquettes Figma, setup Next.js</p>
+                      </div>
+                      <div className="relative pl-8 opacity-50">
+                        <div className="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-slate-300 border-2 border-white"></div>
+                        <span className="inline-block text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full mb-2">
+                          SEMAINE 2
+                        </span>
+                        <p className="text-slate-700 font-bold text-lg mb-1">Core Features</p>
+                        <p className="text-sm text-slate-500">Base de données, auth, feature principale</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="order-1 md:order-2">
+                <div className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-bold mb-4">
+                  Étape 3
+                </div>
+                <h3 className="text-4xl font-black text-slate-900 mb-6">
+                  Obtenez votre plan<br/>
+                  <span className="text-purple-600">d'attaque complet</span>
+                </h3>
+                <p className="text-xl text-slate-600 leading-relaxed mb-6">
+                  Stack technique recommandée, roadmap détaillée sur 4 semaines et métriques de succès. Tout pour passer à l'action immédiatement.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-purple-600 mr-3" />
+                    Outils adaptés à votre niveau
+                  </li>
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-purple-600 mr-3" />
+                    Timeline réaliste et actionnable
+                  </li>
+                </ul>
+              </div>
             </div>
-            <h2 className="text-4xl font-black text-white tracking-tight leading-tight">
-              Construisez avec un <br/>
-              <span className="text-gold-500">CTO dans la poche.</span>
-            </h2>
-            <p className="text-slate-400 text-xl leading-relaxed font-light">
-              Fini le syndrome de la page blanche technique. Le Chantier transforme votre plan en tâches concrètes. Bloqué ? Le Sherpa vous donne la solution.
-            </p>
-            <ul className="space-y-4 pt-2">
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-gold-500 mr-4" /> Kanban généré automatiquement
-              </li>
-              <li className="flex items-center text-slate-300 text-base">
-                <IconCheck className="w-5 h-5 text-gold-500 mr-4" /> Assistant de code IA intégré
-              </li>
-            </ul>
+
+            {/* Step 4 */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-block px-4 py-2 bg-slate-100 text-slate-700 rounded-full text-sm font-bold mb-4">
+                  Étape 4
+                </div>
+                <h3 className="text-4xl font-black text-slate-900 mb-6">
+                  Construisez avec<br/>
+                  <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">un CTO dans la poche</span>
+                </h3>
+                <p className="text-xl text-slate-600 leading-relaxed mb-6">
+                  Le Chantier transforme votre plan en tâches Kanban. Bloqué sur une étape ? Le Sherpa IA vous donne le code exact à copier-coller.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-amber-600 mr-3" />
+                    Kanban automatique et intelligent
+                  </li>
+                  <li className="flex items-center text-slate-700 font-medium">
+                    <IconCheck className="w-5 h-5 text-amber-600 mr-3" />
+                    Assistant code intégré
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-3xl p-8 border border-slate-200 shadow-lg">
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
+                      <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                        <IconSherpa className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <span className="font-bold text-slate-900">Le Sherpa</span>
+                      <span className="ml-auto px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">En ligne</span>
+                    </div>
+                    <div className="bg-slate-900 p-4 rounded-xl font-mono text-sm text-green-400 mb-4">
+                      <span className="text-slate-500">// Setup Supabase Auth</span><br/>
+                      supabase.auth.signUp(&#123;<br/>
+                      &nbsp;&nbsp;email: 'user@app.com',<br/>
+                      &nbsp;&nbsp;password: 'secure123'<br/>
+                      &#125;)
+                    </div>
+                    <button className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
+                      <IconCodeBlockCopy className="w-4 h-4" />
+                      Copier le code
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* PRICING SECTION */}
-      <section className="py-32 px-6 max-w-7xl mx-auto" id="pricing">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
-            Des tarifs adaptés à votre ambition
-          </h2>
-          <p className="text-slate-400 text-xl max-w-2xl mx-auto font-light">
-            Commencez petit ou visez le sommet. Changez de plan à tout moment.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto text-left items-stretch">
-          {/* OPTION 0: FREE (Camp de Base) */}
-          <div className="bg-dark-800/30 border border-dark-700 rounded-[2rem] p-8 flex flex-col h-full">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-14 h-14 bg-dark-800 rounded-2xl flex items-center justify-center border border-dark-700 shadow-lg">
-                <IconMountain className="w-7 h-7 text-slate-400" />
-              </div>
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-dark-900/60 text-slate-400 border border-dark-600">
-                Découverte
+      {/* Pricing Section - Modern & Clear */}
+      <section className="py-24 px-6 bg-gradient-to-b from-slate-50 to-white" id="pricing">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-black tracking-tight mb-6 text-slate-900">
+              Commencez gratuitement,<br/>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                passez à la vitesse supérieure
               </span>
-            </div>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Choisissez le plan adapté à votre ambition. Changez à tout moment.
+            </p>
+          </div>
 
-            {/* Titre + prix */}
-            <h3 className="text-2xl font-bold text-white mb-2">Camp de Base</h3>
-            <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-5xl font-black text-white">0€</span>
-              <span className="text-slate-500 font-medium text-lg">/ vie</span>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {/* Free Plan */}
+            <div className="bg-white rounded-3xl p-8 border-2 border-slate-200 hover:border-slate-300 transition-all">
+              <div className="mb-6">
+                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+                  <IconMountain className="w-7 h-7 text-slate-600" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">Camp de Base</h3>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-5xl font-black text-slate-900">0€</span>
+                  <span className="text-slate-500 font-semibold">/vie</span>
+                </div>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Pour découvrir la puissance de Sommet sans engagement.
+                </p>
+              </div>
 
-            {/* Contenu principal (prend l’espace dispo) */}
-            <div className="flex-1 flex flex-col">
-              <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-                Pour découvrir la puissance de l&apos;IA Sommet sans engagement ni
-                carte bancaire.
-              </p>
-
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-slate-500 mr-3 flex-shrink-0" />
-                  <span>
-                    <strong>3 Crédits</strong> de Génération
-                  </span>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start text-sm">
+                  <IconCheck className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-700"><strong>3 Crédits</strong> de génération</span>
                 </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-slate-500 mr-3 flex-shrink-0" />
-                  <span>
-                    <strong>1 Analyse</strong> simplifiée
-                  </span>
+                <li className="flex items-start text-sm">
+                  <IconCheck className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-700"><strong>1 Analyse</strong> simplifiée</span>
                 </li>
-                <li className="flex items-start text-slate-600 text-sm opacity-60">
-                  <IconX className="w-5 h-5 mr-3 flex-shrink-0" />
-                  <span>Pas de Blueprint MVP</span>
+                <li className="flex items-start text-sm opacity-40">
+                  <IconX className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-600">Blueprint MVP</span>
                 </li>
-                <li className="flex items-start text-slate-600 text-sm opacity-60">
-                  <IconX className="w-5 h-5 mr-3 flex-shrink-0" />
-                  <span>Pas d&apos;export PDF</span>
-                </li>
-                <li className="flex items-start text-slate-600 text-sm opacity-60">
-                  <IconX className="w-5 h-5 mr-3 flex-shrink-0" />
-                  <span>Pas d&apos;accès au Chantier</span>
+                <li className="flex items-start text-sm opacity-40">
+                  <IconX className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-600">Accès au Chantier</span>
                 </li>
               </ul>
-            </div>
 
-            {/* Footer (bouton aligné en bas) */}
-            <div>
               <button
                 onClick={() => openAuth('REGISTER')}
-                className="w-full py-4 bg-dark-800 hover:bg-dark-700 text-white rounded-xl font-bold transition-colors border border-dark-700"
+                className="w-full py-4 bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-full font-bold transition-all"
               >
                 Commencer gratuitement
               </button>
             </div>
-          </div>
 
-          {/* OPTION 1: CREDITS (Explorateur) */}
-          <div className="bg-gradient-to-b from-dark-800/80 via-dark-900 to-dark-900 border border-brand-900/50 rounded-[2rem] p-8 flex flex-col h-full shadow-xl shadow-brand-900/10">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-14 h-14 bg-brand-900/20 rounded-2xl flex items-center justify-center border border-brand-500/20 shadow-lg shadow-brand-900/20">
-                <IconDiamond className="w-7 h-7 text-brand-400" />
+            {/* Explorateur Plan */}
+            <div className="bg-white rounded-3xl p-8 border-2 border-blue-500 shadow-xl shadow-blue-500/10 hover:shadow-2xl hover:shadow-blue-500/20 transition-all relative">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-full">
+                POPULAIRE
               </div>
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-brand-500/10 text-brand-300 border border-brand-500/30">
-                Populaire
-              </span>
-            </div>
+              <div className="mb-6">
+                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
+                  <IconDiamond className="w-7 h-7 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">L'Explorateur</h3>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-5xl font-black text-blue-600">4,99€</span>
+                  <span className="text-slate-500 font-semibold">/pack</span>
+                </div>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Validez une idée précise avec un plan d'action exploitable.
+                </p>
+              </div>
 
-            {/* Titre + prix */}
-            <h3 className="text-2xl font-bold text-white mb-2">L&apos;Explorateur</h3>
-            <div className="flex items-baseline gap-1 mb-4">
-              {/* Prix en bleu */}
-              <span className="text-5xl font-black text-brand-400">4,99€</span>
-              <span className="text-slate-500 font-medium text-lg">/ pack</span>
-            </div>
-
-            {/* Contenu principal */}
-            <div className="flex-1 flex flex-col">
-              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                Idéal pour valider une idée précise, tester son potentiel et obtenir
-                un plan d&apos;action exploitable.
-              </p>
-
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" />
-                  <span>
-                    <strong>20 Crédits</strong> de Génération
-                  </span>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start text-sm">
+                  <IconCheck className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-700"><strong>20 Crédits</strong> de génération</span>
                 </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" />
-                  <span>
-                    <strong>1 Analyse de Marché</strong> complète
-                  </span>
+                <li className="flex items-start text-sm">
+                  <IconCheck className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-700"><strong>1 Analyse</strong> complète</span>
                 </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" />
-                  <span>
-                    <strong>1 Blueprint MVP</strong> détaillé
-                  </span>
+                <li className="flex items-start text-sm">
+                  <IconCheck className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-700"><strong>1 Blueprint</strong> MVP détaillé</span>
                 </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" />
-                  <span>Export PDF complet du projet</span>
+                <li className="flex items-start text-sm">
+                  <IconCheck className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-700">Export PDF complet</span>
                 </li>
-                <li className="flex items-start text-slate-600 text-sm opacity-60">
-                  <IconX className="w-5 h-5 mr-3 flex-shrink-0" />
-                  <span>Pas d&apos;accès au Chantier (Kanban)</span>
-                </li>
-                <li className="flex items-start text-slate-600 text-sm opacity-60">
-                  <IconX className="w-5 h-5 mr-3 flex-shrink-0" />
-                  <span>Pas d&apos;assistant Sherpa</span>
+                <li className="flex items-start text-sm opacity-40">
+                  <IconX className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
+                  <span className="text-slate-600">Accès au Chantier</span>
                 </li>
               </ul>
-            </div>
 
-            {/* Footer */}
-            <div>
               <button
                 onClick={() => handleCheckout('explorateur')}
-                className="w-full py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-colors shadow-lg shadow-brand-900/30 hover:-translate-y-1"
+                className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-500/30 hover:shadow-xl hover:scale-105"
               >
                 Acheter le pack
               </button>
             </div>
-          </div>
 
-          {/* OPTION 2: SUBSCRIPTION (Bâtisseur) */}
-          <div className="bg-gradient-to-b from-[#1E1A10] via-dark-900 to-dark-900 border border-gold-500/30 rounded-[2rem] p-8 flex flex-col h-full shadow-2xl shadow-gold-500/10">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-14 h-14 bg-gold-500/10 rounded-2xl flex items-center justify-center border border-gold-500/20 shadow-lg shadow-gold-900/20">
-                <IconRocket className="w-7 h-7 text-gold-500" />
+            {/* Bâtisseur Plan */}
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl hover:scale-[1.02] transition-transform">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl"></div>
+              <div className="relative z-10">
+                <div className="mb-6">
+                  <div className="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center mb-4">
+                    <IconRocket className="w-7 h-7 text-amber-400" />
+                  </div>
+                  <h3 className="text-2xl font-black mb-2">Le Bâtisseur</h3>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-5xl font-black text-amber-400">12,99€</span>
+                    <span className="text-slate-400 font-semibold">/mois</span>
+                  </div>
+                  <p className="text-slate-300 text-sm leading-relaxed">
+                    Pour ceux qui passent à l'action et veulent tout gérer au même endroit.
+                  </p>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-start text-sm">
+                    <IconCheck className="w-5 h-5 text-amber-400 mr-3 flex-shrink-0 mt-0.5" />
+                    <span>Générations <strong>ILLIMITÉES</strong></span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <IconCheck className="w-5 h-5 text-amber-400 mr-3 flex-shrink-0 mt-0.5" />
+                    <span>Analyses <strong>ILLIMITÉES</strong></span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <IconCheck className="w-5 h-5 text-amber-400 mr-3 flex-shrink-0 mt-0.5" />
+                    <span><strong>Accès complet</strong> au Chantier</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <IconCheck className="w-5 h-5 text-amber-400 mr-3 flex-shrink-0 mt-0.5" />
+                    <span><strong>Assistant Sherpa</strong> IA</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <IconCheck className="w-5 h-5 text-amber-400 mr-3 flex-shrink-0 mt-0.5" />
+                    <span>Support prioritaire 24/7</span>
+                  </li>
+                </ul>
+
+                <button
+                  onClick={() => handleCheckout('batisseur')}
+                  className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-full font-bold transition-all shadow-lg hover:scale-105"
+                >
+                  S'abonner maintenant
+                </button>
+                <p className="text-xs text-slate-400 mt-3 text-center">
+                  Annulable à tout moment en un clic
+                </p>
               </div>
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-gold-500/15 text-gold-200 border border-gold-500/40">
-                Recommandé par les fondateurs
-              </span>
-            </div>
-
-            {/* Titre + prix */}
-            <h3 className="text-2xl font-bold text-white mb-2">Le Bâtisseur</h3>
-            <div className="flex items-baseline gap-1 mb-4">
-              <span className="text-5xl font-black text-gold-400">12,99€</span>
-              <span className="text-slate-500 font-medium text-lg">/ mois</span>
-            </div>
-
-            {/* Contenu principal */}
-            <div className="flex-1 flex flex-col">
-              <p className="text-gold-100/80 text-sm mb-6 leading-relaxed">
-                Pour celles et ceux qui passent à l&apos;action. Gérez vos idées,
-                vos analyses et votre exécution au même endroit.
-              </p>
-
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-gold-500 mr-3 flex-shrink-0" />
-                  <span>Générations &amp; analyses ILLIMITÉES</span>
-                </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-gold-500 mr-3 flex-shrink-0" />
-                  <span>
-                    <strong>Accès complet au Chantier</strong> (Kanban)
-                  </span>
-                </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-gold-500 mr-3 flex-shrink-0" />
-                  <span>
-                    <strong>Assistant Sherpa</strong> (aide au code)
-                  </span>
-                </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-gold-500 mr-3 flex-shrink-0" />
-                  <span>Blueprints &amp; exports PDF illimités</span>
-                </li>
-                <li className="flex items-start text-slate-300 text-sm">
-                  <IconCheck className="w-5 h-5 text-gold-500 mr-3 flex-shrink-0" />
-                  <span>Support prioritaire 24/7</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Footer */}
-            <div>
-              <button
-                onClick={() => handleCheckout('batisseur')}
-                className="w-full py-4 bg-gold-500 hover:bg-gold-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-gold-500/20 hover:-translate-y-1"
-              >
-                S&apos;abonner maintenant
-              </button>
-              <p className="text-[10px] text-slate-500 mt-3 text-center font-medium">
-                Annulable à tout moment en un clic.
-              </p>
             </div>
           </div>
         </div>
       </section>
-      
-      {/* FAQ SECTION */}
-      <section id="faq" className="py-24 px-6 max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
-            Questions fréquentes
-          </h2>
-          <p className="text-slate-400 text-base md:text-lg max-w-2xl mx-auto font-light">
-            Tout ce qu&apos;il faut savoir avant de lancer votre projet avec Sommet.
-          </p>
+
+      {/* FAQ Section - Clean */}
+      <section id="faq" className="py-24 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-black tracking-tight mb-6 text-slate-900">
+              Questions fréquentes
+            </h2>
+            <p className="text-xl text-slate-600">
+              Tout ce qu'il faut savoir avant de démarrer
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "Sommet, c'est quoi exactement ?",
+                a: "Sommet est une plateforme IA pensée pour les fondateurs qui veulent passer de l'idée au micro-SaaS lancé. Le Générateur trouve des concepts alignés à vos compétences, le Valideur évalue le potentiel marché, le Blueprint prépare votre plan d'attaque et le Chantier vous aide à exécuter, étape par étape."
+              },
+              {
+                q: "En quoi Sommet est différent d'un simple ChatGPT ?",
+                a: "Sommet ne se contente pas de 'répondre à des prompts'. La plateforme est structurée autour d'un parcours fondateur complet : génération d'idées actionnables, analyse de marché, plan technique, tâches à exécuter et snippets de code prêts à l'emploi. Vous n'avez pas à deviner quoi demander à l'IA : le workflow est guidé de A à Z."
+              },
+              {
+                q: "Est-ce adapté si je ne suis pas développeur ?",
+                a: "Oui. Sommet est conçu pour les fondateurs non-tech : les tâches sont expliquées clairement, le Sherpa vous propose du code à copier-coller, et chaque étape est contextualisée. Vous pouvez démarrer avec un niveau technique très bas et apprendre en avançant."
+              },
+              {
+                q: "Combien de temps pour passer d'une idée à un MVP ?",
+                a: "La plupart des projets peuvent atteindre un MVP testable en quelques semaines si vous suivez la roadmap générée. Sommet ne fait pas tout à votre place, mais il réduit drastiquement le temps passé à chercher quoi faire, dans quel ordre et avec quels outils."
+              },
+              {
+                q: "Puis-je annuler mon abonnement à tout moment ?",
+                a: "Oui. Le plan Bâtisseur est sans engagement : vous pouvez arrêter à tout moment depuis votre espace. Vous gardez l'accès à vos projets, idées enregistrées et Blueprints déjà générés."
+              }
+            ].map((faq, i) => (
+              <details key={i} className="group bg-slate-50 hover:bg-slate-100 rounded-2xl transition-colors">
+                <summary className="flex items-center justify-between w-full px-6 py-5 cursor-pointer list-none">
+                  <span className="text-base font-bold text-slate-900 text-left pr-4">
+                    {faq.q}
+                  </span>
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white text-slate-600 group-open:text-blue-600 transition-colors flex-shrink-0">
+                    <IconPlus className="w-5 h-5 group-open:rotate-45 transition-transform" />
+                  </div>
+                </summary>
+                <div className="px-6 pb-5 text-slate-600 leading-relaxed">
+                  {faq.a}
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
+      </section>
 
-        {/* Accordéon */}
-        <div className="space-y-4">
-          {/* Item 1 */}
-          <details className="group bg-dark-900 border border-dark-700 rounded-2xl">
-            <summary className="flex items-center justify-between w-full px-5 py-4 cursor-pointer list-none">
-              <span className="text-sm md:text-base font-semibold text-white text-left pr-4">
-                Sommet, c&apos;est quoi exactement ?
-              </span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-dark-800 border border-dark-700 text-slate-400 group-open:bg-gold-500/10 group-open:text-gold-400 group-open:border-gold-500/40 transition-colors">
-                <IconPlus className="w-4 h-4 group-open:hidden" />
-                <IconX className="w-4 h-4 hidden group-open:block" />
-              </span>
-            </summary>
-            <div className="px-5 pb-5 pt-0 text-sm md:text-base text-slate-400 leading-relaxed border-t border-dark-800">
-              Sommet est une plateforme IA pensée pour les fondateurs qui veulent passer de l&apos;idée
-              au micro-SaaS lancé. Le Générateur trouve des concepts alignés à vos compétences, 
-              le Valideur évalue le potentiel marché, le Blueprint prépare votre plan d&apos;attaque
-              et le Chantier vous aide à exécuter, étape par étape.
-            </div>
-          </details>
-
-          {/* Item 2 */}
-          <details className="group bg-dark-900 border border-dark-700 rounded-2xl">
-            <summary className="flex items-center justify-between w-full px-5 py-4 cursor-pointer list-none">
-              <span className="text-sm md:text-base font-semibold text-white text-left pr-4">
-                En quoi Sommet est différent d&apos;un simple ChatGPT ou d&apos;un outil no-code ?
-              </span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-dark-800 border border-dark-700 text-slate-400 group-open:bg-gold-500/10 group-open:text-gold-400 group-open:border-gold-500/40 transition-colors">
-                <IconPlus className="w-4 h-4 group-open:hidden" />
-                <IconX className="w-4 h-4 hidden group-open:block" />
-              </span>
-            </summary>
-            <div className="px-5 pb-5 pt-0 text-sm md:text-base text-slate-400 leading-relaxed border-t border-dark-800">
-              Sommet ne se contente pas de “répondre à des prompts”. La plateforme est structurée 
-              autour d&apos;un parcours fondateur complet : génération d&apos;idées actionnables, 
-              analyse de marché, plan technique, tâches à exécuter et snippets de code prêts à l&apos;emploi. 
-              Vous n&apos;avez pas à deviner quoi demander à l&apos;IA : le workflow est guidé de A à Z.
-            </div>
-          </details>
-
-          {/* Item 3 */}
-          <details className="group bg-dark-900 border border-dark-700 rounded-2xl">
-            <summary className="flex items-center justify-between w-full px-5 py-4 cursor-pointer list-none">
-              <span className="text-sm md:text-base font-semibold text-white text-left pr-4">
-                Est-ce adapté si je ne suis pas développeur ?
-              </span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-dark-800 border border-dark-700 text-slate-400 group-open:bg-gold-500/10 group-open:text-gold-400 group-open:border-gold-500/40 transition-colors">
-                <IconPlus className="w-4 h-4 group-open:hidden" />
-                <IconX className="w-4 h-4 hidden group-open:block" />
-              </span>
-            </summary>
-            <div className="px-5 pb-5 pt-0 text-sm md:text-base text-slate-400 leading-relaxed border-t border-dark-800">
-              Oui. Sommet est conçu pour les fondateurs non-tech : les tâches sont expliquées 
-              clairement, le Sherpa vous propose du code à copier-coller, et chaque étape est 
-              contextualisée (&quot;pourquoi on fait ça&quot;, &quot;ce que ça débloque ensuite&quot;). 
-              Vous pouvez démarrer avec un niveau technique très bas et apprendre en avançant.
-            </div>
-          </details>
-
-          {/* Item 4 */}
-          <details className="group bg-dark-900 border border-dark-700 rounded-2xl">
-            <summary className="flex items-center justify-between w-full px-5 py-4 cursor-pointer list-none">
-              <span className="text-sm md:text-base font-semibold text-white text-left pr-4">
-                Combien de temps faut-il pour passer d&apos;une idée à un premier MVP ?
-              </span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-dark-800 border border-dark-700 text-slate-400 group-open:bg-gold-500/10 group-open:text-gold-400 group-open:border-gold-500/40 transition-colors">
-                <IconPlus className="w-4 h-4 group-open:hidden" />
-                <IconX className="w-4 h-4 hidden group-open:block" />
-              </span>
-            </summary>
-            <div className="px-5 pb-5 pt-0 text-sm md:text-base text-slate-400 leading-relaxed border-t border-dark-800">
-              La plupart des projets peuvent atteindre un MVP testable en quelques semaines si 
-              vous suivez la roadmap générée par le Blueprint et le Chantier. Sommet ne promet 
-              pas de tout faire à votre place, mais il réduit drastiquement le temps passé à 
-              chercher quoi faire, dans quel ordre et avec quels outils.
-            </div>
-          </details>
-
-          {/* Item 5 */}
-          <details className="group bg-dark-900 border border-dark-700 rounded-2xl">
-            <summary className="flex items-center justify-between w-full px-5 py-4 cursor-pointer list-none">
-              <span className="text-sm md:text-base font-semibold text-white text-left pr-4">
-                Comment fonctionnent les crédits et les différentes offres ?
-              </span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-dark-800 border border-dark-700 text-slate-400 group-open:bg-gold-500/10 group-open:text-gold-400 group-open:border-gold-500/40 transition-colors">
-                <IconPlus className="w-4 h-4 group-open:hidden" />
-                <IconX className="w-4 h-4 hidden group-open:block" />
-              </span>
-            </summary>
-            <div className="px-5 pb-5 pt-0 text-sm md:text-base text-slate-400 leading-relaxed border-t border-dark-800">
-              Le Camp de Base vous permet de découvrir Sommet gratuitement avec quelques crédits 
-              de génération et une analyse simplifiée. L&apos;Explorateur ajoute une analyse de marché 
-              complète et un Blueprint pour un projet précis. Le Bâtisseur s&apos;adresse aux fondateurs 
-              engagés : générations et analyses illimitées, accès complet au Chantier et au Sherpa.
-            </div>
-          </details>
-
-          {/* Item 6 */}
-          <details className="group bg-dark-900 border border-dark-700 rounded-2xl">
-            <summary className="flex items-center justify-between w-full px-5 py-4 cursor-pointer list-none">
-              <span className="text-sm md:text-base font-semibold text-white text-left pr-4">
-                Puis-je annuler mon abonnement à tout moment ?
-              </span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-dark-800 border border-dark-700 text-slate-400 group-open:bg-gold-500/10 group-open:text-gold-400 group-open:border-gold-500/40 transition-colors">
-                <IconPlus className="w-4 h-4 group-open:hidden" />
-                <IconX className="w-4 h-4 hidden group-open:block" />
-              </span>
-            </summary>
-            <div className="px-5 pb-5 pt-0 text-sm md:text-base text-slate-400 leading-relaxed border-t border-dark-800">
-              Oui. Le plan Bâtisseur est sans engagement : vous pouvez arrêter à tout moment 
-              directement depuis votre espace. Vous gardez l&apos;accès à vos projets, à vos idées 
-              enregistrées et à vos Blueprints déjà générés.
-            </div>
-          </details>
-
-          {/* Item 7 */}
-          <details className="group bg-dark-900 border border-dark-700 rounded-2xl">
-            <summary className="flex items-center justify-between w-full px-5 py-4 cursor-pointer list-none">
-              <span className="text-sm md:text-base font-semibold text-white text-left pr-4">
-                Que se passe-t-il concrètement après mon inscription ?
-              </span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-dark-800 border border-dark-700 text-slate-400 group-open:bg-gold-500/10 group-open:text-gold-400 group-open:border-gold-500/40 transition-colors">
-                <IconPlus className="w-4 h-4 group-open:hidden" />
-                <IconX className="w-4 h-4 hidden group-open:block" />
-              </span>
-            </summary>
-            <div className="px-5 pb-5 pt-0 text-sm md:text-base text-slate-400 leading-relaxed border-t border-dark-800">
-              Vous accédez immédiatement à votre espace Sommet : vous pouvez générer vos premières 
-              idées, en sauvegarder dans votre coffre, lancer une analyse de marché puis demander 
-              un Blueprint MVP. En quelques minutes, vous avez une vision claire de quoi lancer, 
-              pour qui et comment le construire étape par étape.
-            </div>
-          </details>
+      {/* Final CTA Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">
+            Prêt à gravir le sommet ?
+          </h2>
+          <p className="text-xl md:text-2xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Rejoignez les centaines de fondateurs qui transforment leurs idées en business rentables.
+          </p>
+          <button
+            onClick={() => openAuth('REGISTER')}
+            className="inline-flex items-center gap-3 px-12 py-6 bg-white hover:bg-slate-50 text-blue-700 rounded-full font-black text-xl transition-all shadow-2xl hover:scale-105 hover:shadow-white/20"
+          >
+            Démarrer gratuitement
+            <IconArrowRight className="w-6 h-6" />
+          </button>
+          <p className="text-blue-200 text-sm mt-6">
+            ✓ Aucune carte bancaire requise &nbsp;&nbsp;•&nbsp;&nbsp; ✓ 3 crédits offerts
+          </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 text-center text-slate-600 text-sm border-t border-dark-800 bg-dark-950">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <div className="w-6 h-6 bg-dark-800 rounded-lg flex items-center justify-center">
-              <IconMountain className="w-3 h-3 text-slate-400" />
+      <footer className="py-12 px-6 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                <IconMountain className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-lg text-slate-900">Sommet</span>
             </div>
-            <span className="font-bold text-slate-500">Sommet.tech</span>
+            <div className="flex items-center gap-6 text-sm text-slate-600">
+              <a href="#pricing" className="hover:text-slate-900 font-medium transition-colors">Tarifs</a>
+              <a href="#faq" className="hover:text-slate-900 font-medium transition-colors">FAQ</a>
+              <span>© 2025 Sommet - Tous droits réservés</span>
+            </div>
           </div>
-          <p>© 2025 Sommet.tech - Tous droits réservés.</p>
         </div>
       </footer>
     </div>
