@@ -170,94 +170,125 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-slate-900/5 shadow-sm shadow-slate-900/5">
         <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
           <div className="flex items-center gap-4 group cursor-pointer">
-            {/* Unique S-shaped ascending stairs logo */}
-            <div className="relative w-12 h-12">
-              <svg viewBox="0 0 48 48" className="w-12 h-12" fill="none">
+            {/* Geometric ascending peaks logo */}
+            <div className="relative w-14 h-14">
+              <svg viewBox="0 0 56 56" className="w-14 h-14" fill="none">
                 <defs>
-                  <linearGradient id="summitGradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#2563eb" />
-                    <stop offset="50%" stopColor="#7c3aed" />
+                  {/* Gradient for peak 1 */}
+                  <linearGradient id="peak1Gradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stopColor="#1e40af" />
+                    <stop offset="100%" stopColor="#3b82f6" />
+                  </linearGradient>
+                  {/* Gradient for peak 2 */}
+                  <linearGradient id="peak2Gradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#8b5cf6" />
+                  </linearGradient>
+                  {/* Gradient for peak 3 - tallest */}
+                  <linearGradient id="peak3Gradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stopColor="#7c3aed" />
                     <stop offset="100%" stopColor="#06b6d4" />
                   </linearGradient>
-                  <linearGradient id="summitGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.3" />
-                  </linearGradient>
+                  {/* Glow */}
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
                 </defs>
 
-                {/* Glow effect on hover */}
-                <rect
-                  x="2"
-                  y="2"
-                  width="44"
-                  height="44"
-                  rx="12"
-                  fill="url(#summitGlow)"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                />
-
-                {/* Step 1 - Bottom */}
-                <rect
-                  x="6"
-                  y="32"
-                  width="14"
-                  height="10"
-                  rx="2"
-                  fill="url(#summitGradient)"
-                  className="group-hover:translate-y-[-1px] transition-transform"
+                {/* Peak 1 - Small (left) */}
+                <g
+                  className="group-hover:-translate-y-1 transition-transform duration-300"
                   style={{
-                    animation: 'scale-in 0.3s ease-out 0.1s backwards'
+                    animation: 'scale-in 0.4s ease-out 0.1s backwards'
                   }}
-                />
+                >
+                  <path
+                    d="M 8 45 L 15 32 L 22 45 Z"
+                    fill="url(#peak1Gradient)"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  {/* Snow cap */}
+                  <path
+                    d="M 13 35 L 15 32 L 17 35 Z"
+                    fill="white"
+                    opacity="0.9"
+                  />
+                </g>
 
-                {/* Step 2 */}
-                <rect
-                  x="17"
-                  y="22"
-                  width="14"
-                  height="10"
-                  rx="2"
-                  fill="url(#summitGradient)"
-                  className="group-hover:translate-y-[-1px] transition-transform"
+                {/* Peak 2 - Medium (center) */}
+                <g
+                  className="group-hover:-translate-y-1 transition-transform duration-300"
                   style={{
-                    animation: 'scale-in 0.3s ease-out 0.2s backwards'
+                    animation: 'scale-in 0.4s ease-out 0.2s backwards',
+                    animationDelay: '0.15s'
                   }}
-                />
+                >
+                  <path
+                    d="M 20 45 L 28 22 L 36 45 Z"
+                    fill="url(#peak2Gradient)"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  {/* Snow cap */}
+                  <path
+                    d="M 25 27 L 28 22 L 31 27 Z"
+                    fill="white"
+                    opacity="0.9"
+                  />
+                </g>
 
-                {/* Step 3 - Top */}
-                <rect
-                  x="28"
-                  y="12"
-                  width="14"
-                  height="10"
-                  rx="2"
-                  fill="url(#summitGradient)"
-                  className="group-hover:translate-y-[-1px] transition-transform"
+                {/* Peak 3 - Tallest (right) */}
+                <g
+                  className="group-hover:-translate-y-1 transition-transform duration-300"
                   style={{
-                    animation: 'scale-in 0.3s ease-out 0.3s backwards'
+                    animation: 'scale-in 0.4s ease-out 0.3s backwards',
+                    animationDelay: '0.3s'
                   }}
-                />
+                >
+                  <path
+                    d="M 32 45 L 42 8 L 52 45 Z"
+                    fill="url(#peak3Gradient)"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                    filter="url(#glow)"
+                  />
+                  {/* Snow cap */}
+                  <path
+                    d="M 38 14 L 42 8 L 46 14 Z"
+                    fill="white"
+                    opacity="0.95"
+                  />
+                  {/* Summit star */}
+                  <circle
+                    cx="42"
+                    cy="8"
+                    r="2.5"
+                    fill="#fbbf24"
+                    className="group-hover:scale-150 transition-transform origin-center"
+                    style={{
+                      animation: 'scale-in 0.3s ease-out 0.6s backwards',
+                      filter: 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.8))'
+                    }}
+                  />
+                </g>
 
-                {/* Summit star/sparkle */}
-                <path
-                  d="M 38 8 L 39.5 11 L 43 11.5 L 40.5 14 L 41 17.5 L 38 15.5 L 35 17.5 L 35.5 14 L 33 11.5 L 36.5 11 Z"
-                  fill="#fbbf24"
-                  className="group-hover:scale-125 transition-transform origin-center"
-                  style={{
-                    animation: 'scale-in 0.4s ease-out 0.5s backwards',
-                    filter: 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.6))'
-                  }}
-                />
-
-                {/* Connecting line showing ascent path */}
-                <path
-                  d="M 13 37 L 24 27 L 35 17"
-                  stroke="white"
+                {/* Base line */}
+                <line
+                  x1="4"
+                  y1="45"
+                  x2="54"
+                  y2="45"
+                  stroke="#e2e8f0"
                   strokeWidth="2"
                   strokeLinecap="round"
-                  strokeDasharray="3 3"
-                  opacity="0.4"
-                  className="group-hover:opacity-70 transition-opacity"
                 />
               </svg>
             </div>
@@ -769,19 +800,29 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex items-center gap-3">
-              <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none">
+              <svg viewBox="0 0 56 56" className="w-11 h-11" fill="none">
                 <defs>
-                  <linearGradient id="summitGradientFooter" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#2563eb" />
-                    <stop offset="50%" stopColor="#7c3aed" />
+                  <linearGradient id="peak1GradientFooter" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stopColor="#1e40af" />
+                    <stop offset="100%" stopColor="#3b82f6" />
+                  </linearGradient>
+                  <linearGradient id="peak2GradientFooter" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#8b5cf6" />
+                  </linearGradient>
+                  <linearGradient id="peak3GradientFooter" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stopColor="#7c3aed" />
                     <stop offset="100%" stopColor="#06b6d4" />
                   </linearGradient>
                 </defs>
-                <rect x="6" y="32" width="14" height="10" rx="2" fill="url(#summitGradientFooter)" />
-                <rect x="17" y="22" width="14" height="10" rx="2" fill="url(#summitGradientFooter)" />
-                <rect x="28" y="12" width="14" height="10" rx="2" fill="url(#summitGradientFooter)" />
-                <path d="M 38 8 L 39.5 11 L 43 11.5 L 40.5 14 L 41 17.5 L 38 15.5 L 35 17.5 L 35.5 14 L 33 11.5 L 36.5 11 Z" fill="#fbbf24" />
-                <path d="M 13 37 L 24 27 L 35 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeDasharray="3 3" opacity="0.4" />
+                <path d="M 8 45 L 15 32 L 22 45 Z" fill="url(#peak1GradientFooter)" stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M 13 35 L 15 32 L 17 35 Z" fill="white" opacity="0.9" />
+                <path d="M 20 45 L 28 22 L 36 45 Z" fill="url(#peak2GradientFooter)" stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M 25 27 L 28 22 L 31 27 Z" fill="white" opacity="0.9" />
+                <path d="M 32 45 L 42 8 L 52 45 Z" fill="url(#peak3GradientFooter)" stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M 38 14 L 42 8 L 46 14 Z" fill="white" opacity="0.95" />
+                <circle cx="42" cy="8" r="2.5" fill="#fbbf24" />
+                <line x1="4" y1="45" x2="54" y2="45" stroke="#e2e8f0" strokeWidth="2" strokeLinecap="round" />
               </svg>
               <span className="font-bold text-xl text-slate-900">Sommet</span>
             </div>
