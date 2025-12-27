@@ -12,7 +12,9 @@ import {
   IconCheckCircle,
   IconWarning,
   IconLightning,
-  IconMoney,
+  IconEuro,
+  IconCalendar,
+  IconSteps,
   IconWrench,
   IconShield,
   IconPackage,
@@ -21,7 +23,11 @@ import {
   IconKanban,
   IconSparkle,
   IconCross,
-  IconPerson
+  IconPerson,
+  IconReact,
+  IconDatabase,
+  IconPayment,
+  IconCloud
 } from './Icons';
 import AuthModal from './AuthModal';
 
@@ -113,15 +119,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       {/* Hero */}
       <section className="pt-20 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
-            Tu as une idée de SaaS,<br/>
-            mais zéro compétence technique ?
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
+            Tu as une idée d'application web,<br/>
+            mais tu ne sais pas coder ?
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-4 leading-relaxed">
-            Bildr transforme ton idée en produit lancé. Sans coder.
+          <p className="text-xl text-gray-600 mb-4 leading-relaxed">
+            Bildr transforme ton idée en vraie application en ligne. Sans écrire une ligne de code.
           </p>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10">
-            De la validation de l'idée au déploiement en ligne. Feuille de route technique, architecture, et extraits de code prêts à l'emploi. Le tout en français, étape par étape.
+          <p className="text-base text-gray-500 max-w-2xl mx-auto mb-10">
+            De la validation de ton idée jusqu'à la mise en ligne. Plan technique détaillé, code prêt à utiliser, et guide pas à pas en français. Tout ce qu'il faut pour créer ton produit.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
@@ -141,7 +147,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
           </div>
 
           <p className="text-sm text-gray-500">
-            ✓ Gratuit à vie · ✓ Sans carte bancaire · ✓ 30 secondes pour démarrer
+            Gratuit pour toujours · Sans carte bancaire · Prêt en 30 secondes
           </p>
         </div>
       </section>
@@ -151,22 +157,22 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-                <IconLightning className="w-10 h-10" /> 4 semaines
+              <div className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+                <IconCalendar className="w-9 h-9" /> 4 semaines
               </div>
-              <div className="text-gray-600">De l'idée au produit en ligne (au lieu de 6+ mois)</div>
+              <div className="text-gray-600">Pour créer ton application (au lieu de 6 mois)</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-                <IconMoney className="w-10 h-10" /> 15 000€+
+              <div className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+                <IconEuro className="w-9 h-9" /> 15 000 €
               </div>
-              <div className="text-gray-600">Économisés par rapport à un développeur</div>
+              <div className="text-gray-600">Économisés en évitant un développeur</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-                <IconTarget className="w-10 h-10" /> 3 étapes
+              <div className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+                <IconSteps className="w-9 h-9" /> 3 étapes
               </div>
-              <div className="text-gray-600">Au lieu de 100 tutoriels YouTube</div>
+              <div className="text-gray-600">Au lieu de chercher dans 100 tutoriels</div>
             </div>
           </div>
         </div>
@@ -175,11 +181,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       {/* Proposition de valeur */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">
-            Génère des idées, valide-les, construis et lance — le tout guidé étape par étape
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            Trouve une idée, vérifie qu'elle vaut le coup, construis et mets en ligne
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Bildr est la plateforme complète pour les fondateurs sans compétences techniques. Génération d'idées qui identifie les opportunités de marché, validation qui fonctionne, plans d'action détaillés, et extraits de code prêts à déployer.
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Bildr est fait pour ceux qui ne savent pas coder. Tu obtiens des idées d'application adaptées à ton profil, une analyse pour savoir si ça peut marcher, un plan technique complet, et du code prêt à copier-coller.
           </p>
         </div>
       </section>
@@ -189,13 +195,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4 flex items-center gap-2">
-              <IconBuilding className="w-4 h-4" /> Plateforme tout-en-un
+              <IconBuilding className="w-4 h-4" /> Tout ce dont tu as besoin
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Tout ce qu'il faut pour lancer ton produit
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              De l'idée à l'application en ligne
             </h2>
-            <p className="text-lg text-gray-600">
-              De la validation d'idée jusqu'au déploiement en ligne
+            <p className="text-base text-gray-600">
+              Chaque étape est guidée et expliquée simplement
             </p>
           </div>
 
@@ -203,50 +209,50 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             {[
               {
                 icon: <IconIdea className="w-8 h-8" />,
-                title: "Génération d'idées",
-                description: "Idées de produits adaptées à tes compétences et validées par le marché"
+                title: "Idées d'application",
+                description: "Des idées adaptées à ce que tu sais faire, avec une vraie demande"
               },
               {
                 icon: <IconAnalytics className="w-8 h-8" />,
-                title: "Analyse de viabilité",
-                description: "Note sur 100, concurrence, taille du marché estimée"
+                title: "Vérification du marché",
+                description: "Un score sur 100, la concurrence, la taille du marché"
               },
               {
                 icon: <IconTarget className="w-8 h-8" />,
-                title: "Validation intelligente",
-                description: "Sache si ça vaut le coup avant d'investir du temps"
+                title: "Analyse détaillée",
+                description: "Tu sais si ton idée vaut le coup avant de te lancer"
               },
               {
                 icon: <IconWrench className="w-8 h-8" />,
-                title: "Plan technique",
-                description: "Technologies recommandées, architecture et plan sur 4 semaines"
+                title: "Plan de construction",
+                description: "Quelles technologies utiliser et comment les assembler"
               },
               {
                 icon: <IconKanban className="w-8 h-8" />,
-                title: "Organisation visuelle",
-                description: "Ton plan transformé en tâches hebdomadaires concrètes"
+                title: "Planning semaine par semaine",
+                description: "Ton projet découpé en tâches claires et réalisables"
               },
               {
                 icon: <IconTerminal className="w-8 h-8" />,
-                title: "Extraits de code",
-                description: "Code prêt à copier-coller qui fonctionne vraiment"
+                title: "Code prêt à l'emploi",
+                description: "Du code qui marche vraiment, à copier-coller directement"
               },
               {
                 icon: <IconShield className="w-8 h-8" />,
-                title: "Authentification & paiements",
-                description: "Intégration Stripe, gestion utilisateurs, sécurité"
+                title: "Connexion et paiements",
+                description: "Tout pour gérer tes utilisateurs et accepter des paiements"
               },
               {
                 icon: <IconPackage className="w-8 h-8" />,
-                title: "Guides de mise en ligne",
-                description: "Déploiement pas à pas sur Vercel ou Railway"
+                title: "Mise en ligne",
+                description: "Comment mettre ton application sur Internet, étape par étape"
               }
             ].map((feature, i) => (
               <div key={i} className="text-center">
                 <div className="flex items-center justify-center mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <h3 className="font-bold text-gray-900 mb-2 text-base">{feature.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
@@ -261,24 +267,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
               Étape 1
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Tu ne sais pas quoi construire ?
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Tu ne sais pas quelle application créer ?
             </h2>
-            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Indique tes centres d'intérêt et compétences. Reçois des idées de micro-SaaS personnalisées, avec une demande réelle identifiée sur le marché. Fini les suppositions.
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">
+              Dis-nous ce qui t'intéresse et ce que tu sais déjà faire. On te propose des idées d'applications simples, avec des gens qui cherchent vraiment ce genre de service. Plus besoin de deviner si ton idée va plaire.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Idées adaptées à ton profil et expérience</span>
+                <span className="text-gray-700 text-sm">Des idées qui correspondent à ce que tu connais</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Créneaux validés avec demande documentée</span>
+                <span className="text-gray-700 text-sm">Des marchés où les gens cherchent vraiment une solution</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Analyse des concurrents existants</span>
+                <span className="text-gray-700 text-sm">La liste des applications qui existent déjà dans ce domaine</span>
               </li>
             </ul>
           </div>
@@ -479,24 +485,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
               Étape 2
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Est-ce que ça vaut vraiment le coup ?
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Comment savoir si ça peut marcher ?
             </h2>
-            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Obtiens une note de viabilité sur 100, une analyse complète forces/faiblesses/opportunités, et le paysage concurrentiel détaillé. Décide en connaissance de cause avant d'investir du temps.
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">
+              Tu reçois une note sur 100 qui te dit si ton idée est bonne. On analyse les points forts, les risques, et les opportunités. Tu vois aussi qui fait déjà la même chose. Comme ça, tu décides si ça vaut le coup de te lancer.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Note de viabilité avec explication détaillée</span>
+                <span className="text-gray-700 text-sm">Une note claire avec les raisons qui l'expliquent</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Analyse concurrents et positionnement recommandé</span>
+                <span className="text-gray-700 text-sm">La liste de tes concurrents et comment te différencier</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Estimation de la taille du marché accessible</span>
+                <span className="text-gray-700 text-sm">Combien de personnes pourraient être intéressées</span>
               </li>
             </ul>
           </div>
@@ -510,24 +516,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
               Étape 3
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Quelles technologies utiliser ? Par où commencer ?
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Quels outils utiliser ? Par où commencer ?
             </h2>
-            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Reçois un plan technique complet. Technologies recommandées pour ton projet, feuille de route sur 4 semaines, et schémas d'architecture. Tout ce qu'un développeur facturerait 5 000€ à concevoir.
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">
+              On te donne un plan complet pour construire ton application. Les outils à utiliser, un planning sur 4 semaines, et les schémas pour comprendre comment tout s'assemble. Normalement, un développeur te ferait payer 5 000 € juste pour faire ce plan.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Choix des technologies adapté à ton projet</span>
+                <span className="text-gray-700 text-sm">Les bons outils pour ton type d'application</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Feuille de route semaine par semaine</span>
+                <span className="text-gray-700 text-sm">Un planning détaillé, semaine après semaine</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Schéma de base de données et architecture réseau</span>
+                <span className="text-gray-700 text-sm">Des schémas pour comprendre comment ça marche</span>
               </li>
             </ul>
           </div>
@@ -556,7 +562,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 <div className="space-y-2">
                   <div className="bg-white rounded-lg p-3 border border-blue-200 flex items-center gap-3 shadow-sm">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl">⚛️</span>
+                      <IconReact className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-bold text-gray-900">Interface utilisateur</div>
@@ -566,30 +572,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
 
                   <div className="bg-white rounded-lg p-3 border border-green-200 flex items-center gap-3 shadow-sm">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl">🗄️</span>
+                      <IconDatabase className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-bold text-gray-900">Base de données & Auth</div>
+                      <div className="text-sm font-bold text-gray-900">Base de données et connexion</div>
                       <div className="text-xs text-gray-600">Supabase (PostgreSQL + authentification intégrée)</div>
                     </div>
                   </div>
 
                   <div className="bg-white rounded-lg p-3 border border-purple-200 flex items-center gap-3 shadow-sm">
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl">💳</span>
+                      <IconPayment className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-bold text-gray-900">Paiements</div>
-                      <div className="text-xs text-gray-600">Stripe Checkout + abonnements</div>
+                      <div className="text-xs text-gray-600">Stripe Checkout et abonnements</div>
                     </div>
                   </div>
 
                   <div className="bg-white rounded-lg p-3 border border-indigo-200 flex items-center gap-3 shadow-sm">
                     <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl">🚀</span>
+                      <IconCloud className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-bold text-gray-900">Hébergement</div>
+                      <div className="text-sm font-bold text-gray-900">Mise en ligne</div>
                       <div className="text-xs text-gray-600">Vercel (déploiement automatique)</div>
                     </div>
                   </div>
@@ -711,96 +717,172 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
               Étape 4
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Bloqué ? Obtiens le code exact dont tu as besoin
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Et si je bloque ? Je fais comment ?
             </h2>
-            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Extraits de code prêts pour la production à chaque étape. Authentification, paiements, requêtes base de données—tout est prêt à copier-coller. Comme avoir un développeur expert à disposition.
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">
+              À chaque étape, tu reçois du code prêt à utiliser. Connexion des utilisateurs, accepter des paiements, récupérer des données... tout est déjà écrit. Tu copies, tu colles, ça marche. C'est comme avoir un développeur professionnel disponible en permanence.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Code qui fonctionne réellement (testé en production)</span>
+                <span className="text-gray-700 text-sm">Du code qui marche vraiment (testé sur de vraies applications)</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Explications en français, ligne par ligne</span>
+                <span className="text-gray-700 text-sm">Des explications en français pour chaque ligne</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Demandes de code illimitées</span>
+                <span className="text-gray-700 text-sm">Autant de code que tu veux, quand tu veux</span>
               </li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* Tableau de comparaison */}
+      {/* Comparaison */}
       <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4 flex items-center justify-center gap-3">
-            Comment Bildr se compare ? <IconQuestion className="w-10 h-10" />
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+            En quoi Bildr est différent
           </h2>
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            On a construit Bildr parce qu'on en avait marre d'assembler des solutions qui ne communiquent pas entre elles.
+            On a créé Bildr parce qu'on était fatigués de devoir assembler 10 outils différents qui ne parlent pas entre eux
           </p>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse bg-white rounded-xl shadow-sm overflow-hidden">
-              <thead>
-                <tr className="border-b-2 border-gray-200 bg-gray-50">
-                  <th className="text-left py-4 px-6 text-gray-900 font-semibold">Fonctionnalité</th>
-                  <th className="text-center py-4 px-6 text-gray-900 font-semibold">Bildr</th>
-                  <th className="text-center py-4 px-6 text-gray-600">ChatGPT</th>
-                  <th className="text-center py-4 px-6 text-gray-600">Développeur</th>
-                  <th className="text-center py-4 px-6 text-gray-600">Outils sans code</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Génération d'idées validées</td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Validation du marché</td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Plan technique complet</td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Partiel</span></td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Code prêt pour la production</td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Souvent buggé</span></td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Limité</span></td>
-                </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Guidage étape par étape</td>
-                  <td className="text-center py-4 px-6"><IconCheckCircle className="w-6 h-6 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                  <td className="text-center py-4 px-6"><IconCross className="w-6 h-6 mx-auto opacity-30" /></td>
-                </tr>
-                <tr className="bg-gray-50">
-                  <td className="py-4 px-6 text-gray-900 font-semibold">Coût</td>
-                  <td className="text-center py-4 px-6 text-indigo-600 font-semibold">19€/mois</td>
-                  <td className="text-center py-4 px-6 text-gray-600">20€/mois</td>
-                  <td className="text-center py-4 px-6 text-gray-600">15 000€+</td>
-                  <td className="text-center py-4 px-6 text-gray-600">30-100€/mois</td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Bildr */}
+            <div className="bg-indigo-50 border-2 border-indigo-600 rounded-xl p-6">
+              <div className="text-center mb-4">
+                <div className="inline-block px-3 py-1 bg-indigo-600 text-white rounded-full text-sm font-bold mb-3">
+                  Bildr
+                </div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">19 € / mois</div>
+                <div className="text-xs text-gray-600">Tout inclus</div>
+              </div>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold mt-0.5">✓</span>
+                  <span className="text-gray-700">Génération d'idées validées</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold mt-0.5">✓</span>
+                  <span className="text-gray-700">Vérification du marché</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold mt-0.5">✓</span>
+                  <span className="text-gray-700">Plan technique détaillé</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold mt-0.5">✓</span>
+                  <span className="text-gray-700">Code prêt à utiliser</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold mt-0.5">✓</span>
+                  <span className="text-gray-700">Guide étape par étape</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* ChatGPT */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="text-center mb-4">
+                <div className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold mb-3">
+                  ChatGPT
+                </div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">20 € / mois</div>
+                <div className="text-xs text-gray-600">À toi de savoir quoi demander</div>
+              </div>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">~</span>
+                  <span className="text-gray-500">Idées génériques</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Pas de validation marché</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">~</span>
+                  <span className="text-gray-500">Conseils partiels</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">~</span>
+                  <span className="text-gray-500">Code souvent buggé</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Aucune structure</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Développeur */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="text-center mb-4">
+                <div className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold mb-3">
+                  Développeur
+                </div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">15 000 €</div>
+                <div className="text-xs text-gray-600">Pour tout construire</div>
+              </div>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Pas son rôle</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Pas son rôle</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✓</span>
+                  <span className="text-gray-500">Si tu paies en plus</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✓</span>
+                  <span className="text-gray-500">Code sur mesure</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Tu dois tout gérer</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* No-code */}
+            <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+              <div className="text-center mb-4">
+                <div className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold mb-3">
+                  Outils no-code
+                </div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">50 € / mois</div>
+                <div className="text-xs text-gray-600">Limité à leurs templates</div>
+              </div>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Non</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Non</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Non</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">~</span>
+                  <span className="text-gray-500">Très limité</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 font-bold mt-0.5">✗</span>
+                  <span className="text-gray-500">Interface compliquée</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -808,11 +890,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       {/* Signal de confiance */}
       <section className="py-16 px-6 bg-indigo-50 border-y border-indigo-100">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-lg text-indigo-900 font-medium flex items-center justify-center gap-2 flex-wrap">
-            "Construit par des fondateurs indépendants <IconPerson className="w-5 h-5 inline" /> pour des fondateurs qui ne savent pas coder <IconCross className="w-5 h-5 inline opacity-60" /> mais qui ont des idées à un million <IconIdea className="w-5 h-5 inline" />"
+          <p className="text-lg text-indigo-900 font-medium">
+            "Créé par des fondateurs pour des fondateurs qui ne savent pas coder"
           </p>
-          <p className="text-indigo-700 mt-2 flex items-center justify-center gap-2 flex-wrap">
-            Pas de levée de fonds <IconMoney className="w-5 h-5 inline opacity-60" /> — Autofinancés <IconWrench className="w-5 h-5 inline" /> — On comprend tes galères.
+          <p className="text-indigo-700 mt-3">
+            Pas de levée de fonds • Autofinancés • On comprend tes galères parce qu'on les a vécues
           </p>
         </div>
       </section>
@@ -821,11 +903,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <section className="py-20 px-6" id="tarifs">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
-              Tarifs simples et transparents <IconMoney className="w-10 h-10" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Prix simples et clairs
             </h2>
-            <p className="text-lg text-gray-600">
-              Commence gratuitement. Passe à la version payante quand tu es prêt à construire.
+            <p className="text-base text-gray-600">
+              Essaie gratuitement. Passe à la version complète quand tu es prêt
             </p>
           </div>
 
@@ -835,30 +917,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Découverte</h3>
                 <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-5xl font-bold text-gray-900">0€</span>
-                  <span className="text-gray-600">/à vie</span>
+                  <span className="text-4xl font-bold text-gray-900">0 €</span>
+                  <span className="text-gray-600">pour toujours</span>
                 </div>
-                <p className="text-gray-600">
-                  Teste Bildr. Génère ta première idée.
+                <p className="text-gray-600 text-sm">
+                  Pour tester Bildr et voir comment ça marche
                 </p>
               </div>
 
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">1 idée complète générée</span>
+                  <span className="text-gray-700">1 idée complète avec analyse</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Analyse de viabilité</span>
+                  <span className="text-gray-700">Score de viabilité</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-gray-400">
                   <IconX className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                  <span>Plan technique</span>
+                  <span>Plan de construction</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-gray-400">
                   <IconX className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                  <span>Extraits de code</span>
+                  <span>Code prêt à utiliser</span>
                 </li>
               </ul>
 
@@ -866,7 +948,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 onClick={() => openAuth('REGISTER')}
                 className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-semibold transition-colors"
               >
-                Commencer gratuitement
+                Essayer gratuitement
               </button>
             </div>
 
@@ -876,36 +958,36 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 Le plus populaire
               </div>
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Lancement</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Version complète</h3>
                 <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-5xl font-bold text-gray-900">19€</span>
-                  <span className="text-gray-600">/mois</span>
+                  <span className="text-4xl font-bold text-gray-900">19 €</span>
+                  <span className="text-gray-600">par mois</span>
                 </div>
-                <p className="text-gray-600">
-                  Tout pour lancer ton produit
+                <p className="text-gray-600 text-sm">
+                  Tout ce qu'il faut pour créer ton application
                 </p>
               </div>
 
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Idées illimitées</span>
+                  <span className="text-gray-700">Autant d'idées que tu veux</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Validations complètes</span>
+                  <span className="text-gray-700">Analyses complètes</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Plans techniques détaillés</span>
+                  <span className="text-gray-700">Plans de construction détaillés</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Code prêt pour la production</span>
+                  <span className="text-gray-700">Tout le code dont tu as besoin</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Demandes de code illimitées</span>
+                  <span className="text-gray-700">Aide illimitée si tu bloques</span>
                 </li>
               </ul>
 
@@ -916,7 +998,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 Commencer maintenant
               </button>
               <p className="text-xs text-gray-500 text-center mt-4">
-                Résilie à tout moment. Sans poser de questions.
+                Tu peux annuler quand tu veux, sans justification
               </p>
             </div>
           </div>
@@ -933,28 +1015,28 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
           <div className="space-y-4">
             {[
               {
-                q: "J'ai besoin de savoir coder ?",
-                a: "Non. Bildr est conçu pour les personnes sans compétences techniques. On te fournit du code prêt à copier-coller, avec des explications en français simple. Si tu sais suivre une recette de cuisine, tu peux utiliser Bildr."
+                q: "Je dois savoir coder ?",
+                a: "Non, pas du tout. Bildr est fait pour ceux qui ne savent pas coder. On te donne du code tout prêt à copier-coller, avec des explications simples en français. Si tu peux suivre une recette de cuisine, tu peux utiliser Bildr."
               },
               {
-                q: "En quoi c'est différent de ChatGPT ?",
-                a: "ChatGPT est génial, mais pas structuré. Tu dois savoir quoi demander, quand le demander, et comment tout assembler. Bildr te guide à travers tout le processus : idée → validation → plan → code. C'est un parcours complet, pas juste des réponses éparpillées."
+                q: "C'est quoi la différence avec ChatGPT ?",
+                a: "ChatGPT est super, mais il ne te guide pas. Tu dois savoir quoi lui demander et comment assembler ses réponses. Avec Bildr, tout est organisé : tu passes de l'idée à l'application en ligne, étape par étape. C'est un vrai parcours, pas juste des réponses en vrac."
               },
               {
-                q: "Je peux vraiment construire un produit en 4 semaines ?",
-                a: "Oui—si tu suis la feuille de route et que tu investis 10-15 heures par semaine. On découpe tout en jalons hebdomadaires réalisables. Semaine 1 : Authentification. Semaine 2 : Fonctionnalité principale. Semaine 3 : Paiements. Semaine 4 : Mise en ligne."
+                q: "Je peux vraiment créer une application en 4 semaines ?",
+                a: "Oui, si tu suis le plan et que tu travailles 10 à 15 heures par semaine. On découpe tout en tâches simples. Semaine 1 : connexion des utilisateurs. Semaine 2 : fonction principale. Semaine 3 : paiements. Semaine 4 : mise en ligne."
               },
               {
-                q: "Et si je suis bloqué ?",
-                a: "C'est exactement pour ça qu'il y a le générateur d'extraits de code. Décris où tu es coincé, et tu reçois le code exact dont tu as besoin pour avancer. C'est comme avoir un développeur expert disponible en permanence."
+                q: "Et si je bloque quelque part ?",
+                a: "C'est pour ça qu'on te donne du code à chaque étape. Tu expliques où tu bloques, et tu reçois exactement le code qu'il te faut. C'est comme avoir un développeur pro toujours disponible."
               },
               {
-                q: "Je peux annuler à tout moment ?",
-                a: "Oui. Un clic, aucune question posée. Tu gardes l'accès à tout ce que tu as déjà généré."
+                q: "Je peux arrêter quand je veux ?",
+                a: "Oui, en un clic. Pas besoin de se justifier. Et tu gardes tout ce que tu as déjà généré."
               },
               {
-                q: "Le plan gratuit est vraiment gratuit à vie ?",
-                a: "Oui. Pas de carte bancaire demandée. Tu obtiens 1 génération d'idée complète avec validation. Assez pour voir si Bildr te convient."
+                q: "Le gratuit, c'est vraiment pour toujours ?",
+                a: "Oui, pour toujours. Pas besoin de carte bancaire. Tu peux tester avec 1 idée complète et son analyse. Comme ça tu vois si Bildr te convient."
               }
             ].map((faq, i) => (
               <details
@@ -979,21 +1061,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       {/* CTA Final */}
       <section className="py-20 px-6 bg-indigo-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 flex items-center justify-center gap-3">
-            Prêt à construire ton produit ? <IconRocketFlat className="w-12 h-12" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Prêt à créer ton application ?
           </h2>
-          <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
-            Rejoins les fondateurs indépendants qui lancent leurs idées au lieu d'attendre "un jour".
+          <p className="text-lg text-indigo-100 mb-10 max-w-2xl mx-auto">
+            Rejoins ceux qui se lancent au lieu d'attendre le bon moment
           </p>
           <button
             onClick={() => openAuth('REGISTER')}
             className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-gray-100 text-indigo-600 rounded-lg font-bold text-lg transition-colors"
           >
-            Commencer gratuitement
+            Essayer gratuitement
             <IconArrowRight className="w-5 h-5" />
           </button>
           <p className="text-indigo-200 text-sm mt-6">
-            Gratuit à vie · Sans carte bancaire · 30 secondes pour démarrer
+            Gratuit pour toujours • Sans carte bancaire • Prêt en 30 secondes
           </p>
         </div>
       </section>

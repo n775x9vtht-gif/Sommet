@@ -465,3 +465,66 @@ export const IconPerson = ({ className = "w-6 h-6" }: { className?: string }) =>
     <path d="M6 21v-2a5 5 0 0110 0v2" stroke="#7C3AED" strokeWidth="2" strokeLinecap="round"/>
   </svg>
 );
+
+// Euro icon (cohérent avec le contexte français)
+export const IconEuro = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#34D399" stroke="#059669" strokeWidth="1.5"/>
+    <path d="M14 8c-1.5-1-3.5-1-5 0M14 16c-1.5 1-3.5 1-5 0M7 11h6M7 13h6M9 8v8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+// Calendar icon (pour les semaines/temps)
+export const IconCalendar = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <rect x="3" y="4" width="18" height="18" rx="2" fill="#FBBF24" stroke="#F59E0B" strokeWidth="1.5"/>
+    <path d="M3 10h18M8 2v4M16 2v4" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M8 14h2M8 17h2M12 14h2M12 17h2M16 14h2" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+// Steps/Ladder icon (pour les étapes)
+export const IconSteps = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M3 21h6v-6h6v-6h6V3" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="6" cy="18" r="2" fill="#FCA5A5" stroke="#EF4444" strokeWidth="1.5"/>
+    <circle cx="12" cy="12" r="2" fill="#FCA5A5" stroke="#EF4444" strokeWidth="1.5"/>
+    <circle cx="18" cy="6" r="2" fill="#FCA5A5" stroke="#EF4444" strokeWidth="1.5"/>
+  </svg>
+);
+
+// React logo icon
+export const IconReact = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="2" fill="#61DAFB"/>
+    <ellipse cx="12" cy="12" rx="10" ry="4" stroke="#61DAFB" strokeWidth="1.5" fill="none"/>
+    <ellipse cx="12" cy="12" rx="10" ry="4" stroke="#61DAFB" strokeWidth="1.5" fill="none" transform="rotate(60 12 12)"/>
+    <ellipse cx="12" cy="12" rx="10" ry="4" stroke="#61DAFB" strokeWidth="1.5" fill="none" transform="rotate(-60 12 12)"/>
+  </svg>
+);
+
+// Database icon
+export const IconDatabase = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <ellipse cx="12" cy="6" rx="8" ry="3" fill="#10B981" stroke="#059669" strokeWidth="1.5"/>
+    <path d="M4 6v12c0 1.657 3.582 3 8 3s8-1.343 8-3V6" stroke="#059669" strokeWidth="1.5"/>
+    <ellipse cx="12" cy="12" rx="8" ry="3" fill="none" stroke="#059669" strokeWidth="1.5"/>
+  </svg>
+);
+
+// Payment/Credit card icon
+export const IconPayment = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <rect x="2" y="5" width="20" height="14" rx="2" fill="#A78BFA" stroke="#7C3AED" strokeWidth="1.5"/>
+    <path d="M2 10h20" stroke="#7C3AED" strokeWidth="2"/>
+    <rect x="5" y="14" width="6" height="2" rx="1" fill="white"/>
+  </svg>
+);
+
+// Cloud/Deploy icon
+export const IconCloud = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M18 10h-1.26A8 8 0 109 17h9a5 5 0 000-10z" fill="#818CF8" stroke="#6366F1" strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M12 12v5M10 15l2 2 2-2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
