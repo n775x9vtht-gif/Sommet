@@ -8,7 +8,8 @@ import {
   IconConstruction,
   IconBlueprint,
   IconX,
-  IconPlus
+  IconPlus,
+  Emoji
 } from './Icons';
 import AuthModal from './AuthModal';
 
@@ -70,7 +71,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            {/* New Bildr Logo - Stacked blocks */}
+            {/* Logo Bildr - Stacked blocks */}
             <div className="w-8 h-8 bg-gray-900 rounded-lg flex flex-col items-center justify-center gap-0.5 p-1">
               <div className="w-5 h-1.5 bg-white rounded-sm"></div>
               <div className="w-4 h-1.5 bg-white/80 rounded-sm"></div>
@@ -80,35 +81,36 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
           </div>
 
           <div className="flex items-center gap-4">
-            <a href="#pricing" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Pricing</a>
+            <a href="#pricing" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Tarifs</a>
             <button
               onClick={() => openAuth('LOGIN')}
               className="text-gray-600 hover:text-gray-900 text-sm font-medium"
             >
-              Sign in
+              Se connecter
             </button>
             <button
               onClick={() => openAuth('REGISTER')}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
             >
-              Get started free
+              Commencer gratuitement
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Hero with emojis */}
+      {/* Hero */}
       <section className="pt-20 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
-            You have a SaaS idea 💡<br/>
-            No code skills 👨‍💻 No clue where to start 🤷‍♂️
+            Tu as une idée de SaaS <Emoji>💡</Emoji><br/>
+            Aucune compétence en code <Emoji>👨‍💻</Emoji><br />
+            Aucune idée par où commencer <Emoji>🤷‍♂️</Emoji>
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-4 leading-relaxed">
-            Sound familiar?
+            Ça te parle ?
           </p>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10">
-            Bildr gives you everything you need to go from idea to launched MVP. Validated ideas, technical roadmap, and production-ready code. No developer needed.
+            Bildr te donne tout ce qu'il faut pour passer de l'idée au MVP lancé. Idées validées, roadmap technique et code prêt à l'emploi. Pas besoin de développeur.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
@@ -116,124 +118,130 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               onClick={() => openAuth('REGISTER')}
               className="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
             >
-              Start building for free
+              Commencer à construire gratuitement
               <IconArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={onEnterDemo}
               className="w-full sm:w-auto px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-lg font-semibold border border-gray-300 transition-colors"
             >
-              See how it works
+              Voir comment ça marche
             </button>
           </div>
 
           <p className="text-sm text-gray-500">
-            ✓ Free forever plan · ✓ No credit card required · ✓ 30 seconds to set up
+            ✓ Gratuit à vie · ✓ Pas de carte bancaire · ✓ 30 secondes pour commencer
           </p>
         </div>
       </section>
 
-      {/* Quantified Benefits with emojis */}
+      {/* Bénéfices quantifiés */}
       <section className="py-16 px-6 bg-gray-50 border-y border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">⚡ 4 weeks</div>
-              <div className="text-gray-600">From idea to launched MVP (not 6+ months)</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">
+                <Emoji>⚡</Emoji> 4 semaines
+              </div>
+              <div className="text-gray-600">De l'idée au MVP lancé (pas 6+ mois)</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">💰 $15K+</div>
-              <div className="text-gray-600">Saved vs hiring a developer</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">
+                <Emoji>💰</Emoji> 15K€+
+              </div>
+              <div className="text-gray-600">Économisés vs embaucher un dev</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">🎯 3 steps</div>
-              <div className="text-gray-600">Not 100 scattered YouTube tutorials</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">
+                <Emoji>🎯</Emoji> 3 étapes
+              </div>
+              <div className="text-gray-600">Pas 100 tutos YouTube éparpillés</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main value prop with emojis (UserJot style) */}
+      {/* Proposition de valeur principale */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">
-            Generate ideas 💡 validate instantly ✅ build with production code 🚀 and ship in weeks ⚡
+            Génère des idées <Emoji>💡</Emoji> valide instantanément <Emoji>✅</Emoji> construis avec du code production <Emoji>🚀</Emoji> et lance en quelques semaines <Emoji>⚡</Emoji>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Bildr is the complete platform for non-technical founders. Beautiful idea generation that finds market gaps, validation that actually works, blueprints that guide you step-by-step, and code that's ready to ship.
+            Bildr est la plateforme complète pour les fondateurs non-techniques. Génération d'idées qui trouve les gaps du marché, validation qui fonctionne vraiment, blueprints qui te guident pas à pas, et code prêt à déployer.
           </p>
         </div>
       </section>
 
-      {/* Features Grid (UserJot style) */}
+      {/* Grille de fonctionnalités (style UserJot) */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
-              💼 SaaS Builder Platform
+              <Emoji>💼</Emoji> Plateforme complète pour SaaS
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Everything you need to launch
+              Tout ce qu'il te faut pour lancer
             </h2>
             <p className="text-lg text-gray-600">
-              From idea validation to production deployment
+              De la validation d'idée au déploiement en production
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                icon: "💡",
+                emoji: "💡",
                 color: "bg-yellow-100",
-                title: "Idea generation",
-                description: "Market-validated SaaS ideas based on your skills"
+                title: "Génération d'idées",
+                description: "Idées de SaaS validées par le marché basées sur tes compétences"
               },
               {
-                icon: "📊",
+                emoji: "📊",
                 color: "bg-blue-100",
-                title: "SWOT analysis",
-                description: "Viability score, competition check, market size"
+                title: "Analyse SWOT",
+                description: "Score de viabilité, analyse concurrence, taille du marché"
               },
               {
-                icon: "🎯",
+                emoji: "🎯",
                 color: "bg-purple-100",
-                title: "Smart validation",
-                description: "Know if it's worth building before you code"
+                title: "Validation intelligente",
+                description: "Sache si ça vaut le coup de construire avant de coder"
               },
               {
-                icon: "📋",
+                emoji: "📋",
                 color: "bg-green-100",
-                title: "Technical blueprint",
-                description: "Complete stack, architecture, and 4-week plan"
+                title: "Blueprint technique",
+                description: "Stack complet, architecture et plan sur 4 semaines"
               },
               {
-                icon: "⚙️",
+                emoji: "⚙️",
                 color: "bg-red-100",
-                title: "Kanban workflow",
-                description: "Turn your plan into actionable weekly tasks"
+                title: "Workflow Kanban",
+                description: "Transforme ton plan en tâches hebdomadaires actionnables"
               },
               {
-                icon: "💻",
+                emoji: "💻",
                 color: "bg-indigo-100",
-                title: "Production code",
-                description: "Copy-paste ready snippets that actually work"
+                title: "Code production",
+                description: "Snippets copier-coller prêts à l'emploi qui marchent"
               },
               {
-                icon: "🔐",
+                emoji: "🔐",
                 color: "bg-cyan-100",
-                title: "Auth & payments",
-                description: "Stripe integration, user management, everything"
+                title: "Auth & paiements",
+                description: "Intégration Stripe, gestion utilisateurs, tout"
               },
               {
-                icon: "📦",
+                emoji: "📦",
                 color: "bg-pink-100",
-                title: "Deploy guides",
-                description: "Step-by-step deployment to Vercel/Railway"
+                title: "Guides de déploiement",
+                description: "Déploiement pas à pas sur Vercel/Railway"
               }
             ].map((feature, i) => (
               <div key={i} className="text-center">
                 <div className={`w-16 h-16 ${feature.color} rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4`}>
-                  {feature.icon}
+                  <Emoji>{feature.emoji}</Emoji>
                 </div>
                 <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
@@ -243,61 +251,80 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Feature 1: Idea Generation with updated mockup */}
+      {/* Fonctionnalité 1 : Génération d'idées (mockup amélioré) */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
-              Step 1
+              Étape 1
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              No idea what to build? 🤔
+              Aucune idée de quoi construire ? <Emoji>🤔</Emoji>
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Enter your interests and skills. Get personalized micro-SaaS ideas that actually have market demand. No more guessing what might work.
+              Entre tes intérêts et compétences. Reçois des idées de micro-SaaS personnalisées avec une vraie demande sur le marché. Plus besoin de deviner ce qui pourrait marcher.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Ideas based on your background</span>
+                <span className="text-gray-700">Idées basées sur ton profil</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Validated niches with real demand</span>
+                <span className="text-gray-700">Niches validées avec demande réelle</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Competition analysis included</span>
+                <span className="text-gray-700">Analyse de la concurrence incluse</span>
               </li>
             </ul>
           </div>
-          <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
-                  B
+
+          {/* Mockup professionnel */}
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 border border-gray-200 shadow-xl">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              {/* Header du mockup */}
+              <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center text-2xl">
+                  <Emoji>💡</Emoji>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">Bildr</div>
-                  <div className="text-xs text-gray-500">Idea Generator</div>
+                  <div className="font-bold text-white">Générateur d'idées</div>
+                  <div className="text-xs text-indigo-100">Bildr Intelligence</div>
                 </div>
               </div>
-              <div className="border-t border-gray-100 pt-4">
-                <div className="text-sm text-gray-500 mb-3">💡 Generated idea:</div>
-                <div className="font-semibold text-gray-900 mb-3">Screenshot Feedback Tool for Designers</div>
-                <div className="grid grid-cols-3 gap-3 text-xs">
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-2">
-                    <div className="text-green-600 font-medium">Market size</div>
-                    <div className="text-gray-900 font-bold">$2.4M</div>
+
+              {/* Contenu du mockup */}
+              <div className="p-6">
+                <div className="mb-4">
+                  <div className="text-sm font-medium text-gray-500 mb-2">Idée générée :</div>
+                  <div className="text-lg font-bold text-gray-900 mb-4">
+                    Outil de feedback par screenshot pour designers
                   </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2">
-                    <div className="text-yellow-600 font-medium">Competition</div>
-                    <div className="text-gray-900 font-bold">Medium</div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-3 text-center">
+                    <div className="text-xs font-semibold text-green-700 mb-1">Taille marché</div>
+                    <div className="text-xl font-bold text-gray-900">2,4M€</div>
                   </div>
-                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-2">
-                    <div className="text-indigo-600 font-medium">Viability</div>
-                    <div className="text-gray-900 font-bold">87/100</div>
+                  <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-3 text-center">
+                    <div className="text-xs font-semibold text-orange-700 mb-1">Concurrence</div>
+                    <div className="text-xl font-bold text-gray-900">Moyenne</div>
                   </div>
+                  <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl p-3 text-center">
+                    <div className="text-xs font-semibold text-indigo-700 mb-1">Viabilité</div>
+                    <div className="text-xl font-bold text-gray-900">87/100</div>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                  <span className="text-sm font-medium text-green-800">
+                    <Emoji>✨</Emoji> Très bon potentiel
+                  </span>
+                  <button className="text-xs font-semibold text-indigo-600 hover:text-indigo-700">
+                    Voir le détail →
+                  </button>
                 </div>
               </div>
             </div>
@@ -305,150 +332,197 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Feature 2: Validation with updated mockup */}
+      {/* Fonctionnalité 2 : Validation (mockup amélioré) */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">📊</span>
-                <div className="font-semibold text-gray-900">SWOT Analysis</div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="font-semibold text-green-700 mb-2 flex items-center gap-2">
-                  <span>✅</span> Strengths
+          {/* Mockup professionnel */}
+          <div className="order-2 md:order-1 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 border border-gray-200 shadow-xl">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center text-2xl">
+                  <Emoji>📊</Emoji>
                 </div>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Low competition in niche</li>
-                  <li>• Recurring revenue model</li>
-                  <li>• Easy to integrate</li>
-                </ul>
-              </div>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div className="font-semibold text-yellow-700 mb-2 flex items-center gap-2">
-                  <span>⚠️</span> Weaknesses
+                <div>
+                  <div className="font-bold text-white">Analyse SWOT</div>
+                  <div className="text-xs text-blue-100">Validation du marché</div>
                 </div>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Requires design tool integration</li>
-                  <li>• Network effects limited</li>
-                </ul>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="font-semibold text-blue-700 mb-2 flex items-center gap-2">
-                  <span>🚀</span> Opportunities
+
+              {/* Contenu */}
+              <div className="p-6 space-y-3">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4">
+                  <div className="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <Emoji>✅</Emoji> Forces
+                  </div>
+                  <ul className="text-sm text-gray-700 space-y-1.5">
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-600 font-bold">•</span>
+                      Concurrence faible dans la niche
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-600 font-bold">•</span>
+                      Modèle de revenus récurrents
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-600 font-bold">•</span>
+                      Facile à intégrer
+                    </li>
+                  </ul>
                 </div>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Growing remote design market</li>
-                  <li>• API integrations possible</li>
-                </ul>
+
+                <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl p-4">
+                  <div className="font-bold text-yellow-800 mb-2 flex items-center gap-2">
+                    <Emoji>⚠️</Emoji> Faiblesses
+                  </div>
+                  <ul className="text-sm text-gray-700 space-y-1.5">
+                    <li className="flex items-start gap-2">
+                      <span className="text-yellow-600 font-bold">•</span>
+                      Nécessite intégration outils design
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-yellow-600 font-bold">•</span>
+                      Effets de réseau limités
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4">
+                  <div className="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                    <Emoji>🚀</Emoji> Opportunités
+                  </div>
+                  <ul className="text-sm text-gray-700 space-y-1.5">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 font-bold">•</span>
+                      Marché du design à distance en croissance
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 font-bold">•</span>
+                      Intégrations API possibles
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
+
           <div className="order-1 md:order-2">
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
-              Step 2
+              Étape 2
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Is it actually worth building? 🎯
+              Est-ce que ça vaut vraiment le coup de construire ? <Emoji>🎯</Emoji>
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Get a viability score out of 100, complete SWOT analysis, and competitor landscape. Know if your idea has legs before writing a single line of code.
+              Reçois un score de viabilité sur 100, une analyse SWOT complète et le paysage concurrentiel. Sache si ton idée tient la route avant d'écrire une seule ligne de code.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Viability score with detailed breakdown</span>
+                <span className="text-gray-700">Score de viabilité avec breakdown détaillé</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Competitor analysis and positioning</span>
+                <span className="text-gray-700">Analyse concurrentielle et positionnement</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Market size estimation</span>
+                <span className="text-gray-700">Estimation de la taille du marché</span>
               </li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* Feature 3: Blueprint with updated mockup */}
+      {/* Fonctionnalité 3 : Blueprint (mockup amélioré) */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
-              Step 3
+              Étape 3
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              What tech stack? What features first? 🛠️
+              Quelle stack tech ? Quelles features d'abord ? <Emoji>🛠️</Emoji>
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Get a complete technical blueprint. Recommended tech stack, 4-week roadmap, and architecture diagrams. Everything a developer would charge $5K to plan.
+              Reçois un blueprint technique complet. Stack recommandée, roadmap sur 4 semaines et diagrammes d'architecture. Tout ce qu'un développeur facturerait 5K€ pour planifier.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Personalized tech stack recommendation</span>
+                <span className="text-gray-700">Recommandation de stack tech personnalisée</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Week-by-week development roadmap</span>
+                <span className="text-gray-700">Roadmap de développement semaine par semaine</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Database schema and API design</span>
+                <span className="text-gray-700">Schéma de base de données et design d'API</span>
               </li>
             </ul>
           </div>
-          <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">🏗️</span>
-                <div className="font-semibold text-gray-900">Recommended Stack</div>
+
+          {/* Mockup professionnel */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border border-gray-200 shadow-xl">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center text-2xl">
+                  <Emoji>🏗️</Emoji>
+                </div>
+                <div>
+                  <div className="font-bold text-white">Stack recommandée</div>
+                  <div className="text-xs text-purple-100">Blueprint technique</div>
+                </div>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                    <span className="text-sm">⚛️</span>
+
+              {/* Contenu */}
+              <div className="p-6 space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-xl">
+                    <Emoji>⚛️</Emoji>
                   </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">Frontend</div>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-gray-900">Frontend</div>
                     <div className="text-xs text-gray-600">React + Tailwind CSS</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-100 rounded flex items-center justify-center">
-                    <span className="text-sm">🗄️</span>
+
+                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-xl">
+                    <Emoji>🗄️</Emoji>
                   </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">Backend</div>
-                    <div className="text-xs text-gray-600">Supabase (auth + database)</div>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-gray-900">Backend</div>
+                    <div className="text-xs text-gray-600">Supabase (auth + BDD)</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-purple-100 rounded flex items-center justify-center">
-                    <span className="text-sm">💳</span>
+
+                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-xl">
+                    <Emoji>💳</Emoji>
                   </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">Payments</div>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-gray-900">Paiements</div>
                     <div className="text-xs text-gray-600">Stripe</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-indigo-100 rounded flex items-center justify-center">
-                    <span className="text-sm">🚀</span>
+
+                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-200">
+                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-xl">
+                    <Emoji>🚀</Emoji>
                   </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">Hosting</div>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-gray-900">Hébergement</div>
                     <div className="text-xs text-gray-600">Vercel</div>
                   </div>
                 </div>
-                <div className="pt-3 border-t border-gray-200">
+
+                <div className="mt-4 p-3 bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg border-2 border-gray-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Estimated cost:</span>
-                    <span className="font-bold text-gray-900">$25/month</span>
+                    <span className="text-sm font-medium text-gray-600">Coût mensuel estimé :</span>
+                    <span className="text-lg font-bold text-gray-900">25€/mois</span>
                   </div>
                 </div>
               </div>
@@ -457,21 +531,22 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Feature 4: Code with updated mockup */}
+      {/* Fonctionnalité 4 : Code (mockup amélioré) */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Mockup professionnel */}
           <div className="order-2 md:order-1">
-            <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700 shadow-xl">
+            <div className="bg-gray-900 rounded-2xl p-6 shadow-2xl border-4 border-gray-800">
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
-                <span className="text-gray-500 text-xs ml-2">auth.ts</span>
+                <span className="text-gray-400 text-xs ml-2 font-mono">auth.ts</span>
               </div>
-              <div className="font-mono text-sm text-green-400">
-                <div className="text-gray-500">// 🔐 Authentication setup</div>
+              <div className="font-mono text-sm">
+                <div className="text-gray-500 mb-2">// <Emoji>🔐</Emoji> Configuration authentification</div>
                 <div className="mt-3">
                   <span className="text-purple-400">const</span>{' '}
                   <span className="text-blue-400">supabase</span> ={' '}
@@ -483,102 +558,111 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 <div className="ml-4 text-cyan-400">
                   process.env.SUPABASE_KEY
                 </div>
-                <div>);</div>
-                <div className="mt-4 text-gray-500">// ✅ Copy-paste ready</div>
+                <div className="text-green-400">);</div>
+                <div className="mt-4 text-gray-500">// <Emoji>✅</Emoji> Prêt à copier-coller</div>
+                <div className="mt-3">
+                  <span className="text-purple-400">export</span>{' '}
+                  <span className="text-purple-400">async</span>{' '}
+                  <span className="text-purple-400">function</span>{' '}
+                  <span className="text-yellow-400">signIn</span>() {'{'}
+                </div>
+                <div className="ml-4 text-gray-500">// Logique d'auth...</div>
+                <div className="text-green-400">{'}'}</div>
               </div>
             </div>
           </div>
+
           <div className="order-1 md:order-2">
             <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
-              Step 4
+              Étape 4
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Stuck? Get the exact code you need 💻
+              Bloqué ? Reçois le code exact dont tu as besoin <Emoji>💻</Emoji>
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Production-ready code snippets for every step. Authentication, payments, database queries—all ready to copy-paste. Your technical co-founder, on demand.
+              Snippets de code prêts pour la production à chaque étape. Authentification, paiements, requêtes BDD—tout prêt à copier-coller. Ton co-fondateur technique, à la demande.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Code that actually works (tested)</span>
+                <span className="text-gray-700">Code qui marche vraiment (testé)</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Explained in plain English</span>
+                <span className="text-gray-700">Expliqué en français simple</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Unlimited code requests</span>
+                <span className="text-gray-700">Requêtes de code illimitées</span>
               </li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* Comparison Table */}
+      {/* Tableau de comparaison */}
       <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
-            How does Bildr compare? 🤔
+            Comment Bildr se compare ? <Emoji>🤔</Emoji>
           </h2>
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            We built Bildr because we were tired of piecing together solutions that don't talk to each other.
+            On a construit Bildr parce qu'on en avait marre de bricoler des solutions qui ne se parlent pas entre elles.
           </p>
 
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table className="w-full border-collapse bg-white rounded-xl shadow-sm overflow-hidden">
               <thead>
-                <tr className="border-b-2 border-gray-200">
-                  <th className="text-left py-4 px-6 text-gray-900 font-semibold">Feature</th>
+                <tr className="border-b-2 border-gray-200 bg-gray-50">
+                  <th className="text-left py-4 px-6 text-gray-900 font-semibold">Fonctionnalité</th>
                   <th className="text-center py-4 px-6 text-gray-900 font-semibold">Bildr</th>
                   <th className="text-center py-4 px-6 text-gray-600">ChatGPT</th>
-                  <th className="text-center py-4 px-6 text-gray-600">Hiring a Dev</th>
-                  <th className="text-center py-4 px-6 text-gray-600">No-Code Tools</th>
+                  <th className="text-center py-4 px-6 text-gray-600">Embaucher un dev</th>
+                  <th className="text-center py-4 px-6 text-gray-600">Outils no-code</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Idea generation</td>
+                  <td className="py-4 px-6 text-gray-700">Génération d'idées</td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-gray-300 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Market validation</td>
+                  <td className="py-4 px-6 text-gray-700">Validation du marché</td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Technical blueprint</td>
+                  <td className="py-4 px-6 text-gray-700">Blueprint technique</td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Partial</span></td>
+                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Partiel</span></td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-gray-300 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Production code</td>
+                  <td className="py-4 px-6 text-gray-700">Code production</td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Buggy</span></td>
+                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Buggé</span></td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-gray-300 mx-auto" /></td>
-                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Limited</span></td>
+                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Limité</span></td>
                 </tr>
                 <tr className="border-b border-gray-200">
-                  <td className="py-4 px-6 text-gray-700">Guided workflow</td>
+                  <td className="py-4 px-6 text-gray-700">Workflow guidé</td>
                   <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                   <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
                 </tr>
                 <tr className="bg-gray-50">
-                  <td className="py-4 px-6 text-gray-900 font-semibold">Cost</td>
-                  <td className="text-center py-4 px-6 text-indigo-600 font-semibold">19€/mo</td>
-                  <td className="text-center py-4 px-6 text-gray-600">20€/mo</td>
-                  <td className="text-center py-4 px-6 text-gray-600">$15K+</td>
-                  <td className="text-center py-4 px-6 text-gray-600">$30-100/mo</td>
+                  <td className="py-4 px-6 text-gray-900 font-semibold">Coût</td>
+                  <td className="text-center py-4 px-6 text-indigo-600 font-semibold">19€/mois</td>
+                  <td className="text-center py-4 px-6 text-gray-600">20€/mois</td>
+                  <td className="text-center py-4 px-6 text-gray-600">15K€+</td>
+                  <td className="text-center py-4 px-6 text-gray-600">30-100€/mois</td>
                 </tr>
               </tbody>
             </table>
@@ -586,14 +670,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Trust Signal */}
+      {/* Signal de confiance */}
       <section className="py-16 px-6 bg-indigo-50 border-y border-indigo-100">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-lg text-indigo-900 font-medium">
-            "Built by indie founders 👨‍💻 for indie founders who can't code 🚫💻 but have million-dollar ideas 💡"
+            "Construit par des fondateurs indie <Emoji>👨‍💻</Emoji> pour des fondateurs indie qui ne savent pas coder <Emoji>🚫💻</Emoji> mais qui ont des idées à un million <Emoji>💡</Emoji>"
           </p>
           <p className="text-indigo-700 mt-2">
-            We're not VC-funded 🚫💰 We're bootstrapped 🛠️ We get it.
+            On n'est pas financés par des VCs <Emoji>🚫💰</Emoji> On est bootstrappés <Emoji>🛠️</Emoji> On comprend.
           </p>
         </div>
       </section>
@@ -603,43 +687,43 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Simple, honest pricing 💸
+              Tarifs simples et honnêtes <Emoji>💸</Emoji>
             </h2>
             <p className="text-lg text-gray-600">
-              Start free. Upgrade when you're ready to build.
+              Commence gratuitement. Passe à la vitesse supérieure quand tu es prêt à construire.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free */}
-            <div className="border-2 border-gray-200 rounded-lg p-8 bg-white">
+            {/* Gratuit */}
+            <div className="border-2 border-gray-200 rounded-lg p-8 bg-white shadow-sm hover:shadow-md transition-shadow">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
                 <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-5xl font-bold text-gray-900">$0</span>
-                  <span className="text-gray-600">/forever</span>
+                  <span className="text-5xl font-bold text-gray-900">0€</span>
+                  <span className="text-gray-600">/à vie</span>
                 </div>
                 <p className="text-gray-600">
-                  Try Bildr. Generate your first idea.
+                  Teste Bildr. Génère ta première idée.
                 </p>
               </div>
 
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">1 complete idea generated</span>
+                  <span className="text-gray-700">1 idée complète générée</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Viability analysis</span>
+                  <span className="text-gray-700">Analyse de viabilité</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-gray-400">
                   <IconX className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                  <span>Technical blueprint</span>
+                  <span>Blueprint technique</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-gray-400">
                   <IconX className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                  <span>Production code</span>
+                  <span>Code production</span>
                 </li>
               </ul>
 
@@ -647,46 +731,46 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 onClick={() => openAuth('REGISTER')}
                 className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-semibold transition-colors"
               >
-                Start free
+                Commencer gratuitement
               </button>
             </div>
 
             {/* Launch */}
-            <div className="border-2 border-indigo-600 rounded-lg p-8 bg-white relative">
+            <div className="border-2 border-indigo-600 rounded-lg p-8 bg-white relative shadow-lg hover:shadow-xl transition-shadow">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-indigo-600 text-white text-sm font-semibold rounded-full">
-                Most popular
+                Le plus populaire
               </div>
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Launch</h3>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-5xl font-bold text-gray-900">19€</span>
-                  <span className="text-gray-600">/month</span>
+                  <span className="text-gray-600">/mois</span>
                 </div>
                 <p className="text-gray-600">
-                  Everything to launch your SaaS
+                  Tout pour lancer ton SaaS
                 </p>
               </div>
 
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Unlimited ideas generated</span>
+                  <span className="text-gray-700">Idées illimitées générées</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Complete validations</span>
+                  <span className="text-gray-700">Validations complètes</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Technical blueprints</span>
+                  <span className="text-gray-700">Blueprints techniques</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Production-ready code</span>
+                  <span className="text-gray-700">Code prêt pour la production</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm">
                   <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">Unlimited code requests</span>
+                  <span className="text-gray-700">Requêtes de code illimitées</span>
                 </li>
               </ul>
 
@@ -694,10 +778,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 onClick={handleCheckout}
                 className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors"
               >
-                Get started
+                Commencer
               </button>
               <p className="text-xs text-gray-500 text-center mt-4">
-                Cancel anytime. No questions asked.
+                Annule à tout moment. Sans question.
               </p>
             </div>
           </div>
@@ -708,34 +792,34 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <section className="py-20 px-6 bg-gray-50" id="faq">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Frequently asked questions
+            Questions fréquentes
           </h2>
 
           <div className="space-y-4">
             {[
               {
-                q: "Do I need to know how to code?",
-                a: "Nope. Bildr is built for non-developers. We give you code that's ready to copy-paste, with explanations in plain English. If you can follow a recipe, you can use Bildr."
+                q: "J'ai besoin de savoir coder ?",
+                a: "Non. Bildr est fait pour les non-développeurs. On te donne du code prêt à copier-coller, avec des explications en français simple. Si tu sais suivre une recette de cuisine, tu peux utiliser Bildr."
               },
               {
-                q: "How is this different from ChatGPT?",
-                a: "ChatGPT is amazing, but it's not structured. You need to know what to ask, when to ask it, and how to piece everything together. Bildr guides you through the entire process: idea → validation → plan → code. It's the full workflow, not just scattered answers."
+                q: "En quoi c'est différent de ChatGPT ?",
+                a: "ChatGPT est génial, mais pas structuré. Il faut savoir quoi demander, quand le demander, et comment assembler le tout. Bildr te guide à travers tout le process : idée → validation → plan → code. C'est le workflow complet, pas juste des réponses éparpillées."
               },
               {
-                q: "Can I really build a SaaS in 4 weeks?",
-                a: "Yes—if you follow the roadmap and put in 10-15 hours per week. We break it down into doable weekly milestones. Week 1: Auth. Week 2: Core feature. Week 3: Payments. Week 4: Launch."
+                q: "Je peux vraiment construire un SaaS en 4 semaines ?",
+                a: "Oui—si tu suis la roadmap et que tu mets 10-15 heures par semaine. On découpe en jalons hebdomadaires faisables. Semaine 1 : Auth. Semaine 2 : Feature principale. Semaine 3 : Paiements. Semaine 4 : Lancement."
               },
               {
-                q: "What if I get stuck?",
-                a: "That's exactly what the code generator is for. Describe what you're stuck on, and you'll get the exact code you need to move forward. It's like having a senior developer on speed dial."
+                q: "Et si je suis bloqué ?",
+                a: "C'est exactement pour ça qu'il y a le générateur de code. Décris où tu es bloqué, et tu reçois le code exact dont tu as besoin pour avancer. C'est comme avoir un dev senior en speed dial."
               },
               {
-                q: "Can I cancel anytime?",
-                a: "Yes. One click, no hoops. You keep access to everything you've already generated."
+                q: "Je peux annuler à tout moment ?",
+                a: "Oui. Un clic, pas de questions. Tu gardes l'accès à tout ce que tu as déjà généré."
               },
               {
-                q: "Is the free plan really free forever?",
-                a: "Yes. No credit card required. You get 1 complete idea generation and validation. Enough to see if Bildr is right for you."
+                q: "Le plan gratuit est vraiment gratuit à vie ?",
+                a: "Oui. Pas de carte bancaire demandée. Tu reçois 1 génération d'idée complète et sa validation. Assez pour voir si Bildr te convient."
               }
             ].map((faq, i) => (
               <details
@@ -757,24 +841,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* CTA Final */}
       <section className="py-20 px-6 bg-indigo-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to build your SaaS? 🚀
+            Prêt à construire ton SaaS ? <Emoji>🚀</Emoji>
           </h2>
           <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
-            Join indie founders who are shipping their ideas instead of waiting for "someday."
+            Rejoins les fondateurs indie qui lancent leurs idées au lieu d'attendre "un jour".
           </p>
           <button
             onClick={() => openAuth('REGISTER')}
             className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-gray-100 text-indigo-600 rounded-lg font-bold text-lg transition-colors"
           >
-            Start building for free
+            Commencer à construire gratuitement
             <IconArrowRight className="w-5 h-5" />
           </button>
           <p className="text-indigo-200 text-sm mt-6">
-            Free forever plan · No credit card · 30 seconds to start
+            Gratuit à vie · Pas de carte bancaire · 30 secondes pour commencer
           </p>
         </div>
       </section>
@@ -792,7 +876,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               <span className="font-bold text-xl text-gray-900">Bildr</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-gray-600">
-              <a href="#pricing" className="hover:text-gray-900 transition-colors">Pricing</a>
+              <a href="#pricing" className="hover:text-gray-900 transition-colors">Tarifs</a>
               <a href="#faq" className="hover:text-gray-900 transition-colors">FAQ</a>
               <span>© 2025 Bildr</span>
             </div>

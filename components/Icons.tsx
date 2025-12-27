@@ -101,9 +101,10 @@ export const IconTrash = ({ className = defaultClass }: { className?: string }) 
   </svg>
 );
 
+// Clean check mark icon (professional, simple stroke)
 export const IconCheck = ({ className = defaultClass }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="20 6 9 17 4 12" />
   </svg>
 );
 
@@ -312,4 +313,17 @@ export const IconLockOpen = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
     />
   </svg>
+);
+
+// Emoji component for professional flat-style emojis (UserJot style)
+export const Emoji = ({ children, className = "" }: { children: string; className?: string }) => (
+  <span
+    className={`inline-block ${className}`}
+    style={{
+      fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, Android Emoji, sans-serif',
+      fontSize: '1em'
+    }}
+  >
+    {children}
+  </span>
 );
