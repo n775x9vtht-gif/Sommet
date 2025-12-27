@@ -66,12 +66,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         onSuccess={onEnterApp}
       />
 
-      {/* Navbar - Clean minimal */}
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
+            {/* New Bildr Logo - Stacked blocks */}
+            <div className="w-8 h-8 bg-gray-900 rounded-lg flex flex-col items-center justify-center gap-0.5 p-1">
+              <div className="w-5 h-1.5 bg-white rounded-sm"></div>
+              <div className="w-4 h-1.5 bg-white/80 rounded-sm"></div>
+              <div className="w-3 h-1.5 bg-white/60 rounded-sm"></div>
             </div>
             <span className="font-bold text-xl text-gray-900">Bildr</span>
           </div>
@@ -94,12 +97,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </nav>
 
-      {/* Hero - Problem-first */}
+      {/* Hero with emojis */}
       <section className="pt-20 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
-            You have a SaaS idea.<br/>
-            No code skills. No clue where to start.
+            You have a SaaS idea 💡<br/>
+            No code skills 👨‍💻 No clue where to start 🤷‍♂️
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-4 leading-relaxed">
             Sound familiar?
@@ -130,27 +133,117 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Quantified Benefits */}
+      {/* Quantified Benefits with emojis */}
       <section className="py-16 px-6 bg-gray-50 border-y border-gray-200">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">4 weeks</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">⚡ 4 weeks</div>
               <div className="text-gray-600">From idea to launched MVP (not 6+ months)</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">$15K+</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">💰 $15K+</div>
               <div className="text-gray-600">Saved vs hiring a developer</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-gray-900 mb-2">3 steps</div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">🎯 3 steps</div>
               <div className="text-gray-600">Not 100 scattered YouTube tutorials</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Feature 1: Idea Generation */}
+      {/* Main value prop with emojis (UserJot style) */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">
+            Generate ideas 💡 validate instantly ✅ build with production code 🚀 and ship in weeks ⚡
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Bildr is the complete platform for non-technical founders. Beautiful idea generation that finds market gaps, validation that actually works, blueprints that guide you step-by-step, and code that's ready to ship.
+          </p>
+        </div>
+      </section>
+
+      {/* Features Grid (UserJot style) */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+              💼 SaaS Builder Platform
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Everything you need to launch
+            </h2>
+            <p className="text-lg text-gray-600">
+              From idea validation to production deployment
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: "💡",
+                color: "bg-yellow-100",
+                title: "Idea generation",
+                description: "Market-validated SaaS ideas based on your skills"
+              },
+              {
+                icon: "📊",
+                color: "bg-blue-100",
+                title: "SWOT analysis",
+                description: "Viability score, competition check, market size"
+              },
+              {
+                icon: "🎯",
+                color: "bg-purple-100",
+                title: "Smart validation",
+                description: "Know if it's worth building before you code"
+              },
+              {
+                icon: "📋",
+                color: "bg-green-100",
+                title: "Technical blueprint",
+                description: "Complete stack, architecture, and 4-week plan"
+              },
+              {
+                icon: "⚙️",
+                color: "bg-red-100",
+                title: "Kanban workflow",
+                description: "Turn your plan into actionable weekly tasks"
+              },
+              {
+                icon: "💻",
+                color: "bg-indigo-100",
+                title: "Production code",
+                description: "Copy-paste ready snippets that actually work"
+              },
+              {
+                icon: "🔐",
+                color: "bg-cyan-100",
+                title: "Auth & payments",
+                description: "Stripe integration, user management, everything"
+              },
+              {
+                icon: "📦",
+                color: "bg-pink-100",
+                title: "Deploy guides",
+                description: "Step-by-step deployment to Vercel/Railway"
+              }
+            ].map((feature, i) => (
+              <div key={i} className="text-center">
+                <div className={`w-16 h-16 ${feature.color} rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4`}>
+                  {feature.icon}
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Feature 1: Idea Generation with updated mockup */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
@@ -158,7 +251,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Step 1
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              No idea what to build?
+              No idea what to build? 🤔
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
               Enter your interests and skills. Get personalized micro-SaaS ideas that actually have market demand. No more guessing what might work.
@@ -178,27 +271,78 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               </li>
             </ul>
           </div>
-          <div className="bg-gray-100 rounded-lg p-8 border border-gray-200">
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="text-sm text-gray-500 mb-4">Generated idea:</div>
-              <div className="font-semibold text-gray-900 mb-2">Screenshot Feedback Tool for Designers</div>
-              <div className="text-sm text-gray-600">Market size: $2.4M · Competition: Medium · Viability: 87/100</div>
+          <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
+                  B
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Bildr</div>
+                  <div className="text-xs text-gray-500">Idea Generator</div>
+                </div>
+              </div>
+              <div className="border-t border-gray-100 pt-4">
+                <div className="text-sm text-gray-500 mb-3">💡 Generated idea:</div>
+                <div className="font-semibold text-gray-900 mb-3">Screenshot Feedback Tool for Designers</div>
+                <div className="grid grid-cols-3 gap-3 text-xs">
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-2">
+                    <div className="text-green-600 font-medium">Market size</div>
+                    <div className="text-gray-900 font-bold">$2.4M</div>
+                  </div>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2">
+                    <div className="text-yellow-600 font-medium">Competition</div>
+                    <div className="text-gray-900 font-bold">Medium</div>
+                  </div>
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-2">
+                    <div className="text-indigo-600 font-medium">Viability</div>
+                    <div className="text-gray-900 font-bold">87/100</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Feature 2: Validation */}
+      {/* Feature 2: Validation with updated mockup */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 bg-gray-100 rounded-lg p-8 border border-gray-200">
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="text-sm font-semibold text-gray-900 mb-4">SWOT Analysis</div>
-              <div className="space-y-3 text-sm">
-                <div><span className="font-medium text-green-600">Strengths:</span> Low competition, recurring revenue model</div>
-                <div><span className="font-medium text-yellow-600">Weaknesses:</span> Requires design tool integration</div>
-                <div><span className="font-medium text-blue-600">Opportunities:</span> Growing remote design market</div>
-                <div><span className="font-medium text-red-600">Threats:</span> Figma could add native feature</div>
+          <div className="order-2 md:order-1 bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">📊</span>
+                <div className="font-semibold text-gray-900">SWOT Analysis</div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="font-semibold text-green-700 mb-2 flex items-center gap-2">
+                  <span>✅</span> Strengths
+                </div>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Low competition in niche</li>
+                  <li>• Recurring revenue model</li>
+                  <li>• Easy to integrate</li>
+                </ul>
+              </div>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="font-semibold text-yellow-700 mb-2 flex items-center gap-2">
+                  <span>⚠️</span> Weaknesses
+                </div>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Requires design tool integration</li>
+                  <li>• Network effects limited</li>
+                </ul>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="font-semibold text-blue-700 mb-2 flex items-center gap-2">
+                  <span>🚀</span> Opportunities
+                </div>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Growing remote design market</li>
+                  <li>• API integrations possible</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -207,7 +351,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Step 2
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Is it actually worth building?
+              Is it actually worth building? 🎯
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
               Get a viability score out of 100, complete SWOT analysis, and competitor landscape. Know if your idea has legs before writing a single line of code.
@@ -230,7 +374,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Feature 3: Blueprint */}
+      {/* Feature 3: Blueprint with updated mockup */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
@@ -238,7 +382,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Step 3
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              What tech stack? What features first?
+              What tech stack? What features first? 🛠️
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
               Get a complete technical blueprint. Recommended tech stack, 4-week roadmap, and architecture diagrams. Everything a developer would charge $5K to plan.
@@ -258,16 +402,54 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               </li>
             </ul>
           </div>
-          <div className="bg-gray-100 rounded-lg p-8 border border-gray-200">
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="text-sm font-semibold text-gray-900 mb-4">Recommended Stack</div>
-              <div className="space-y-2 text-sm text-gray-600">
-                <div>• Frontend: React + Tailwind CSS</div>
-                <div>• Backend: Supabase (auth + database)</div>
-                <div>• Payments: Stripe</div>
-                <div>• Hosting: Vercel</div>
-                <div className="pt-2 border-t border-gray-200 mt-3">
-                  <div className="font-medium text-gray-900">Estimated cost: $25/month</div>
+          <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🏗️</span>
+                <div className="font-semibold text-gray-900">Recommended Stack</div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
+                    <span className="text-sm">⚛️</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Frontend</div>
+                    <div className="text-xs text-gray-600">React + Tailwind CSS</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-100 rounded flex items-center justify-center">
+                    <span className="text-sm">🗄️</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Backend</div>
+                    <div className="text-xs text-gray-600">Supabase (auth + database)</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded flex items-center justify-center">
+                    <span className="text-sm">💳</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Payments</div>
+                    <div className="text-xs text-gray-600">Stripe</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-indigo-100 rounded flex items-center justify-center">
+                    <span className="text-sm">🚀</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Hosting</div>
+                    <div className="text-xs text-gray-600">Vercel</div>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Estimated cost:</span>
+                    <span className="font-bold text-gray-900">$25/month</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -275,17 +457,35 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Feature 4: Code */}
+      {/* Feature 4: Code with updated mockup */}
       <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 bg-gray-900 rounded-lg p-6 border border-gray-700">
-            <div className="font-mono text-sm text-green-400">
-              <div className="text-gray-500">// Authentication setup</div>
-              <div className="mt-2">const supabase = createClient(</div>
-              <div className="ml-4">process.env.SUPABASE_URL,</div>
-              <div className="ml-4">process.env.SUPABASE_KEY</div>
-              <div>);</div>
-              <div className="mt-3 text-gray-500">// Copy-paste ready ✓</div>
+          <div className="order-2 md:order-1">
+            <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700 shadow-xl">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <span className="text-gray-500 text-xs ml-2">auth.ts</span>
+              </div>
+              <div className="font-mono text-sm text-green-400">
+                <div className="text-gray-500">// 🔐 Authentication setup</div>
+                <div className="mt-3">
+                  <span className="text-purple-400">const</span>{' '}
+                  <span className="text-blue-400">supabase</span> ={' '}
+                  <span className="text-yellow-400">createClient</span>(
+                </div>
+                <div className="ml-4 text-cyan-400">
+                  process.env.SUPABASE_URL,
+                </div>
+                <div className="ml-4 text-cyan-400">
+                  process.env.SUPABASE_KEY
+                </div>
+                <div>);</div>
+                <div className="mt-4 text-gray-500">// ✅ Copy-paste ready</div>
+              </div>
             </div>
           </div>
           <div className="order-1 md:order-2">
@@ -293,7 +493,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Step 4
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Stuck? Get the exact code you need.
+              Stuck? Get the exact code you need 💻
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
               Production-ready code snippets for every step. Authentication, payments, database queries—all ready to copy-paste. Your technical co-founder, on demand.
@@ -320,7 +520,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
-            How does Bildr compare?
+            How does Bildr compare? 🤔
           </h2>
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             We built Bildr because we were tired of piecing together solutions that don't talk to each other.
@@ -390,10 +590,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <section className="py-16 px-6 bg-indigo-50 border-y border-indigo-100">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-lg text-indigo-900 font-medium">
-            "Built by indie founders, for indie founders who can't code but have million-dollar ideas."
+            "Built by indie founders 👨‍💻 for indie founders who can't code 🚫💻 but have million-dollar ideas 💡"
           </p>
           <p className="text-indigo-700 mt-2">
-            We're not VC-funded. We're bootstrapped. We get it.
+            We're not VC-funded 🚫💰 We're bootstrapped 🛠️ We get it.
           </p>
         </div>
       </section>
@@ -403,7 +603,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Simple, honest pricing
+              Simple, honest pricing 💸
             </h2>
             <p className="text-lg text-gray-600">
               Start free. Upgrade when you're ready to build.
@@ -561,7 +761,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <section className="py-20 px-6 bg-indigo-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to build your SaaS?
+            Ready to build your SaaS? 🚀
           </h2>
           <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
             Join indie founders who are shipping their ideas instead of waiting for "someday."
@@ -584,8 +784,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">B</span>
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex flex-col items-center justify-center gap-0.5 p-1">
+                <div className="w-5 h-1.5 bg-white rounded-sm"></div>
+                <div className="w-4 h-1.5 bg-white/80 rounded-sm"></div>
+                <div className="w-3 h-1.5 bg-white/60 rounded-sm"></div>
               </div>
               <span className="font-bold text-xl text-gray-900">Bildr</span>
             </div>
