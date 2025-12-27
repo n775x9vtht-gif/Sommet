@@ -120,11 +120,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <section className="pt-20 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
-            Tu as une idée d'application web,<br/>
+            Tu as une idée de SaaS,<br/>
             mais tu ne sais pas coder ?
           </h1>
           <p className="text-xl text-gray-600 mb-4 leading-relaxed">
-            Bildr transforme ton idée en vraie application en ligne. Sans écrire une ligne de code.
+            Bildr transforme ton idée en vrai SaaS. Sans écrire une ligne de code.
           </p>
           <p className="text-base text-gray-500 max-w-2xl mx-auto mb-10">
             De la validation de ton idée jusqu'à la mise en ligne. Plan technique détaillé, code prêt à utiliser, et guide pas à pas en français. Tout ce qu'il faut pour créer ton produit.
@@ -160,7 +160,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               <div className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
                 <IconCalendar className="w-9 h-9" /> 4 semaines
               </div>
-              <div className="text-gray-600">Pour créer ton application (au lieu de 6 mois)</div>
+              <div className="text-gray-600">Pour créer ton SaaS (au lieu de 6 mois)</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
@@ -185,7 +185,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             Trouve une idée, vérifie qu'elle vaut le coup, construis et mets en ligne
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Bildr est fait pour ceux qui ne savent pas coder. Tu obtiens des idées d'application adaptées à ton profil, une analyse pour savoir si ça peut marcher, un plan technique complet, et du code prêt à copier-coller.
+            Bildr est fait pour ceux qui ne savent pas coder. Tu obtiens des idées de SaaS adaptées à ton profil, une analyse pour savoir si ça peut marcher, un plan technique complet, et du code prêt à copier-coller.
           </p>
         </div>
       </section>
@@ -198,7 +198,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               <IconBuilding className="w-4 h-4" /> Tout ce dont tu as besoin
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              De l'idée à l'application en ligne
+              De l'idée au SaaS en ligne
             </h2>
             <p className="text-base text-gray-600">
               Chaque étape est guidée et expliquée simplement
@@ -209,7 +209,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             {[
               {
                 icon: <IconIdea className="w-8 h-8" />,
-                title: "Idées d'application",
+                title: "Idées de SaaS",
                 description: "Des idées adaptées à ce que tu sais faire, avec une vraie demande"
               },
               {
@@ -245,7 +245,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               {
                 icon: <IconPackage className="w-8 h-8" />,
                 title: "Mise en ligne",
-                description: "Comment mettre ton application sur Internet, étape par étape"
+                description: "Comment mettre ton SaaS sur Internet, étape par étape"
               }
             ].map((feature, i) => (
               <div key={i} className="text-center">
@@ -268,10 +268,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Étape 1
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              Tu ne sais pas quelle application créer ?
+              Tu ne sais pas quel SaaS créer ?
             </h2>
             <p className="text-base text-gray-600 mb-6 leading-relaxed">
-              Dis-nous ce qui t'intéresse et ce que tu sais déjà faire. On te propose des idées d'applications simples, avec des gens qui cherchent vraiment ce genre de service. Plus besoin de deviner si ton idée va plaire.
+              Dis-nous ce qui t'intéresse et ce que tu sais déjà faire. On te propose des idées de SaaS simples, avec des gens qui cherchent vraiment ce genre de service. Plus besoin de deviner si ton idée va plaire.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
@@ -284,7 +284,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700 text-sm">La liste des applications qui existent déjà dans ce domaine</span>
+                <span className="text-gray-700 text-sm">La liste des SaaS qui existent déjà dans ce domaine</span>
               </li>
             </ul>
           </div>
@@ -520,12 +520,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Quels outils utiliser ? Par où commencer ?
             </h2>
             <p className="text-base text-gray-600 mb-6 leading-relaxed">
-              On te donne un plan complet pour construire ton application. Les outils à utiliser, un planning sur 4 semaines, et les schémas pour comprendre comment tout s'assemble. Normalement, un développeur te ferait payer 5 000 € juste pour faire ce plan.
+              On te donne un plan complet pour construire ton SaaS. Les outils à utiliser, un planning sur 4 semaines, et les schémas pour comprendre comment tout s'assemble. Normalement, un développeur te ferait payer 5 000 € juste pour faire ce plan.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700 text-sm">Les bons outils pour ton type d'application</span>
+                <span className="text-gray-700 text-sm">Les bons outils pour ton type de SaaS</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
@@ -726,7 +726,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700 text-sm">Du code qui marche vraiment (testé sur de vraies applications)</span>
+                <span className="text-gray-700 text-sm">Du code qui marche vraiment (testé sur de vrais SaaS)</span>
               </li>
               <li className="flex items-start gap-3">
                 <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
@@ -964,7 +964,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                   <span className="text-gray-600">par mois</span>
                 </div>
                 <p className="text-gray-600 text-sm">
-                  Tout ce qu'il faut pour créer ton application
+                  Tout ce qu'il faut pour créer ton SaaS
                 </p>
               </div>
 
@@ -1020,10 +1020,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               },
               {
                 q: "C'est quoi la différence avec ChatGPT ?",
-                a: "ChatGPT est super, mais il ne te guide pas. Tu dois savoir quoi lui demander et comment assembler ses réponses. Avec Bildr, tout est organisé : tu passes de l'idée à l'application en ligne, étape par étape. C'est un vrai parcours, pas juste des réponses en vrac."
+                a: "ChatGPT est super, mais il ne te guide pas. Tu dois savoir quoi lui demander et comment assembler ses réponses. Avec Bildr, tout est organisé : tu passes de l'idée au SaaS en ligne, étape par étape. C'est un vrai parcours, pas juste des réponses en vrac."
               },
               {
-                q: "Je peux vraiment créer une application en 4 semaines ?",
+                q: "Je peux vraiment créer un SaaS en 4 semaines ?",
                 a: "Oui, si tu suis le plan et que tu travailles 10 à 15 heures par semaine. On découpe tout en tâches simples. Semaine 1 : connexion des utilisateurs. Semaine 2 : fonction principale. Semaine 3 : paiements. Semaine 4 : mise en ligne."
               },
               {
@@ -1062,7 +1062,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       <section className="py-20 px-6 bg-indigo-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Prêt à créer ton application ?
+            Prêt à créer ton SaaS ?
           </h2>
           <p className="text-lg text-indigo-100 mb-10 max-w-2xl mx-auto">
             Rejoins ceux qui se lancent au lieu d'attendre le bon moment
