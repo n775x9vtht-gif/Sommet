@@ -751,23 +751,38 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             On a créé Bildr parce qu'on était fatigués de devoir assembler 10 outils différents qui ne parlent pas entre eux
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Bildr */}
             <div className="bg-indigo-50 border-2 border-indigo-600 rounded-xl p-6">
               <div className="text-center mb-4">
                 <div className="inline-block px-3 py-1 bg-indigo-600 text-white rounded-full text-sm font-bold mb-3">
                   Bildr
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">19 € par mois</div>
-                <div className="text-xs text-gray-600 mb-4">Tout inclus</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">19 € / mois</div>
+                <div className="text-xs text-gray-600">Tout inclus</div>
               </div>
-              <div className="space-y-3 text-sm text-gray-700">
-                <p><span className="font-semibold">Idées :</span> Générées spécialement pour toi avec validation du marché</p>
-                <p><span className="font-semibold">Analyse :</span> Score sur 100, concurrents, taille du marché</p>
-                <p><span className="font-semibold">Plan technique :</span> Complet avec tous les détails sur 4 semaines</p>
-                <p><span className="font-semibold">Code :</span> Prêt à copier-coller, testé et qui marche</p>
-                <p><span className="font-semibold">Guidage :</span> Tu sais exactement quoi faire à chaque étape</p>
-              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <IconCheckCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-gray-700">Idées validées</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheckCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-gray-700">Analyse marché</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheckCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-gray-700">Plan complet</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheckCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-gray-700">Code testé</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheckCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-gray-700">Guide complet</span>
+                </li>
+              </ul>
             </div>
 
             {/* ChatGPT */}
@@ -776,52 +791,97 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                 <div className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold mb-3">
                   ChatGPT
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">20 € par mois</div>
-                <div className="text-xs text-gray-600 mb-4">Il faut savoir quoi demander</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">20 € / mois</div>
+                <div className="text-xs text-gray-600">Pas structuré</div>
               </div>
-              <div className="space-y-3 text-sm text-gray-600">
-                <p><span className="font-semibold">Idées :</span> Génériques, sans vérifier s'il y a une vraie demande</p>
-                <p><span className="font-semibold">Analyse :</span> Aucune analyse de marché structurée</p>
-                <p><span className="font-semibold">Plan technique :</span> Conseils partiels, il faut savoir quoi demander</p>
-                <p><span className="font-semibold">Code :</span> Souvent avec des bugs, demande des corrections</p>
-                <p><span className="font-semibold">Guidage :</span> Aucun parcours structuré, tu dois tout organiser</p>
-              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Idées génériques</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Pas d'analyse</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Conseils partiels</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Code buggé</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Pas de structure</span>
+                </li>
+              </ul>
             </div>
 
             {/* Développeur */}
             <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
               <div className="text-center mb-4">
                 <div className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold mb-3">
-                  Développeur freelance
+                  Développeur
                 </div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">15 000 €</div>
-                <div className="text-xs text-gray-600 mb-4">Pour construire ton app</div>
+                <div className="text-xs text-gray-600">Très cher</div>
               </div>
-              <div className="space-y-3 text-sm text-gray-600">
-                <p><span className="font-semibold">Idées :</span> Ce n'est pas son rôle, il code ce que tu demandes</p>
-                <p><span className="font-semibold">Analyse :</span> Pas son métier, il ne fait pas d'études de marché</p>
-                <p><span className="font-semibold">Plan technique :</span> Oui, mais tu dois le payer en plus pour ça</p>
-                <p><span className="font-semibold">Code :</span> Sur mesure et de qualité, mais très cher</p>
-                <p><span className="font-semibold">Guidage :</span> Non, c'est toi qui dois tout gérer et décider</p>
-              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Pas son rôle</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Pas son rôle</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheckCircle className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">En supplément</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCheckCircle className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Sur mesure</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Tu gères seul</span>
+                </li>
+              </ul>
             </div>
 
             {/* No-code */}
             <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
               <div className="text-center mb-4">
                 <div className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-semibold mb-3">
-                  Outils no-code
+                  No-code
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">50 € par mois</div>
-                <div className="text-xs text-gray-600 mb-4">Limité à leurs modèles</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">50 € / mois</div>
+                <div className="text-xs text-gray-600">Très limité</div>
               </div>
-              <div className="space-y-3 text-sm text-gray-600">
-                <p><span className="font-semibold">Idées :</span> Non, juste des modèles prédéfinis à adapter</p>
-                <p><span className="font-semibold">Analyse :</span> Aucune aide pour valider ton idée</p>
-                <p><span className="font-semibold">Plan technique :</span> Non, tu utilises leurs outils imposés</p>
-                <p><span className="font-semibold">Code :</span> Très limité, que ce que leurs outils permettent</p>
-                <p><span className="font-semibold">Guidage :</span> Interface souvent compliquée à apprendre</p>
-              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Templates imposés</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Aucune</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Outils imposés</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Très limité</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <IconCross className="w-5 h-5 flex-shrink-0 opacity-40" />
+                  <span className="text-gray-500">Compliqué</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
