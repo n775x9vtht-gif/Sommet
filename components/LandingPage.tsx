@@ -27,7 +27,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
   };
 
   const handleCheckout = async () => {
-    const priceId = 'price_1SXR94F1yiAtAmIjmLg0JIkT'; // Launch plan
+    const priceId = 'price_1SXR94F1yiAtAmIjmLg0JIkT';
     const mode: 'subscription' = 'subscription';
 
     try {
@@ -58,8 +58,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#2D2A26] font-sans overflow-x-hidden antialiased">
-      {/* Auth Modal */}
+    <div className="min-h-screen bg-white text-gray-900 font-sans antialiased">
       <AuthModal
         isOpen={isAuthModalOpen}
         initialMode={authMode}
@@ -67,295 +66,438 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         onSuccess={onEnterApp}
       />
 
-      {/* Navbar - Minimal warm */}
-      <nav className="sticky top-0 z-50 bg-[#FAF8F5]/90 backdrop-blur-xl border-b border-[#E8E3DD]">
-        <div className="max-w-6xl mx-auto px-8 py-5 flex justify-between items-center">
-          <div className="flex items-center gap-3 cursor-pointer">
-            {/* Bildr Logo - Simple B */}
-            <div className="w-10 h-10 bg-[#8B3A62] rounded-lg flex items-center justify-center">
-              <span className="text-[#FAF8F5] font-black text-xl font-serif">B</span>
+      {/* Navbar - Clean minimal */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">B</span>
             </div>
-            <span className="font-black text-2xl text-[#2D2A26] tracking-tight">Bildr</span>
+            <span className="font-bold text-xl text-gray-900">Bildr</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <a href="#pricing" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Pricing</a>
             <button
               onClick={() => openAuth('LOGIN')}
-              className="hidden sm:block text-[#6B6560] hover:text-[#2D2A26] font-medium text-sm transition-colors px-4 py-2"
+              className="text-gray-600 hover:text-gray-900 text-sm font-medium"
             >
-              Se connecter
+              Sign in
             </button>
             <button
               onClick={() => openAuth('REGISTER')}
-              className="bg-[#8B3A62] hover:bg-[#6F2D4E] text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all hover:shadow-lg"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
             >
-              Commencer
+              Get started free
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section - Clean & Warm */}
-      <section className="pt-24 pb-20 px-6">
+      {/* Hero - Problem-first */}
+      <section className="pt-20 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E8E3DD] text-[#6B6560] text-sm font-medium mb-10">
-            <div className="w-2 h-2 rounded-full bg-[#8B3A62]"></div>
-            <span>Lancez votre SaaS sans coder</span>
-          </div>
-
-          {/* Headline */}
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8 leading-[1.1] font-serif">
-            <span className="block text-[#2D2A26]">Build your SaaS.</span>
-            <span className="block text-[#8B3A62]">Ship in days.</span>
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-gray-900 leading-tight">
+            You have a SaaS idea.<br/>
+            No code skills. No clue where to start.
           </h1>
-
-          {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-[#6B6560] max-w-2xl mx-auto mb-12 leading-relaxed">
-            De l'idée au code production-ready. Validation marché, architecture technique, et roadmap complète.
-            <span className="block mt-2 text-[#9B968F] italic">Même si vous ne savez pas coder.</span>
+          <p className="text-xl md:text-2xl text-gray-600 mb-4 leading-relaxed">
+            Sound familiar?
+          </p>
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10">
+            Bildr gives you everything you need to go from idea to launched MVP. Validated ideas, technical roadmap, and production-ready code. No developer needed.
           </p>
 
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
             <button
               onClick={() => openAuth('REGISTER')}
-              className="w-full sm:w-auto px-8 py-4 bg-[#8B3A62] hover:bg-[#6F2D4E] text-white rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
             >
-              Commencer gratuitement
-              <IconArrowRight className="w-5 h-5" />
+              Start building for free
+              <IconArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={onEnterDemo}
-              className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[#F5F1EB] text-[#2D2A26] rounded-xl font-semibold text-lg border-2 border-[#E8E3DD] hover:border-[#D4CFC7] transition-all"
+              className="w-full sm:w-auto px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-lg font-semibold border border-gray-300 transition-colors"
             >
-              Voir la démo
+              See how it works
             </button>
           </div>
 
-          {/* Trust badge */}
-          <div className="flex items-center justify-center gap-2 text-sm text-[#6B6560]">
-            <IconCheck className="w-5 h-5 text-[#8B3A62]" />
-            <span>Gratuit, sans carte bancaire</span>
-          </div>
+          <p className="text-sm text-gray-500">
+            ✓ Free forever plan · ✓ No credit card required · ✓ 30 seconds to set up
+          </p>
         </div>
       </section>
 
-      {/* How it works - Simple 4 steps */}
-      <section className="py-20 px-6 bg-white border-y border-[#E8E3DD]">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-[#2D2A26] font-serif">
-              Comment ça marche
-            </h2>
-            <p className="text-lg text-[#6B6560] max-w-2xl mx-auto">
-              4 étapes simples pour passer de l'idée au SaaS lancé
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                number: "1",
-                title: "Générez des idées",
-                description: "Entrez vos centres d'intérêt. Obtenez des idées de micro-SaaS rentables et actionnables.",
-                icon: IconBulb
-              },
-              {
-                number: "2",
-                title: "Validez votre marché",
-                description: "Score de viabilité, analyse SWOT, concurrence identifiée. Sachez si ça vaut le coup avant de coder.",
-                icon: IconChart
-              },
-              {
-                number: "3",
-                title: "Obtenez le plan complet",
-                description: "Stack technique personnalisée, roadmap 4 semaines, architecture détaillée. Le blueprint de votre MVP.",
-                icon: IconBlueprint
-              },
-              {
-                number: "4",
-                title: "Construisez étape par étape",
-                description: "Tâches Kanban concrètes. Code production-ready à copier-coller. Votre co-fondateur technique personnel.",
-                icon: IconConstruction
-              }
-            ].map((step, i) => (
-              <div key={i} className="relative p-8 rounded-2xl bg-[#FAF8F5] border border-[#E8E3DD] hover:border-[#8B3A62] transition-all group">
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-[#8B3A62] rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-black text-xl font-serif">{step.number}</span>
-                </div>
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 ml-8 border border-[#E8E3DD]">
-                  <step.icon className="w-6 h-6 text-[#8B3A62]" />
-                </div>
-                <h3 className="text-2xl font-black mb-3 text-[#2D2A26] font-serif">{step.title}</h3>
-                <p className="text-[#6B6560] leading-relaxed">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features - Clean grid */}
-      <section className="py-24 px-6">
+      {/* Quantified Benefits */}
+      <section className="py-16 px-6 bg-gray-50 border-y border-gray-200">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-[#2D2A26] font-serif">
-              Tout ce qu'il faut<br/>pour réussir
-            </h2>
-            <p className="text-xl text-[#6B6560] max-w-2xl mx-auto">
-              Une plateforme complète pour aller de zéro au MVP
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                title: "Générateur d'idées",
-                description: "Entrez vos passions. Recevez des niches SaaS validées et rentables.",
-                icon: IconBulb
-              },
-              {
-                title: "Validation instantanée",
-                description: "Score sur 100, analyse SWOT, opportunités et menaces identifiées.",
-                icon: IconChart
-              },
-              {
-                title: "Blueprint technique",
-                description: "Stack recommandée, roadmap détaillée, métriques de succès.",
-                icon: IconBlueprint
-              },
-              {
-                title: "Le Chantier",
-                description: "Tableau Kanban qui transforme le plan en tâches concrètes à cocher.",
-                icon: IconConstruction
-              },
-              {
-                title: "Code production-ready",
-                description: "Snippets à copier-coller. Pas de devinette, juste du code qui marche.",
-                icon: IconRocket
-              },
-              {
-                title: "Votre co-fondateur technique",
-                description: "Bloqué ? Obtenez le code exact dont vous avez besoin, expliqué clairement.",
-                icon: IconRocket
-              }
-            ].map((feature, i) => (
-              <div key={i} className="p-8 rounded-2xl bg-white border border-[#E8E3DD] hover:border-[#8B3A62] transition-all hover:shadow-lg">
-                <div className="w-12 h-12 bg-[#FAF8F5] rounded-xl flex items-center justify-center mb-6 border border-[#E8E3DD]">
-                  <feature.icon className="w-6 h-6 text-[#8B3A62]" />
-                </div>
-                <h3 className="text-xl font-black mb-3 text-[#2D2A26] font-serif">{feature.title}</h3>
-                <p className="text-[#6B6560] leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">4 weeks</div>
+              <div className="text-gray-600">From idea to launched MVP (not 6+ months)</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">$15K+</div>
+              <div className="text-gray-600">Saved vs hiring a developer</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-gray-900 mb-2">3 steps</div>
+              <div className="text-gray-600">Not 100 scattered YouTube tutorials</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing - Simple 2 tiers */}
-      <section className="py-24 px-6 bg-white border-y border-[#E8E3DD]" id="pricing">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-[#2D2A26] font-serif">
-              Tarifs simples
+      {/* Feature 1: Idea Generation */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+              Step 1
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              No idea what to build?
             </h2>
-            <p className="text-xl text-[#6B6560]">
-              Commencez gratuitement. Payez quand vous êtes prêt à lancer.
+            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              Enter your interests and skills. Get personalized micro-SaaS ideas that actually have market demand. No more guessing what might work.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Ideas based on your background</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Validated niches with real demand</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Competition analysis included</span>
+              </li>
+            </ul>
+          </div>
+          <div className="bg-gray-100 rounded-lg p-8 border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="text-sm text-gray-500 mb-4">Generated idea:</div>
+              <div className="font-semibold text-gray-900 mb-2">Screenshot Feedback Tool for Designers</div>
+              <div className="text-sm text-gray-600">Market size: $2.4M · Competition: Medium · Viability: 87/100</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature 2: Validation */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="order-2 md:order-1 bg-gray-100 rounded-lg p-8 border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="text-sm font-semibold text-gray-900 mb-4">SWOT Analysis</div>
+              <div className="space-y-3 text-sm">
+                <div><span className="font-medium text-green-600">Strengths:</span> Low competition, recurring revenue model</div>
+                <div><span className="font-medium text-yellow-600">Weaknesses:</span> Requires design tool integration</div>
+                <div><span className="font-medium text-blue-600">Opportunities:</span> Growing remote design market</div>
+                <div><span className="font-medium text-red-600">Threats:</span> Figma could add native feature</div>
+              </div>
+            </div>
+          </div>
+          <div className="order-1 md:order-2">
+            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+              Step 2
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Is it actually worth building?
+            </h2>
+            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              Get a viability score out of 100, complete SWOT analysis, and competitor landscape. Know if your idea has legs before writing a single line of code.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Viability score with detailed breakdown</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Competitor analysis and positioning</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Market size estimation</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature 3: Blueprint */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+              Step 3
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              What tech stack? What features first?
+            </h2>
+            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              Get a complete technical blueprint. Recommended tech stack, 4-week roadmap, and architecture diagrams. Everything a developer would charge $5K to plan.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Personalized tech stack recommendation</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Week-by-week development roadmap</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Database schema and API design</span>
+              </li>
+            </ul>
+          </div>
+          <div className="bg-gray-100 rounded-lg p-8 border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="text-sm font-semibold text-gray-900 mb-4">Recommended Stack</div>
+              <div className="space-y-2 text-sm text-gray-600">
+                <div>• Frontend: React + Tailwind CSS</div>
+                <div>• Backend: Supabase (auth + database)</div>
+                <div>• Payments: Stripe</div>
+                <div>• Hosting: Vercel</div>
+                <div className="pt-2 border-t border-gray-200 mt-3">
+                  <div className="font-medium text-gray-900">Estimated cost: $25/month</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature 4: Code */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="order-2 md:order-1 bg-gray-900 rounded-lg p-6 border border-gray-700">
+            <div className="font-mono text-sm text-green-400">
+              <div className="text-gray-500">// Authentication setup</div>
+              <div className="mt-2">const supabase = createClient(</div>
+              <div className="ml-4">process.env.SUPABASE_URL,</div>
+              <div className="ml-4">process.env.SUPABASE_KEY</div>
+              <div>);</div>
+              <div className="mt-3 text-gray-500">// Copy-paste ready ✓</div>
+            </div>
+          </div>
+          <div className="order-1 md:order-2">
+            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+              Step 4
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Stuck? Get the exact code you need.
+            </h2>
+            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              Production-ready code snippets for every step. Authentication, payments, database queries—all ready to copy-paste. Your technical co-founder, on demand.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Code that actually works (tested)</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Explained in plain English</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">Unlimited code requests</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Table */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+            How does Bildr compare?
+          </h2>
+          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            We built Bildr because we were tired of piecing together solutions that don't talk to each other.
+          </p>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b-2 border-gray-200">
+                  <th className="text-left py-4 px-6 text-gray-900 font-semibold">Feature</th>
+                  <th className="text-center py-4 px-6 text-gray-900 font-semibold">Bildr</th>
+                  <th className="text-center py-4 px-6 text-gray-600">ChatGPT</th>
+                  <th className="text-center py-4 px-6 text-gray-600">Hiring a Dev</th>
+                  <th className="text-center py-4 px-6 text-gray-600">No-Code Tools</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-200">
+                  <td className="py-4 px-6 text-gray-700">Idea generation</td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-4 px-6 text-gray-700">Market validation</td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-4 px-6 text-gray-700">Technical blueprint</td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Partial</span></td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-4 px-6 text-gray-700">Production code</td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Buggy</span></td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><span className="text-gray-400 text-sm">Limited</span></td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-4 px-6 text-gray-700">Guided workflow</td>
+                  <td className="text-center py-4 px-6"><IconCheck className="w-5 h-5 text-indigo-600 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                  <td className="text-center py-4 px-6"><IconX className="w-5 h-5 text-gray-300 mx-auto" /></td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="py-4 px-6 text-gray-900 font-semibold">Cost</td>
+                  <td className="text-center py-4 px-6 text-indigo-600 font-semibold">19€/mo</td>
+                  <td className="text-center py-4 px-6 text-gray-600">20€/mo</td>
+                  <td className="text-center py-4 px-6 text-gray-600">$15K+</td>
+                  <td className="text-center py-4 px-6 text-gray-600">$30-100/mo</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Signal */}
+      <section className="py-16 px-6 bg-indigo-50 border-y border-indigo-100">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-lg text-indigo-900 font-medium">
+            "Built by indie founders, for indie founders who can't code but have million-dollar ideas."
+          </p>
+          <p className="text-indigo-700 mt-2">
+            We're not VC-funded. We're bootstrapped. We get it.
+          </p>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-20 px-6" id="pricing">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Simple, honest pricing
+            </h2>
+            <p className="text-lg text-gray-600">
+              Start free. Upgrade when you're ready to build.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free */}
-            <div className="p-10 rounded-2xl bg-[#FAF8F5] border-2 border-[#E8E3DD] hover:border-[#D4CFC7] transition-all">
-              <div className="mb-8">
-                <h3 className="text-2xl font-black text-[#2D2A26] mb-3 font-serif">Starter</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-6xl font-black text-[#2D2A26] font-serif">0€</span>
-                  <span className="text-[#6B6560] font-medium">/vie</span>
+            <div className="border-2 border-gray-200 rounded-lg p-8 bg-white">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-5xl font-bold text-gray-900">$0</span>
+                  <span className="text-gray-600">/forever</span>
                 </div>
-                <p className="text-[#6B6560]">
-                  Découvrez Bildr et générez votre première idée
+                <p className="text-gray-600">
+                  Try Bildr. Generate your first idea.
                 </p>
               </div>
 
-              <ul className="space-y-4 mb-10">
-                <li className="flex items-start text-sm text-[#2D2A26]">
-                  <IconCheck className="w-5 h-5 text-[#8B3A62] mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>1 idée complète</strong> générée</span>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-3 text-sm">
+                  <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">1 complete idea generated</span>
                 </li>
-                <li className="flex items-start text-sm text-[#2D2A26]">
-                  <IconCheck className="w-5 h-5 text-[#8B3A62] mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>1 analyse</strong> de viabilité</span>
+                <li className="flex items-start gap-3 text-sm">
+                  <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">Viability analysis</span>
                 </li>
-                <li className="flex items-start text-sm text-[#9B968F]">
-                  <IconX className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span>Blueprint MVP</span>
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <IconX className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <span>Technical blueprint</span>
                 </li>
-                <li className="flex items-start text-sm text-[#9B968F]">
-                  <IconX className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span>Code production-ready</span>
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <IconX className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <span>Production code</span>
                 </li>
               </ul>
 
               <button
                 onClick={() => openAuth('REGISTER')}
-                className="w-full py-4 bg-white hover:bg-[#F5F1EB] text-[#2D2A26] rounded-xl font-bold text-sm transition-all border-2 border-[#E8E3DD] hover:border-[#D4CFC7]"
+                className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-semibold transition-colors"
               >
-                Commencer
+                Start free
               </button>
             </div>
 
-            {/* Launch - Featured */}
-            <div className="p-10 rounded-2xl bg-[#8B3A62] text-white border-2 border-[#8B3A62] hover:shadow-2xl transition-all relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#2D2A26] text-white text-sm font-black rounded-full">
-                ⭐ RECOMMANDÉ
+            {/* Launch */}
+            <div className="border-2 border-indigo-600 rounded-lg p-8 bg-white relative">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-indigo-600 text-white text-sm font-semibold rounded-full">
+                Most popular
               </div>
-              <div className="mb-8 mt-2">
-                <h3 className="text-2xl font-black mb-3 font-serif">Launch</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-6xl font-black font-serif">19€</span>
-                  <span className="text-white/80 font-medium">/mois</span>
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Launch</h3>
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-5xl font-bold text-gray-900">19€</span>
+                  <span className="text-gray-600">/month</span>
                 </div>
-                <p className="text-white/90">
-                  Tout ce qu'il faut pour lancer votre SaaS
+                <p className="text-gray-600">
+                  Everything to launch your SaaS
                 </p>
               </div>
 
-              <ul className="space-y-4 mb-10">
-                <li className="flex items-start text-sm">
-                  <IconCheck className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>Idées illimitées</strong> générées</span>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-3 text-sm">
+                  <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">Unlimited ideas generated</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <IconCheck className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>Analyses complètes</strong> SWOT + score</span>
+                <li className="flex items-start gap-3 text-sm">
+                  <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">Complete validations</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <IconCheck className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>Blueprint MVP</strong> complet</span>
+                <li className="flex items-start gap-3 text-sm">
+                  <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">Technical blueprints</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <IconCheck className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>Le Chantier</strong> (Kanban guidé)</span>
+                <li className="flex items-start gap-3 text-sm">
+                  <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">Production-ready code</span>
                 </li>
-                <li className="flex items-start text-sm">
-                  <IconCheck className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>Code production-ready</strong> illimité</span>
-                </li>
-                <li className="flex items-start text-sm">
-                  <IconCheck className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                  <span><strong>Votre co-fondateur technique</strong></span>
+                <li className="flex items-start gap-3 text-sm">
+                  <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">Unlimited code requests</span>
                 </li>
               </ul>
 
               <button
                 onClick={handleCheckout}
-                className="w-full py-4 bg-white hover:bg-[#FAF8F5] text-[#8B3A62] rounded-xl font-bold text-sm transition-all shadow-lg"
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors"
               >
-                S'abonner
+                Get started
               </button>
-              <p className="text-xs text-white/70 mt-4 text-center">
-                Annulable à tout moment
+              <p className="text-xs text-gray-500 text-center mt-4">
+                Cancel anytime. No questions asked.
               </p>
             </div>
           </div>
@@ -363,50 +505,50 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-24 px-6">
+      <section className="py-20 px-6 bg-gray-50" id="faq">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black tracking-tight mb-4 text-[#2D2A26] font-serif">
-              Questions fréquentes
-            </h2>
-          </div>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Frequently asked questions
+          </h2>
 
           <div className="space-y-4">
             {[
               {
-                q: "Qu'est-ce que Bildr ?",
-                a: "Une plateforme qui vous guide de l'idée au micro-SaaS lancé. Génération d'idées, validation marché, plan technique et code production-ready. Tout le parcours de A à Z."
+                q: "Do I need to know how to code?",
+                a: "Nope. Bildr is built for non-developers. We give you code that's ready to copy-paste, with explanations in plain English. If you can follow a recipe, you can use Bildr."
               },
               {
-                q: "Je ne sais pas coder, c'est pour moi ?",
-                a: "Absolument. Bildr est conçu pour les non-développeurs. Chaque étape est expliquée clairement, le code est prêt à copier-coller, et vous avez un guide technique qui vous débloque quand vous êtes coincé."
+                q: "How is this different from ChatGPT?",
+                a: "ChatGPT is amazing, but it's not structured. You need to know what to ask, when to ask it, and how to piece everything together. Bildr guides you through the entire process: idea → validation → plan → code. It's the full workflow, not just scattered answers."
               },
               {
-                q: "Différence avec ChatGPT ?",
-                a: "Bildr structure tout le parcours : idées validées, analyse marché approfondie, plan technique personnalisé, tâches concrètes et code prêt à l'emploi. Workflow guidé de bout en bout, pas besoin de savoir quoi demander."
+                q: "Can I really build a SaaS in 4 weeks?",
+                a: "Yes—if you follow the roadmap and put in 10-15 hours per week. We break it down into doable weekly milestones. Week 1: Auth. Week 2: Core feature. Week 3: Payments. Week 4: Launch."
               },
               {
-                q: "Combien de temps pour un MVP ?",
-                a: "La plupart des fondateurs atteignent un MVP testable en 3-4 semaines avec la roadmap générée. Bildr réduit drastiquement le temps passé à chercher quoi faire, dans quel ordre et avec quels outils."
+                q: "What if I get stuck?",
+                a: "That's exactly what the code generator is for. Describe what you're stuck on, and you'll get the exact code you need to move forward. It's like having a senior developer on speed dial."
               },
               {
-                q: "Je peux annuler quand je veux ?",
-                a: "Oui, annulation en un clic à tout moment. Vous gardez l'accès complet à tous vos projets, idées enregistrées et Blueprints déjà générés."
+                q: "Can I cancel anytime?",
+                a: "Yes. One click, no hoops. You keep access to everything you've already generated."
+              },
+              {
+                q: "Is the free plan really free forever?",
+                a: "Yes. No credit card required. You get 1 complete idea generation and validation. Enough to see if Bildr is right for you."
               }
             ].map((faq, i) => (
               <details
                 key={i}
-                className="group bg-white rounded-xl transition-all border border-[#E8E3DD] hover:border-[#8B3A62]"
+                className="group bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
               >
-                <summary className="flex items-center justify-between w-full px-8 py-6 cursor-pointer list-none">
-                  <span className="font-bold text-[#2D2A26] text-left pr-6">
+                <summary className="flex items-center justify-between w-full px-6 py-5 cursor-pointer list-none">
+                  <span className="font-semibold text-gray-900 text-left pr-6">
                     {faq.q}
                   </span>
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#FAF8F5] text-[#6B6560] group-open:bg-[#8B3A62] group-open:text-white transition-all flex-shrink-0 border border-[#E8E3DD]">
-                    <IconPlus className="w-5 h-5 group-open:rotate-45 transition-transform duration-300" />
-                  </div>
+                  <IconPlus className="w-5 h-5 text-gray-400 group-open:rotate-45 transition-transform flex-shrink-0" />
                 </summary>
-                <div className="px-8 pb-6 text-[#6B6560] leading-relaxed border-t border-[#E8E3DD] pt-6">
+                <div className="px-6 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
                   {faq.a}
                 </div>
               </details>
@@ -416,48 +558,40 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 px-6 bg-[#2D2A26] text-white">
+      <section className="py-20 px-6 bg-indigo-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl md:text-6xl font-black mb-8 tracking-tight font-serif">
-            Prêt à lancer ?
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Ready to build your SaaS?
           </h2>
-          <p className="text-xl text-white/80 mb-12 leading-relaxed max-w-2xl mx-auto">
-            Rejoignez les fondateurs qui transforment leurs idées en SaaS rentables.
+          <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
+            Join indie founders who are shipping their ideas instead of waiting for "someday."
           </p>
           <button
             onClick={() => openAuth('REGISTER')}
-            className="inline-flex items-center gap-3 px-10 py-5 bg-[#8B3A62] hover:bg-[#6F2D4E] text-white rounded-xl font-black text-xl transition-all shadow-xl hover:shadow-2xl"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-gray-100 text-indigo-600 rounded-lg font-bold text-lg transition-colors"
           >
-            Commencer gratuitement
-            <IconArrowRight className="w-6 h-6" />
+            Start building for free
+            <IconArrowRight className="w-5 h-5" />
           </button>
-          <p className="text-white/60 text-sm mt-8 flex items-center justify-center gap-6">
-            <span className="flex items-center gap-2">
-              <IconCheck className="w-5 h-5" />
-              Gratuit
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-2">
-              <IconCheck className="w-5 h-5" />
-              Sans CB
-            </span>
+          <p className="text-indigo-200 text-sm mt-6">
+            Free forever plan · No credit card · 30 seconds to start
           </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-[#FAF8F5] border-t border-[#E8E3DD]">
+      <footer className="py-12 px-6 bg-white border-t border-gray-200">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#8B3A62] rounded-lg flex items-center justify-center">
-                <span className="text-[#FAF8F5] font-black text-xl font-serif">B</span>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">B</span>
               </div>
-              <span className="font-black text-xl text-[#2D2A26]">Bildr</span>
+              <span className="font-bold text-xl text-gray-900">Bildr</span>
             </div>
-            <div className="flex items-center gap-8 text-sm text-[#6B6560]">
-              <a href="#pricing" className="hover:text-[#2D2A26] font-medium transition-colors">Tarifs</a>
-              <a href="#faq" className="hover:text-[#2D2A26] font-medium transition-colors">FAQ</a>
+            <div className="flex items-center gap-6 text-sm text-gray-600">
+              <a href="#pricing" className="hover:text-gray-900 transition-colors">Pricing</a>
+              <a href="#faq" className="hover:text-gray-900 transition-colors">FAQ</a>
               <span>© 2025 Bildr</span>
             </div>
           </div>
