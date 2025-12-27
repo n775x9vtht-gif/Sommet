@@ -315,15 +315,153 @@ export const IconLockOpen = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-// Emoji component for professional flat-style emojis (UserJot style)
-export const Emoji = ({ children, className = "" }: { children: string; className?: string }) => (
-  <span
-    className={`inline-block ${className}`}
-    style={{
-      fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, Android Emoji, sans-serif',
-      fontSize: '1em'
-    }}
-  >
-    {children}
-  </span>
+// Professional flat design icons (replacing emojis)
+// Lightbulb icon (idea)
+export const IconIdea = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z" fill="#FCD34D" stroke="#F59E0B" strokeWidth="1.5"/>
+    <path d="M9 21h6M10 18h4" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+// Rocket icon
+export const IconRocketFlat = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 2L4 8v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V8l-8-6z" fill="#818CF8" stroke="#6366F1" strokeWidth="1.5"/>
+    <path d="M12 8v8M8 12h8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+// Target icon
+export const IconTarget = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#FCA5A5" stroke="#EF4444" strokeWidth="1.5"/>
+    <circle cx="12" cy="12" r="6" fill="#FEE2E2" stroke="#EF4444" strokeWidth="1.5"/>
+    <circle cx="12" cy="12" r="2" fill="#EF4444"/>
+  </svg>
+);
+
+// Chart/Analytics icon
+export const IconAnalytics = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M3 3v16c0 1.1.9 2 2 2h16" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M7 16v-5M12 16V8M17 16v-8" stroke="#60A5FA" strokeWidth="2" strokeLinecap="round"/>
+    <circle cx="7" cy="11" r="2" fill="#3B82F6"/>
+    <circle cx="12" cy="8" r="2" fill="#3B82F6"/>
+    <circle cx="17" cy="8" r="2" fill="#3B82F6"/>
+  </svg>
+);
+
+// Code/Terminal icon
+export const IconTerminal = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <rect x="2" y="4" width="20" height="16" rx="2" fill="#1F2937" stroke="#374151" strokeWidth="1.5"/>
+    <path d="M6 9l3 3-3 3M11 15h6" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="6" cy="7" r="0.5" fill="#EF4444"/>
+    <circle cx="8" cy="7" r="0.5" fill="#F59E0B"/>
+    <circle cx="10" cy="7" r="0.5" fill="#10B981"/>
+  </svg>
+);
+
+// Checkmark in circle icon
+export const IconCheckCircle = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#10B981" stroke="#059669" strokeWidth="1.5"/>
+    <path d="M8 12l3 3 5-6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Warning/Alert icon
+export const IconWarning = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 2L2 20h20L12 2z" fill="#FBBF24" stroke="#F59E0B" strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M12 9v5M12 17h.01" stroke="#92400E" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+// Lightning/Speed icon
+export const IconLightning = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" fill="#FBBF24" stroke="#F59E0B" strokeWidth="1.5" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Money/Dollar icon
+export const IconMoney = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#34D399" stroke="#059669" strokeWidth="1.5"/>
+    <path d="M12 6v12M9 9h4.5a1.5 1.5 0 010 3H9M9 15h4.5a1.5 1.5 0 000-3H9" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+// Tools/Settings icon
+export const IconWrench = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" fill="#A78BFA" stroke="#7C3AED" strokeWidth="1.5"/>
+  </svg>
+);
+
+// Shield/Security icon
+export const IconShield = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" fill="#60A5FA" stroke="#3B82F6" strokeWidth="1.5"/>
+    <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Package/Box icon
+export const IconPackage = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" fill="#F472B6" stroke="#EC4899" strokeWidth="1.5"/>
+    <path d="M12 12L2 7M12 12l10-5M12 12v10" stroke="#BE185D" strokeWidth="1.5"/>
+  </svg>
+);
+
+// Question mark icon
+export const IconQuestion = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#93C5FD" stroke="#3B82F6" strokeWidth="1.5"/>
+    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" stroke="#1E40AF" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+// Building/Company icon
+export const IconBuilding = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <rect x="4" y="2" width="16" height="20" rx="1" fill="#A78BFA" stroke="#7C3AED" strokeWidth="1.5"/>
+    <path d="M8 6h2M14 6h2M8 10h2M14 10h2M8 14h2M14 14h2M10 22v-4h4v4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+// Kanban/Board icon
+export const IconKanban = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <rect x="3" y="3" width="6" height="18" rx="1" fill="#FCA5A5" stroke="#EF4444" strokeWidth="1.5"/>
+    <rect x="11" y="3" width="6" height="12" rx="1" fill="#FCD34D" stroke="#F59E0B" strokeWidth="1.5"/>
+    <rect x="19" y="3" width="2" height="8" rx="1" fill="#86EFAC" stroke="#10B981" strokeWidth="1.5"/>
+  </svg>
+);
+
+// Sparkle/Magic icon
+export const IconSparkle = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z" fill="#FBBF24" stroke="#F59E0B" strokeWidth="1.5"/>
+    <path d="M6 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3zM18 16l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z" fill="#FCD34D"/>
+  </svg>
+);
+
+// No/Cross icon
+export const IconCross = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#FCA5A5" stroke="#EF4444" strokeWidth="1.5"/>
+    <path d="M8 8l8 8M16 8l-8 8" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+  </svg>
+);
+
+// Person/User icon
+export const IconPerson = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="8" r="4" fill="#A78BFA" stroke="#7C3AED" strokeWidth="1.5"/>
+    <path d="M6 21v-2a5 5 0 0110 0v2" stroke="#7C3AED" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
 );
