@@ -169,56 +169,106 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
       {/* Navbar - Ultra minimal with animated logo */}
       <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-slate-900/5 shadow-sm shadow-slate-900/5">
         <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            {/* Animated logo */}
-            <div className="relative w-9 h-9">
-              <svg viewBox="0 0 36 36" className="w-9 h-9" fill="none">
+          <div className="flex items-center gap-4 group cursor-pointer">
+            {/* Unique S-shaped ascending stairs logo */}
+            <div className="relative w-12 h-12">
+              <svg viewBox="0 0 48 48" className="w-12 h-12" fill="none">
                 <defs>
-                  <linearGradient id="summitGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="summitGradient" x1="0%" y1="100%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#2563eb" />
                     <stop offset="50%" stopColor="#7c3aed" />
                     <stop offset="100%" stopColor="#06b6d4" />
                   </linearGradient>
+                  <linearGradient id="summitGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.3" />
+                  </linearGradient>
                 </defs>
-                {/* Mountain with draw animation */}
-                <path
-                  d="M 6 28 L 18 8 L 30 28 Z"
+
+                {/* Glow effect on hover */}
+                <rect
+                  x="2"
+                  y="2"
+                  width="44"
+                  height="44"
+                  rx="12"
+                  fill="url(#summitGlow)"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                />
+
+                {/* Step 1 - Bottom */}
+                <rect
+                  x="6"
+                  y="32"
+                  width="14"
+                  height="10"
+                  rx="2"
                   fill="url(#summitGradient)"
-                  className="group-hover:opacity-90 transition-opacity"
+                  className="group-hover:translate-y-[-1px] transition-transform"
                   style={{
-                    animation: 'scale-in 0.6s ease-out'
+                    animation: 'scale-in 0.3s ease-out 0.1s backwards'
                   }}
                 />
-                {/* Ascending path with draw animation */}
+
+                {/* Step 2 */}
+                <rect
+                  x="17"
+                  y="22"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="url(#summitGradient)"
+                  className="group-hover:translate-y-[-1px] transition-transform"
+                  style={{
+                    animation: 'scale-in 0.3s ease-out 0.2s backwards'
+                  }}
+                />
+
+                {/* Step 3 - Top */}
+                <rect
+                  x="28"
+                  y="12"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="url(#summitGradient)"
+                  className="group-hover:translate-y-[-1px] transition-transform"
+                  style={{
+                    animation: 'scale-in 0.3s ease-out 0.3s backwards'
+                  }}
+                />
+
+                {/* Summit star/sparkle */}
                 <path
-                  d="M 8 26 Q 14 20, 18 14 Q 22 20, 28 26"
-                  stroke="white"
-                  strokeWidth="2.5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeDasharray="40"
-                  strokeDashoffset="40"
-                  className="group-hover:stroke-[3] transition-all"
+                  d="M 38 8 L 39.5 11 L 43 11.5 L 40.5 14 L 41 17.5 L 38 15.5 L 35 17.5 L 35.5 14 L 33 11.5 L 36.5 11 Z"
+                  fill="#fbbf24"
+                  className="group-hover:scale-125 transition-transform origin-center"
                   style={{
-                    animation: 'draw-path 1s ease-out 0.3s forwards'
+                    animation: 'scale-in 0.4s ease-out 0.5s backwards',
+                    filter: 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.6))'
                   }}
                 />
-                {/* Success flag */}
-                <circle
-                  cx="18"
-                  cy="8"
-                  r="2.5"
-                  fill="white"
-                  className="group-hover:scale-110 transition-transform origin-center"
-                  style={{
-                    animation: 'scale-in 0.4s ease-out 1s backwards'
-                  }}
+
+                {/* Connecting line showing ascent path */}
+                <path
+                  d="M 13 37 L 24 27 L 35 17"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray="3 3"
+                  opacity="0.4"
+                  className="group-hover:opacity-70 transition-opacity"
                 />
               </svg>
             </div>
-            <span className="font-bold text-xl bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent tracking-tight">
-              Sommet
-            </span>
+            <div className="flex flex-col">
+              <span className="font-black text-2xl bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent tracking-tight leading-none">
+                Sommet
+              </span>
+              <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">
+                Idea to Unicorn
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -719,17 +769,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex items-center gap-3">
-              <svg viewBox="0 0 36 36" className="w-8 h-8" fill="none">
+              <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none">
                 <defs>
-                  <linearGradient id="summitGradientFooter" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="summitGradientFooter" x1="0%" y1="100%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#2563eb" />
                     <stop offset="50%" stopColor="#7c3aed" />
                     <stop offset="100%" stopColor="#06b6d4" />
                   </linearGradient>
                 </defs>
-                <path d="M 6 28 L 18 8 L 30 28 Z" fill="url(#summitGradientFooter)" />
-                <path d="M 8 26 Q 14 20, 18 14 Q 22 20, 28 26" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                <circle cx="18" cy="8" r="2.5" fill="white" />
+                <rect x="6" y="32" width="14" height="10" rx="2" fill="url(#summitGradientFooter)" />
+                <rect x="17" y="22" width="14" height="10" rx="2" fill="url(#summitGradientFooter)" />
+                <rect x="28" y="12" width="14" height="10" rx="2" fill="url(#summitGradientFooter)" />
+                <path d="M 38 8 L 39.5 11 L 43 11.5 L 40.5 14 L 41 17.5 L 38 15.5 L 35 17.5 L 35.5 14 L 33 11.5 L 36.5 11 Z" fill="#fbbf24" />
+                <path d="M 13 37 L 24 27 L 35 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeDasharray="3 3" opacity="0.4" />
               </svg>
               <span className="font-bold text-xl text-slate-900">Sommet</span>
             </div>
