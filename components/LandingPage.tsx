@@ -30,6 +30,7 @@ import {
   IconCloud
 } from './Icons';
 import AuthModal from './AuthModal';
+import DashboardMockup from './DashboardMockup';
 
 interface LandingPageProps {
   onEnterApp: () => void;
@@ -741,8 +742,42 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
         </div>
       </section>
 
-      {/* Comparaison */}
+      {/* Fonctionnalité 5 : Dashboard (mockup ultra-réaliste) */}
       <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+              Une fois lancé
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Tout ton avancement au même endroit
+            </h2>
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">
+              Ton Dashboard te montre où tu en es, ce qu'il te reste à faire, et la prochaine action à réaliser. Tu vois tes idées validées, ton plan technique, ton code en cours, et tes projets terminés. Tout est organisé pour que tu ne te perdes jamais.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700 text-sm">Suivi en temps réel de ta progression</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700 text-sm">Toutes tes idées et projets à portée de main</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <IconCheck className="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700 text-sm">Recommandations pour la prochaine étape</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Mockup Dashboard */}
+          <DashboardMockup />
+        </div>
+      </section>
+
+      {/* Comparaison */}
+      <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
             En quoi Bildr est différent
