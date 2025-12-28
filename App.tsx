@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
+import BildrDashboard from './components/BildrDashboard';
+import BildrSidebar from './components/BildrSidebar';
 import IdeaGenerator from './components/IdeaGenerator';
 import MarketAnalyzer from './components/MarketAnalyzer';
 import LandingPage from './components/LandingPage';
@@ -507,34 +509,78 @@ const handleManageBilling = async () => {
         onClose={() => setIsPricingModalOpen(false)}
       />
 
-      <Sidebar 
-        currentView={currentView} 
-        onViewChange={setCurrentView} 
-        isGuestMode={isGuestMode}
-        onTriggerAuth={handleAuthTrigger}
-        onOpenPricing={() => setIsPricingModalOpen(true)}
-        onLogout={handleLogout}
-        // ✅ On n’envoie que le prénom à la Sidebar
-        userName={firstName}
-      />
-      
-      <main className="flex-1 lg:ml-64 p-6 lg:p-10 overflow-x-hidden">
-        <header className="lg:hidden flex items-center justify-between mb-8">
-          <div className="font-extrabold text-xl flex items-center gap-2">
-            <IconMountain className="w-6 h-6 text-brand-500" />
-            Sommet
-          </div>
-        </header>
-
-        {currentView === AppView.DASHBOARD && (
-          <Dashboard 
-            savedIdeas={savedIdeas} 
-            onDelete={handleDeleteIdea} 
-            onAnalyze={handleAnalyzeRequest}
-            onNavigate={handleNavigateFromDashboard}
+      {/* Mode Démo : Utilise les composants Bildr */}
+      {isGuestMode ? (
+        <>
+          <BildrSidebar
+            currentView={currentView}
+            onViewChange={setCurrentView}
             isGuestMode={isGuestMode}
+            onLogout={handleLogout}
+            userName={firstName || 'Visiteur'}
           />
-        )}
+
+          <main className="flex-1 lg:ml-64 p-6 lg:p-10 overflow-x-hidden bg-gray-50 min-h-screen">
+            {currentView === AppView.DASHBOARD && (
+              <BildrDashboard
+                savedIdeas={savedIdeas}
+                onDelete={handleDeleteIdea}
+                onAnalyze={handleAnalyzeRequest}
+                onNavigate={handleNavigateFromDashboard}
+                isGuestMode={isGuestMode}
+              />
+            )}
+
+            {/* Autres vues en mode démo affichent le message de retour au dashboard */}
+            {currentView !== AppView.DASHBOARD && (
+              <div className="flex flex-col items-center justify-center min-h-[70vh] text-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-3xl flex items-center justify-center mb-8 border-2 border-indigo-200 shadow-xl">
+                  <IconMountain className="w-12 h-12 text-indigo-600" />
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Mode Démo - Fonctionnalité limitée</h2>
+                <p className="text-gray-600 max-w-md mb-10 text-lg">
+                  Cette fonctionnalité n'est disponible que dans la version complète.
+                </p>
+                <button
+                  onClick={() => setCurrentView(AppView.DASHBOARD)}
+                  className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg"
+                >
+                  Retour au Dashboard
+                </button>
+              </div>
+            )}
+          </main>
+        </>
+      ) : (
+        <>
+          {/* Mode Normal : Utilise les composants Sommet */}
+          <Sidebar
+            currentView={currentView}
+            onViewChange={setCurrentView}
+            isGuestMode={isGuestMode}
+            onTriggerAuth={handleAuthTrigger}
+            onOpenPricing={() => setIsPricingModalOpen(true)}
+            onLogout={handleLogout}
+            userName={firstName}
+          />
+
+          <main className="flex-1 lg:ml-64 p-6 lg:p-10 overflow-x-hidden">
+            <header className="lg:hidden flex items-center justify-between mb-8">
+              <div className="font-extrabold text-xl flex items-center gap-2">
+                <IconMountain className="w-6 h-6 text-brand-500" />
+                Sommet
+              </div>
+            </header>
+
+            {currentView === AppView.DASHBOARD && (
+              <Dashboard
+                savedIdeas={savedIdeas}
+                onDelete={handleDeleteIdea}
+                onAnalyze={handleAnalyzeRequest}
+                onNavigate={handleNavigateFromDashboard}
+                isGuestMode={isGuestMode}
+              />
+            )}
 
         {currentView === AppView.GENERATOR && (
           <IdeaGenerator 
@@ -580,22 +626,24 @@ const handleManageBilling = async () => {
           <DailyNews onNavigateToGenerator={() => setCurrentView(AppView.GENERATOR)} />
         )}
 
-        {currentView === AppView.SETTINGS && (
-          <Settings
-            userEmail={userEmail || 'utilisateur@exemple.com'}
-            firstName={firstName}
-            lastName={lastName}
-            onUpdateProfile={handleUpdateProfile}
-            onOpenPricing={() => setIsPricingModalOpen(true)}
-            onDeleteAccount={handleDeleteAccount}
-            plan={profilePlan}
-            subscriptionStatus={subscriptionStatus}
-            cancelAt={cancelAt}
-            cancelAtPeriodEnd={cancelAtPeriodEnd}
-            onManageBilling={handleManageBilling}
-          />
-        )}
-      </main>
+            {currentView === AppView.SETTINGS && (
+              <Settings
+                userEmail={userEmail || 'utilisateur@exemple.com'}
+                firstName={firstName}
+                lastName={lastName}
+                onUpdateProfile={handleUpdateProfile}
+                onOpenPricing={() => setIsPricingModalOpen(true)}
+                onDeleteAccount={handleDeleteAccount}
+                plan={profilePlan}
+                subscriptionStatus={subscriptionStatus}
+                cancelAt={cancelAt}
+                cancelAtPeriodEnd={cancelAtPeriodEnd}
+                onManageBilling={handleManageBilling}
+              />
+            )}
+          </main>
+        </>
+      )}
 
       {toast.show && (
         <Toast 
