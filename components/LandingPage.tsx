@@ -125,10 +125,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             mais tu ne sais pas coder ?
           </h1>
           <p className="text-xl text-gray-600 mb-4 leading-relaxed">
-            Bildr transforme ton idée en vrai SaaS. Sans écrire une ligne de code.
+            Bildr transforme ton idée en vrai SaaS. Frontend, backend, base de données. Sans écrire une ligne de code.
           </p>
           <p className="text-base text-gray-500 max-w-2xl mx-auto mb-10">
-            De la validation de ton idée jusqu'à la mise en ligne. Plan technique détaillé, code prêt à utiliser, et guide pas à pas en français. Tout ce qu'il faut pour créer ton produit.
+            De la validation de ton idée jusqu'à la mise en ligne. Plan technique complet (frontend + backend), code prêt à utiliser, et guide pas à pas en français. Tout ce qu'il faut pour créer ton produit.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
@@ -186,7 +186,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
             Trouve une idée, vérifie qu'elle vaut le coup, construis et mets en ligne
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Bildr est fait pour ceux qui ne savent pas coder. Tu obtiens des idées de SaaS adaptées à ton profil, une analyse pour savoir si ça peut marcher, un plan technique complet, et du code prêt à copier-coller.
+            Bildr est fait pour ceux qui ne savent pas coder. Tu obtiens des idées de SaaS adaptées à ton profil, une analyse pour savoir si ça peut marcher, un plan technique complet (frontend + backend + base de données), et du code prêt à copier-coller.
           </p>
         </div>
       </section>
@@ -521,7 +521,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Quels outils utiliser ? Par où commencer ?
             </h2>
             <p className="text-base text-gray-600 mb-6 leading-relaxed">
-              On te donne un plan complet pour construire ton SaaS. Les outils à utiliser, un planning sur 4 semaines, et les schémas pour comprendre comment tout s'assemble. Normalement, un développeur te ferait payer 5 000 € juste pour faire ce plan.
+              On te donne un plan complet pour construire ton SaaS. Frontend, backend, base de données, authentification, paiements. Les outils à utiliser, un planning sur 4 semaines, et les schémas pour comprendre comment tout s'assemble. Normalement, un développeur te ferait payer 5 000 € juste pour faire ce plan.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
@@ -576,8 +576,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
                       <IconDatabase className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-bold text-gray-900">Base de données et connexion</div>
-                      <div className="text-xs text-gray-600">Supabase (PostgreSQL + authentification intégrée)</div>
+                      <div className="text-sm font-bold text-gray-900">Backend complet</div>
+                      <div className="text-xs text-gray-600">Supabase (BDD PostgreSQL + API + Auth + Storage)</div>
                     </div>
                   </div>
 
@@ -722,7 +722,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               Et si je bloque ? Je fais comment ?
             </h2>
             <p className="text-base text-gray-600 mb-6 leading-relaxed">
-              À chaque étape, tu reçois du code prêt à utiliser. Connexion des utilisateurs, accepter des paiements, récupérer des données... tout est déjà écrit. Tu copies, tu colles, ça marche. C'est comme avoir un développeur professionnel disponible en permanence.
+              À chaque étape, tu reçois du code prêt à utiliser. Frontend, backend, connexion à la base de données, authentification des utilisateurs, accepter des paiements... tout est déjà écrit. Tu copies, tu colles, ça marche. C'est comme avoir un développeur professionnel disponible en permanence.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
@@ -1052,6 +1052,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp, onEnterDemo }) =>
               {
                 q: "Je dois savoir coder ?",
                 a: "Non, pas du tout. Bildr est fait pour ceux qui ne savent pas coder. On te donne du code tout prêt à copier-coller, avec des explications simples en français. Si tu peux suivre une recette de cuisine, tu peux utiliser Bildr."
+              },
+              {
+                q: "Bildr gère aussi le backend ou juste le frontend ?",
+                a: "Bildr gère tout : frontend (l'interface que tes utilisateurs voient), backend (la logique et les données), base de données, authentification, et paiements. On utilise Supabase pour le backend, ce qui te donne une vraie base de données PostgreSQL, des APIs automatiques, l'authentification des utilisateurs, et le stockage de fichiers. Pour des besoins plus complexes, on peut aussi générer des APIs sur mesure."
               },
               {
                 q: "C'est quoi la différence avec ChatGPT ?",
