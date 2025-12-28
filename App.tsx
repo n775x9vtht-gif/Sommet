@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import BildrDashboard from './components/BildrDashboard';
-import BildrSidebar from './components/BildrSidebar';
+import BildrNavbar from './components/BildrNavbar';
 import IdeaGenerator from './components/IdeaGenerator';
 import MarketAnalyzer from './components/MarketAnalyzer';
 import LandingPage from './components/LandingPage';
@@ -511,8 +511,8 @@ const handleManageBilling = async () => {
 
       {/* Mode Démo : Utilise les composants Bildr */}
       {isGuestMode ? (
-        <>
-          <BildrSidebar
+        <div className="min-h-screen bg-gray-50">
+          <BildrNavbar
             currentView={currentView}
             onViewChange={setCurrentView}
             isGuestMode={isGuestMode}
@@ -520,7 +520,7 @@ const handleManageBilling = async () => {
             userName={firstName || 'Visiteur'}
           />
 
-          <main className="flex-1 lg:ml-64 p-6 lg:p-10 overflow-x-hidden bg-gray-50 min-h-screen">
+          <main className="py-8">
             {currentView === AppView.DASHBOARD && (
               <BildrDashboard
                 savedIdeas={savedIdeas}
@@ -533,7 +533,7 @@ const handleManageBilling = async () => {
 
             {/* Autres vues en mode démo affichent le message de retour au dashboard */}
             {currentView !== AppView.DASHBOARD && (
-              <div className="flex flex-col items-center justify-center min-h-[70vh] text-center">
+              <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
                 <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-3xl flex items-center justify-center mb-8 border-2 border-indigo-200 shadow-xl">
                   <IconMountain className="w-12 h-12 text-indigo-600" />
                 </div>
@@ -550,7 +550,7 @@ const handleManageBilling = async () => {
               </div>
             )}
           </main>
-        </>
+        </div>
       ) : (
         <>
           {/* Mode Normal : Utilise les composants Sommet */}
