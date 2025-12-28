@@ -33,80 +33,77 @@ const BildrNavbar: React.FC<BildrNavbarProps> = ({
     {
       view: AppView.GENERATOR,
       icon: <IconIdea className="w-4 h-4" />,
-      label: 'Générer une idée'
+      label: 'Générer'
     },
     {
       view: AppView.ANALYZER,
       icon: <IconAnalytics className="w-4 h-4" />,
-      label: 'Analyse'
+      label: 'Analyser'
     },
     {
       view: AppView.MVP_BUILDER,
       icon: <IconWrench className="w-4 h-4" />,
-      label: 'Plan technique'
+      label: 'Plan'
     },
     {
       view: AppView.LE_CHANTIER,
       icon: <IconKanban className="w-4 h-4" />,
-      label: 'Le chantier'
+      label: 'Chantier'
     }
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <nav className="bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gray-900 rounded-lg flex flex-col items-center justify-center gap-0.5 p-1">
-              <div className="w-5 h-1.5 bg-white rounded-sm"></div>
-              <div className="w-4 h-1.5 bg-white/80 rounded-sm"></div>
-              <div className="w-3 h-1.5 bg-white/60 rounded-sm"></div>
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 bg-gray-900 rounded flex flex-col items-center justify-center gap-0.5 p-1">
+                <div className="w-4 h-1 bg-white rounded-sm"></div>
+                <div className="w-3.5 h-1 bg-white/80 rounded-sm"></div>
+                <div className="w-3 h-1 bg-white/60 rounded-sm"></div>
+              </div>
+              <span className="font-semibold text-gray-900 text-lg">Bildr</span>
             </div>
-            <div>
-              <div className="font-bold text-lg text-gray-900">Bildr</div>
+
+            {/* Navigation */}
+            <div className="hidden md:flex items-center gap-1">
+              {menuItems.map((item) => (
+                <button
+                  key={item.view}
+                  onClick={() => onViewChange(item.view)}
+                  className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                    currentView === item.view
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))}
             </div>
+          </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-4">
             {isGuestMode && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-700 text-xs font-bold uppercase tracking-wide">
-                Démo
+              <span className="text-xs text-gray-500 font-medium">
+                Mode démo
               </span>
             )}
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center gap-1">
-            {menuItems.map((item) => (
-              <button
-                key={item.view}
-                onClick={() => onViewChange(item.view)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                  currentView === item.view
-                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                {item.icon}
-                <span className="hidden md:inline">{item.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* User & Logout */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white text-xs font-medium">
                 {userName.charAt(0).toUpperCase()}
               </div>
-              <span className="text-sm font-semibold text-gray-900">{userName}</span>
+              <button
+                onClick={onLogout}
+                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+              >
+                {isGuestMode ? 'Quitter' : 'Déconnexion'}
+              </button>
             </div>
-            <button
-              onClick={onLogout}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-              title={isGuestMode ? 'Quitter la démo' : 'Se déconnecter'}
-            >
-              <IconLogout className="w-4 h-4" />
-              <span className="hidden sm:inline">{isGuestMode ? 'Quitter' : 'Déconnexion'}</span>
-            </button>
           </div>
         </div>
       </div>
