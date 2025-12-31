@@ -71,8 +71,8 @@ const BildrDashboard: React.FC<BildrDashboardProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="min-h-screen bg-white w-full">
+      <div className="w-full px-8 lg:px-16 py-10">
 
         {/* Header avec CTA */}
         <div className="flex items-start justify-between mb-12">

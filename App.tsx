@@ -509,7 +509,7 @@ const handleManageBilling = async () => {
         onClose={() => setIsPricingModalOpen(false)}
       />
 
-      {/* Mode Démo : Utilise les composants Bildr */}
+      {/* Mode Démo : Utilise les composants Bildr - Navigation complète débloquée */}
       {isGuestMode ? (
         <>
           <BildrNavbar
@@ -530,23 +530,35 @@ const handleManageBilling = async () => {
             />
           )}
 
-          {/* Autres vues en mode démo affichent le message de retour au dashboard */}
-          {currentView !== AppView.DASHBOARD && (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center text-center px-6">
-              <div className="w-24 h-24 bg-gradient-to-br from-gray-900 to-gray-700 rounded-3xl flex items-center justify-center mb-8 shadow-xl">
-                <IconMountain className="w-12 h-12 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Mode Démo - Fonctionnalité limitée</h2>
-              <p className="text-gray-600 max-w-md mb-10 text-lg">
-                Cette fonctionnalité n'est disponible que dans la version complète.
-              </p>
-              <button
-                onClick={() => setCurrentView(AppView.DASHBOARD)}
-                className="px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold text-lg transition-all shadow-lg hover:scale-105"
-              >
-                Retour au Dashboard
-              </button>
-            </div>
+          {currentView === AppView.GENERATOR && (
+            <IdeaGenerator
+              onIdeaGenerated={handleIdeaGenerated}
+              isGuestMode={isGuestMode}
+            />
+          )}
+
+          {currentView === AppView.ANALYZER && (
+            <MarketAnalyzer
+              ideaToAnalyze={ideaToAnalyze}
+              onAnalysisComplete={handleAnalysisComplete}
+              isGuestMode={isGuestMode}
+            />
+          )}
+
+          {currentView === AppView.MVP_BUILDER && (
+            <MVPBuilder
+              ideaToBlueprint={ideaToBlueprint}
+              onBlueprintComplete={handleBlueprintComplete}
+              isGuestMode={isGuestMode}
+            />
+          )}
+
+          {currentView === AppView.LE_CHANTIER && ideaToChantier && (
+            <LeChantier
+              idea={ideaToChantier}
+              onUpdateIdea={handleUpdateIdeaFromChantier}
+              isGuestMode={isGuestMode}
+            />
           )}
         </>
       ) : (
