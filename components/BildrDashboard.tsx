@@ -72,10 +72,10 @@ const BildrDashboard: React.FC<BildrDashboardProps> = ({
 
   return (
     <div className="min-h-screen bg-white w-full">
-      <div className="w-full px-8 lg:px-16 py-10">
+      <div className="max-w-7xl mx-auto px-6 py-8">
 
         {/* Header avec CTA */}
-        <div className="flex items-start justify-between mb-12">
+        <div className="flex items-start justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
             <p className="text-lg text-gray-600">Transformez vos idées en SaaS rentables</p>
@@ -98,11 +98,11 @@ const BildrDashboard: React.FC<BildrDashboardProps> = ({
         </div>
 
         {/* Impact Metrics - Section stratégique */}
-        <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-8 mb-12">
+        <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-6 lg:p-8 mb-10">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-6">
             Impact de Bildr
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-4 lg:gap-8">
             <div>
               <div className="text-3xl font-bold text-gray-900 mb-1">14 jours</div>
               <div className="text-sm text-gray-600">De l'idée au lancement</div>
@@ -123,7 +123,7 @@ const BildrDashboard: React.FC<BildrDashboardProps> = ({
 
         {/* Hero Project - Projet Vitrine */}
         {showcaseProject && (
-          <div className="mb-12">
+          <div className="mb-10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-gray-900">Projet en vedette</h2>
               <span className="text-sm text-gray-600">Exemple complet de A à Z</span>
@@ -399,7 +399,7 @@ const BildrDashboard: React.FC<BildrDashboardProps> = ({
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {savedIdeas
                 .filter(idea => idea.id !== showcaseProject?.id)
                 .map((idea) => (
