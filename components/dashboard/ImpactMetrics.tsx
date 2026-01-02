@@ -24,10 +24,10 @@ const ImpactMetrics: React.FC = () => {
       <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-6">
         Impact de Bildr
       </h2>
-      <div className="grid grid-cols-3 gap-4 lg:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8">
         {metrics.map((metric, index) => (
-          <div key={index}>
-            <div className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+          <div key={index} className="text-center sm:text-left">
+            <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
               {metric.value}
             </div>
             <div className="text-sm text-gray-600">{metric.label}</div>

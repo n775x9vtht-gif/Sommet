@@ -22,23 +22,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg p-6 hover:border-gray-900 transition-all bg-white group">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="font-semibold text-gray-900">{idea.title}</h3>
-            {idea.analysis && (
-              <span className={`px-2 py-0.5 text-xs font-bold rounded ${getScoreBadgeColor(idea.analysis.score)}`}>
-                {idea.analysis.score}
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-gray-600 mb-3">{idea.tagline}</p>
-          <div className="text-xs text-gray-500">{idea.category}</div>
+    <div className="border border-gray-200 rounded-lg p-5 lg:p-6 hover:border-gray-900 transition-all bg-white group">
+      <div className="mb-4">
+        <div className="flex items-start gap-2 mb-2 flex-wrap">
+          <h3 className="font-semibold text-gray-900 flex-1 min-w-0">{idea.title}</h3>
+          {idea.analysis && (
+            <span className={`px-2 py-0.5 text-xs font-bold rounded flex-shrink-0 ${getScoreBadgeColor(idea.analysis.score)}`}>
+              {idea.analysis.score}
+            </span>
+          )}
         </div>
+        <p className="text-sm text-gray-600 mb-3">{idea.tagline}</p>
+        <div className="text-xs text-gray-500">{idea.category}</div>
       </div>
 
-      <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-4 border-t border-gray-100">
         {!idea.analysis && (
           <button
             onClick={() => onAnalyze(idea)}
